@@ -2,51 +2,45 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 import { fetchDataFromApi } from '../utils/youtubeApi';
 
-
 interface MyContextType {
-    selectedcat: any[]; 
-    setselectedcat: (newValue: any[]) => void
+  selectedcat: string; 
+  setselectedcat: (newValue: string) => void;
+  data: any[]; 
 }
 
-
-const MyContext = createContext<MyContextType | undefined>(undefined);
+export const MyContext = createContext<MyContextType | undefined>(undefined);
 
 interface MyProviderProps {
-  children: ReactNode; 
+  children: ReactNode;
 }
 
-
 export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
-  const [selectedcat, setselectedcat] = useState<any>("New"); 
+  const [selectedcat, setselectedcat] = useState<string>("New");
+  const [data, setData] = useState<any[]>([]);
 
-  
   useEffect(() => {
-    fetchData(`search/?q=${selectedcat}`);
-  }, [])
+    const fetchData = async () => {
+      try {
+        const response = await fetchDataFromApi(`search`, {
+          q: selectedcat,
+          part: 'snippet',
+          type: 'video',
+          maxResults: 10
+        });
+        setData(response); 
+        console.log('Fetched data:', response);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-  
-  const fetchData = async (url: string) => {
-    try {
-      const response = await fetchDataFromApi(url);
-      console.log(response);
-    
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
+    fetchData();
+  }, [selectedcat]);
 
   return (
-    <MyContext.Provider value={{ selectedcat, setselectedcat }}>
+    <MyContext.Provider value={{ selectedcat, setselectedcat, data }}>
       {children}
     </MyContext.Provider>
   );
 };
 
-
-export const useMyContext = (): MyContextType => {
-  const context = useContext(MyContext);
-  if (context === undefined) {
-    throw new Error('useMyContext must be used within a MyProvider');
-  }
-  return context;
-};

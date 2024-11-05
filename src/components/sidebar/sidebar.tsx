@@ -6,19 +6,31 @@ import { MdSubscriptions } from "react-icons/md";
 import { IoPersonOutline } from "react-icons/io5";
 import { GrFormNext } from "react-icons/gr";
 import { categories } from "../utils/constants";
+import { useContext } from "react";
+import {MyContext} from '../vidoContext/VideoContext'
+import { list } from "postcss";
+
+
+
 
 interface SidebarProps {
   isOpen: boolean;
   toggleSidebar: () => void;
 }
 
+
+
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
+  const context=useContext<any>(MyContext)
+  const {selectedcat}=context;
+  console.log(selectedcat);
+  
+
   return (
     <div
       className={`fixed top-0 left-0 h-full bg-white text-black transition-transform duration-300 shadow-lg shadow-none
         ${isOpen ? "w-54 overflow-y-auto" : "w-16 overflow-hidden"}`} 
     >
-      
       <button
         className="flex items-center justify-between w-full h-16 p-4"
         onClick={toggleSidebar}
@@ -34,27 +46,27 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
       </button>
 
       <div className="flex flex-col mt-4">
-      <a
-    href="#"
-    className="flex items-center py-2 px-4 hover:bg-gray-300 transition"
-  >
-    <IoHomeOutline className="text-lg mr-4" /> 
-    {isOpen && <span>Home</span>}
-  </a>
-  <a
-    href="#"
-    className="flex items-center py-2 px-4 hover:bg-gray-300 transition"
-  >
-    <SiYoutubeshorts className="text-lg mr-4" />
-    {isOpen && <span>Shorts</span>}
-  </a>
-  <a
-    href="#"
-    className="flex items-center py-2 px-4 hover:bg-gray-300 transition"
-  >
-    <MdSubscriptions className="text-lg mr-4" /> 
-    {isOpen && <span>Subscriptions</span>}
-  </a>
+        <button 
+          
+          className="flex items-center py-2 px-4 hover:bg-gray-300 transition"
+        >
+          <IoHomeOutline className="text-lg mr-4" /> 
+          {isOpen && <span>Home</span>}
+          </button>
+        <a
+          href="#"
+          className="flex items-center py-2 px-4 hover:bg-gray-300 transition"
+        >
+          <SiYoutubeshorts className="text-lg mr-4" />
+          {isOpen && <span>Shorts</span>}
+        </a>
+        <a
+          href="#"
+          className="flex items-center py-2 px-4 hover:bg-gray-300 transition"
+        >
+          <MdSubscriptions className="text-lg mr-4" /> 
+          {isOpen && <span>Subscriptions</span>}
+        </a>
         <hr />
 
         <a
@@ -77,15 +89,17 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
 
         {/* Mapping over categories - only show when isOpen */}
         {isOpen &&
-          categories?.map((item, index) => (
+          categories.map((item, index) => (
             <button
               key={index}
               className="flex items-center py-2 px-4 hover:bg-gray-300 transition w-full text-left"
+            
             >
               <span className="text-lg mr-4">{item.icon}</span>
               <span className="text-sm font-medium">{item.name}</span>
             </button>
           ))}
+          
       </div>
     </div>
   );
