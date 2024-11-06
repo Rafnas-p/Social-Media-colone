@@ -3,9 +3,11 @@ import React, { createContext, useContext, ReactNode, useState, useEffect } from
 import { fetchDataFromApi } from '../utils/youtubeApi';
 
 interface MyContextType {
-  selectedcat: string; 
+  selectedcat: string;
   setselectedcat: (newValue: string) => void;
-  data: any[]; 
+  data: any[];
+  isOpen: boolean;
+  toggleSidebar: () => void;
 }
 
 export const MyContext = createContext<MyContextType | undefined>(undefined);
@@ -17,6 +19,11 @@ interface MyProviderProps {
 export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   const [selectedcat, setselectedcat] = useState<string>("New");
   const [data, setData] = useState<any[]>([]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,9 +32,9 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
           q: selectedcat,
           part: 'snippet',
           type: 'video',
-          maxResults: 10
+          maxResults: 10,
         });
-        setData(response); 
+        setData(response);
         console.log('Fetched data:', response);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -38,9 +45,10 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   }, [selectedcat]);
 
   return (
-    <MyContext.Provider value={{ selectedcat, setselectedcat, data }}>
+    <MyContext.Provider value={{ selectedcat, setselectedcat, data, isOpen, toggleSidebar }}>
       {children}
     </MyContext.Provider>
   );
 };
+
 

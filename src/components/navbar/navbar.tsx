@@ -1,24 +1,29 @@
 "use client";
-import React from 'react';
+import React, { useContext } from 'react';
 import { BsBellFill } from 'react-icons/bs';
 import { FaBars } from 'react-icons/fa';
 import Searchbar from './searchbar';
+import { MyContext } from '../vidoContext/VideoContext';
 
-interface NavbarProps {
-  toggleSidebar: () => void; 
-}
+const Navbar: React.FC = () => {
+  const context = useContext(MyContext);
 
-const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
+  if (!context) {
+    return null;
+  }
+
+  const { toggleSidebar } = context;
+
   return (
-    <nav className="bg-transparent h-16 flex items-center justify-between px-4 md:px-8 shadow-none">
+    <nav className="bg-white fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-4 md:px-8 shadow z-10 shadow-none">
       <div className="flex items-center">
-        <button onClick={toggleSidebar} className="mr-4 md:hidden">
-          <FaBars className="text-gray-800" />
+        <button onClick={toggleSidebar} className="mr-4">
+          <FaBars className="text-gray-800 text-2xl" />
         </button>
-        <img 
-          src='https://upload.wikimedia.org/wikipedia/commons/3/34/YouTube_logo_%282017%29.png?20170829160812' 
-          alt="YouTube Logo" 
-          className="h-6 w-20 md:ml-8" 
+        <img
+          src='https://upload.wikimedia.org/wikipedia/commons/3/34/YouTube_logo_%282017%29.png?20170829160812'
+          alt="YouTube Logo"
+          className="h-6 w-20 md:ml-8"
         />
       </div>
       <div className="hidden md:flex space-x-6">

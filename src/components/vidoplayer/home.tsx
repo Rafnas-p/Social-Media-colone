@@ -1,11 +1,14 @@
-"use client"; 
+"use client";
 
 import React, { useContext, useState } from 'react';
-import { MyContext } from '../vidoContext/VideoContext'; 
+import { MyContext } from '../vidoContext/VideoContext';
 
 const DisplayData: React.FC = () => {
   const context = useContext(MyContext);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  // Assuming your context has an `isOpen` property to indicate sidebar state
+  const isOpen = context?.isOpen ?? false; // Default to false if context is not available
 
   if (!context) {
     return <div>Loading...</div>; 
@@ -14,8 +17,8 @@ const DisplayData: React.FC = () => {
   const { data } = context;
 
   return (
-    <div className='ml-24'>
-      <h2 className='text-2xl font-bold mb-6'>Video Results:</h2>
+    <div className={`flex flex-col p-4 transition-all duration-300 ${isOpen ? 'ml-64' : 'ml-16'}`}>
+      {/* Adjust margin-left based on sidebar state */}
       {data.length === 0 ? (
         <p>No data found</p>
       ) : (
@@ -28,12 +31,9 @@ const DisplayData: React.FC = () => {
               }`}
               onClick={() => setExpandedIndex(index === expandedIndex ? null : index)}
             >
-             
               <h3 className="text-lg font-semibold p-3 text-ellipsis overflow-hidden whitespace-nowrap">
                 {item.snippet.title}
               </h3>
-
-             
               <div className="video-container">
                 <iframe
                   className={`w-full ${expandedIndex === index ? 'h-96' : 'h-40'}`} 
@@ -44,8 +44,6 @@ const DisplayData: React.FC = () => {
                   allowFullScreen
                 ></iframe>
               </div>
-
-            
               <div className="flex items-center p-3 mt-3">
                 <img
                   src={item.snippet.thumbnails.default.url} 
