@@ -22,7 +22,7 @@ const Sidebar: React.FC = () => {
         isOpen ? "w-64" : "w-16"
       }`}
     >
-      <div className="flex flex-col mt-4 overflow-y-auto max-h-[calc(100vh-4rem)]">
+      <div className="flex flex-col mt-4 max-h-[calc(100vh-4rem)]">
         {" "}
        
         <Link href="/" passHref>
@@ -57,14 +57,15 @@ const Sidebar: React.FC = () => {
           
         </button>
         {isOpen &&
-          categories.map((item, index) => (
-            <button
-              key={index}
-              className="flex items-center py-2 px-4 hover:bg-gray-300 transition w-full text-left"
-            >
-              <span className="text-lg mr-4">{item.icon}</span>
-              <span className={`text-sm font-medium`}>{item.name}</span>
-            </button>
+  categories.map((item, index) => (
+    <Link href={item.href || "#"} key={index}>  {/* Ensure href is valid */}
+      <button
+        className="flex items-center py-2 px-4 hover:bg-gray-300 transition w-full text-left"
+      >
+        <span className="text-lg mr-4">{item.icon}</span>
+        <span className={`text-sm font-medium`}>{item.name}</span>
+      </button>
+    </Link>
           ))}
       </div>
     </div>

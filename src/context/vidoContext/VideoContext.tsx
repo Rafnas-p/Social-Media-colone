@@ -1,11 +1,22 @@
 "use client";
 import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react';
-import { fetchDataFromApi } from '../utils/youtubeApi';
+import { fetchDataFromApi } from '../../components/utils/youtubeApi';
+
+interface VideoSnippet {
+  title: string;
+  description: string;
+  // Define other fields of the snippet as per your response data structure
+}
+
+interface ApiResponse {
+  items: Array<{ id: { videoId: string }; snippet: VideoSnippet }>;
+  // Add other fields based on actual response if necessary
+}
 
 interface MyContextType {
   selectedcat: string;
   setselectedcat: (newValue: string) => void;
-  data: any[];
+  data: ApiResponse | null;
   isOpen: boolean;
   toggleSidebar: () => void;
 }
@@ -18,7 +29,7 @@ interface MyProviderProps {
 
 export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   const [selectedcat, setselectedcat] = useState<string>("New");
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<ApiResponse | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const toggleSidebar = () => {
@@ -28,13 +39,16 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchDataFromApi(`search`, {
+        const response: any = await fetchDataFromApi('search', {
           q: selectedcat,
           part: 'snippet',
           type: 'video',
-          maxResults: 20,
+          maxResults: 10,
         });
-        setData(response);
+        
+        // Type-casting the response to match the expected ApiResponse type
+        setData(response as ApiResponse); // Type-casting here
+
         console.log('Fetched data:', response);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -50,5 +64,3 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
     </MyContext.Provider>
   );
 };
-
-

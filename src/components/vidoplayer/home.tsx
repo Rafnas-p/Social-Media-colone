@@ -1,24 +1,22 @@
 "use client";
 
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { MyContext } from '../vidoContext/VideoContext';
+import Link from 'next/link';
 
 const DisplayData: React.FC = () => {
   const context = useContext(MyContext);
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
-  // Assuming your context has an `isOpen` property to indicate sidebar state
-  const isOpen = context?.isOpen ?? false; // Default to false if context is not available
+  const isOpen = context?.isOpen ?? false;
 
   if (!context) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   const { data } = context;
 
   return (
     <div className={`flex flex-col p-4 transition-all duration-300 ${isOpen ? 'ml-64' : 'ml-16'}`}>
-      {/* Adjust margin-left based on sidebar state */}
       {data.length === 0 ? (
         <p>No data found</p>
       ) : (
@@ -26,24 +24,21 @@ const DisplayData: React.FC = () => {
           {data.map((item, index) => (
             <div
               key={index}
-              className={`bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105 ${
-                expandedIndex === index ? 'col-span-full' : ''
-              }`}
-              onClick={() => setExpandedIndex(index === expandedIndex ? null : index)}
+              className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-105"
             >
-              <h3 className="text-lg font-semibold p-3 text-ellipsis overflow-hidden whitespace-nowrap">
-                {item.snippet.title}
-              </h3>
-              <div className="video-container">
-                <iframe
-                  className={`w-full ${expandedIndex === index ? 'h-96' : 'h-40'}`} 
-                  src={`https://www.youtube.com/embed/${item.id.videoId}`}
-                  title={item.snippet.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
+                
+                <div className="video-container">
+                  <iframe
+                    className="w-full h-40"
+                    src={`https://www.youtube.com/embed/${item.id.videoId}`}
+                    title={item.snippet.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+                            <Link href={`/videos/${item.id.videoId}`} passHref>
+
               <div className="flex items-center p-3 mt-3">
                 <img
                   src={item.snippet.thumbnails.default.url} 
@@ -55,6 +50,8 @@ const DisplayData: React.FC = () => {
                   <p className="text-xs text-gray-600 truncate">{item.snippet.description}</p>
                 </div>
               </div>
+              </Link>
+
             </div>
           ))}
         </div>
