@@ -12,11 +12,11 @@ import { Url } from 'next/dist/shared/lib/router/router';
 interface Category {
     name: string;
     icon: JSX.Element;
-    type: "home" | "category" | "menu"; // Union type for "type"
-    href?: string | Url;  // Optional property, can be a string or an object (Url)
-    divider?: boolean;  // Optional boolean property for divider
+    type: "home" | "category" | "menu"; 
+    href?: string | Url; 
+    divider?: boolean;  
   }
-// Define categories with URL or object URL
+
 export const categories: Category[] = [
   { name: "New", icon: <AiFillHome />, type: "home" },
   { name: "Trending", icon: <MdLocalFireDepartment />, type: "category" },

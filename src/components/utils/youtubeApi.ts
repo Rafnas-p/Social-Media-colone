@@ -35,11 +35,9 @@
 // };
 import axios from 'axios';
 
-// Define the base URL and API key
-const BASE_URL = 'https://youtube-v31.p.rapidapi.com';
-const API_KEY = '984ad391e4mshf52e1e818d46d60p19e9d0jsn4d367debcd40';
+const BASE_URL = process.env.NEXT_PUBLIC_YOUTUBE_API_BASE_URL;
+const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
 
-// Define the options for the axios request
 const options = {
   method: 'GET',
   headers: {
@@ -48,12 +46,10 @@ const options = {
   }
 };
 
-// Define the structure of the data you expect from the API
 interface ApiResponse {
-  items: Array<any>; // Use 'items' or the correct field based on API response structure
+  items: Array<any>; 
 }
 
-// Define the function with types
 export const fetchDataFromApi = async (path: string, params?: Record<string, string | number>): Promise<ApiResponse['items']> => {
   try {
     const { data } = await axios.get(`${BASE_URL}/${path}`, {
@@ -61,25 +57,24 @@ export const fetchDataFromApi = async (path: string, params?: Record<string, str
       params: {
         hl: 'en',
         gl: 'US',
-        ...params, // Spread custom parameters if provided
+        ...params,
       }
     });
     console.log('Fetched data:', data);
+    
 
-    // Verify and return the structure based on the API response
     if (data.items) {
-      return data.items; // Ensure 'items' matches the actual response key
+      return data.items; 
     } else {
       console.warn('Unexpected response structure:', data);
-      return []; // Return an empty array if 'items' is not found
+      return []; 
     }
   } catch (error) {
     console.error('Error fetching data from API:', error);
-    throw error; // Rethrow for further handling if needed
+    throw error;
   }
 };
 
-// Example usage
 (async () => {
   try {
     const results = await fetchDataFromApi('search', {

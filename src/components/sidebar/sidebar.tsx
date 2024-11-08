@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useContext } from "react";
 import { IoHomeOutline, IoPersonOutline } from "react-icons/io5";
 import { SiYoutubeshorts } from "react-icons/si";
@@ -7,6 +8,7 @@ import { GrFormNext } from "react-icons/gr";
 import { categories } from "../utils/constants";
 import { MyContext } from "../vidoContext/VideoContext";
 import Link from "next/link";
+
 const Sidebar: React.FC = () => {
   const context = useContext(MyContext);
 
@@ -19,22 +21,18 @@ const Sidebar: React.FC = () => {
   return (
     <div
       className={`fixed top-16 left-0 h-full bg-white text-black shadow-lg z-20 transition-all duration-300 ${
-        isOpen ? "w-64" : "w-16"
+        isOpen ? "w-60" : "w-16"
       }`}
     >
       <div className="flex flex-col mt-4 max-h-[calc(100vh-4rem)]">
-        {" "}
-       
         <Link href="/" passHref>
-   
-        <button className="flex items-center py-2 px-4 hover:bg-gray-300 transition">
-          <IoHomeOutline className="text-lg mr-4" />
-          <span className={`${isOpen ? "block" : "hidden"} transition-all`}>
-            Home
-          </span>
-        </button>
-   
-    </Link>
+          <button className="flex items-center py-2 px-4 hover:bg-gray-300 transition">
+            <IoHomeOutline className="text-lg mr-4" />
+            <span className={`${isOpen ? "block" : "hidden"} transition-all`}>
+              Home
+            </span>
+          </button>
+        </Link>
         <button className="flex items-center py-2 px-4 hover:bg-gray-300 transition">
           <SiYoutubeshorts className="text-lg mr-4" />
           <span className={`${isOpen ? "block" : "hidden"} transition-all`}>
@@ -53,19 +51,16 @@ const Sidebar: React.FC = () => {
           <GrFormNext
             className={`${isOpen ? "block" : "hidden"} text-gray-600 text-sm`}
           />
-          <span className={`${isOpen ? "block" : "hidden"} text-sm`}>You</span>{" "}
-          
+          <span className={`${isOpen ? "block" : "hidden"} text-sm`}>You</span>
         </button>
         {isOpen &&
-  categories.map((item, index) => (
-    <Link href={item.href || "#"} key={index}>  {/* Ensure href is valid */}
-      <button
-        className="flex items-center py-2 px-4 hover:bg-gray-300 transition w-full text-left"
-      >
-        <span className="text-lg mr-4">{item.icon}</span>
-        <span className={`text-sm font-medium`}>{item.name}</span>
-      </button>
-    </Link>
+          categories.map((item, index) => (
+            <Link href={item.href || "#"} key={index}>
+              <button className="flex items-center py-2 px-4 hover:bg-gray-300 transition w-full text-left">
+                <span className="text-lg mr-4">{item.icon}</span>
+                <span className="text-sm font-medium">{item.name}</span>
+              </button>
+            </Link>
           ))}
       </div>
     </div>

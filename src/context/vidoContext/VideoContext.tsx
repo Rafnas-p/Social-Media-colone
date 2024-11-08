@@ -5,12 +5,12 @@ import { fetchDataFromApi } from '../../components/utils/youtubeApi';
 interface VideoSnippet {
   title: string;
   description: string;
-  // Define other fields of the snippet as per your response data structure
+ 
 }
 
 interface ApiResponse {
   items: Array<{ id: { videoId: string }; snippet: VideoSnippet }>;
-  // Add other fields based on actual response if necessary
+ 
 }
 
 interface MyContextType {
@@ -46,8 +46,8 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
           maxResults: 10,
         });
         
-        // Type-casting the response to match the expected ApiResponse type
-        setData(response as ApiResponse); // Type-casting here
+       
+        setData(response as ApiResponse); 
 
         console.log('Fetched data:', response);
       } catch (error) {

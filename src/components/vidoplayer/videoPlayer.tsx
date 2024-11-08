@@ -20,16 +20,14 @@ const VideoPlayer: React.FC = () => {
     return <div>Video not found!</div>;
   }
 
-  // Filter out the current video to show related videos
   const relatedVideos = data.filter((video) => video.id.videoId !== currentVideoId);
 
   return (
-    <div className="flex px-4 mt-10">
-      {/* Main Video and Details Section */}
+    <div className="flex px-4 mt-16 ml-14">
       <div className="w-2/3 max-w-3xl space-y-4">
         <div className="w-full">
           <iframe
-            className="w-full h-[500px] rounded-lg shadow-lg"
+            className="w-full h-[400px] rounded-xl shadow-lg"
             src={`https://www.youtube.com/embed/${currentVideoId}`}
             title="Video Player"
             frameBorder="0"
@@ -38,7 +36,6 @@ const VideoPlayer: React.FC = () => {
           ></iframe>
         </div>
         
-        {/* Video Details */}
         <div className="flex flex-col space-y-3">
           <div className="flex items-center space-x-3">
             <img
@@ -48,19 +45,18 @@ const VideoPlayer: React.FC = () => {
             />
             <p className="text-base font-medium text-gray-800">{videoDetails.snippet.channelTitle}</p>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-md">
+          <div className="bg-white p-4 rounded-xl shadow-md">
             <p className="text-sm text-gray-700">{videoDetails.snippet.title}</p>
           </div>
         </div>
       </div>
 
-      {/* Related Videos Section */}
-      <div className="w-1/3 pl-4 max-h-[500px] overflow-y-auto space-y-4">
+      <div className="w-1/3 pl-4 max-h-[450px] overflow-y-auto space-y-4">
         {relatedVideos.map((video) => (
           <div
             key={video.id.videoId}
             className="flex items-start space-x-3 cursor-pointer"
-            onClick={() => setCurrentVideoId(video.id.videoId)} // Update main video on click
+            onClick={() => setCurrentVideoId(video.id.videoId)} 
           >
             <img
               src={video.snippet.thumbnails.default.url}
@@ -79,3 +75,4 @@ const VideoPlayer: React.FC = () => {
 };
 
 export default VideoPlayer;
+
