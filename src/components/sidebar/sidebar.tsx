@@ -6,7 +6,7 @@ import { SiYoutubeshorts } from "react-icons/si";
 import { MdSubscriptions } from "react-icons/md";
 import { GrFormNext } from "react-icons/gr";
 import { categories } from "../utils/constants";
-import { MyContext } from "../vidoContext/VideoContext";
+import { MyContext } from "../../context/vidoContext/VideoContext";
 import Link from "next/link";
 
 const Sidebar: React.FC = () => {

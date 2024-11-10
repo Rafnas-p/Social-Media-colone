@@ -6,7 +6,7 @@ const Searchbar: React.FC = () => {
           <input
             type="text"
             placeholder="Search..."
-            className="p-4 rounded-full border border-gray-300 w-full sm:w-96 h-8 focus:outline-none focus:ring-2 focus:ring-blue-500" // Full width on mobile, fixed width on larger screens
+            className="p-4 rounded-full border border-gray-300 w-full sm:w-[500px] h-8 focus:outline-none focus:ring-2 focus:ring-blue-100" // Full width on mobile, fixed width on larger screens
           />
         
           <div className="absolute top-0 right-0 h-full w-12 sm:w-20 bg-gray-100 p-2 rounded-r-full border border-gray-300 flex items-center justify-center">

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useContext } from 'react';
-import { MyContext } from '../vidoContext/VideoContext';
+import { MyContext } from '../../context/vidoContext/VideoContext';
 import Link from 'next/link';
 
 const DisplayData: React.FC = () => {

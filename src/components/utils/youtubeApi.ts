@@ -33,11 +33,13 @@
 //     throw error; // Rethrow the error for further handling if needed
 //   }
 // };
+
+
 import axios from 'axios';
+
 
 const BASE_URL = process.env.NEXT_PUBLIC_YOUTUBE_API_BASE_URL;
 const API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
-
 const options = {
   method: 'GET',
   headers: {
@@ -88,3 +90,34 @@ export const fetchDataFromApi = async (path: string, params?: Record<string, str
     console.error('Error:', error);
   }
 })();
+
+export const featchCommentsAPi=async(
+  videoId:string,
+): Promise<ApiResponse['items']>=>{
+try {
+  const {data}=await axios.get(`${BASE_URL}/commentThreads`,{
+    ...options,
+    params:{
+      part:'snippet',
+      videoId,
+      maxResults:100
+    }
+  })
+  console.log('Fetched comments:', data);
+
+  return data.items || [];
+
+} catch (error) {
+  console.error('Error fetching comments:', error);
+    throw error;
+}
+}
+(async () => {
+  try {
+    const comments = await featchCommentsAPi('7ghhRHRP6t4');
+    console.log('Comments:', comments);
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+  }
+})();
+
