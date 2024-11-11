@@ -1,8 +1,30 @@
 "use client";
 import React, { createContext, useCallback, useState, useEffect, ReactNode } from 'react';
-import { fetchDataFromApi, featchCommentsAPi } from '../../components/utils/youtubeApi';
+import { fetchDataFromApi, featchCommentsAPi,fetchSearchApi} from '../../components/utils/youtubeApi';
+// Define SearchData interface for search results
+interface SearchDataItem {
+  kind: string;
+  id: {
+    kind: string;
+    videoId: string;
+  };
+  snippet: {
+    channelId: string;
+    channelTitle: string;
+    description: string;
+    liveBroadcastContent: string;
+    publishTime: string;
+    publishedAt: string;
+    title: string;
+    thumbnails: {
+      default: { url: string; width: number; height: number };
+      medium: { url: string; width: number; height: number };
+      high: { url: string; width: number; height: number };
+    };
+  };
+}
 
-// Define context type
+
 interface MyContextType {
   selectedcat: string;
   setselectedcat: (newValue: string) => void;
@@ -11,6 +33,9 @@ interface MyContextType {
   fetchComments: (videoId: string) => void;
   isOpen: boolean;
   toggleSidebar: () => void;
+  searchData: SearchDataItem[];  
+  loading: boolean;
+  error: string | null;
 }
 
 // Define video and comment types
@@ -83,8 +108,12 @@ export const MyContext = createContext<MyContextType | undefined>(undefined);
 export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   const [selectedcat, setselectedcat] = useState<string>("New");
   const [data, setData] = useState<Video[]>([]);
+  const [searchData, setSearchData] = useState<SearchDataItem[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -121,6 +150,21 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchSearchData = async () => {
+      try {
+        const data = await fetchSearchApi();
+        setSearchData(data); // Assuming fetchSearchApi returns an array of items
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to fetch search data');
+        setLoading(false);
+      }
+    };
+
+    fetchSearchData();
+  }, []);
+
   return (
     <MyContext.Provider value={{
       selectedcat,
@@ -130,6 +174,9 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
       fetchComments,
       isOpen,
       toggleSidebar,
+      searchData, 
+      loading,
+       error
     }}>
       {children}
     </MyContext.Provider>

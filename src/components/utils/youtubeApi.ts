@@ -121,3 +121,36 @@ try {
   }
 })();
 
+//search
+
+export const fetchSearchApi=async():Promise<ApiResponse['items']>=>{
+try {
+
+  const {data}=await axios.get(`${BASE_URL}/search`,{
+  ...options,
+  params: {
+    q: 'music',
+    part: 'snippet,id',
+    regionCode: 'US',
+    maxResults: '20',
+    order: 'date'
+}
+});
+  console.log('search',data)
+  return data.items;
+  
+} catch (error) {
+  console.error('Error fetching search results:', error);
+    throw error;
+
+}
+  
+}
+(async () => {
+  try {
+    const results = await fetchSearchApi();
+    console.log('Fetched Search Results:', results);
+  } catch (error) {
+    console.error('Error while testing fetchSearchApi:', error);
+  }
+})();
