@@ -15,7 +15,7 @@ const Navbar: React.FC = () => {
   const { toggleSidebar } = context;
 
   return (
-    <nav className="bg-white fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-4 shadow z-10 shadow-none">
+    <nav className="bg-white fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-4 shadow z-10 ">
     <div className="flex items-center">
       <button onClick={toggleSidebar} className="mr-2">
         <FaBars className="text-gray-800" />

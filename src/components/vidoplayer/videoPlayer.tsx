@@ -1,27 +1,66 @@
+// app/components/navbar/VideoPlayer.tsx
 "use client";
+
 import { useParams } from 'next/navigation';
 import React, { useContext, useState, useEffect } from 'react';
 import { MyContext } from '../../context/vidoContext/VideoContext';
 
+// Define the types of the context data
+interface VideoDetails {
+  id: {
+    videoId: string;
+  };
+  snippet: {
+    title: string;
+    channelTitle: string;
+    thumbnails: {
+      default: {
+        url: string;
+      };
+    };
+  };
+}
+// In VideoContext.tsx, define the `CommentSnippet` structure exactly as it appears in VideoPlayer.tsx.
+interface CommentSnippet {
+  snippet: {
+    topLevelComment: {
+      snippet: {
+        authorDisplayName: string;
+        authorProfileImageUrl: string;
+        publishedAt: string;
+        textDisplay: string;
+      };
+    };
+  };
+  id: string;
+}
+
+// Ensure `MyContextType` uses `CommentSnippet[]`
+interface MyContextType {
+  data: VideoDetails[];
+  comments: CommentSnippet[];
+  fetchComments: (videoId: string) => void;
+}
+
 const VideoPlayer: React.FC = () => {
-  const context = useContext(MyContext);
+  const context = useContext(MyContext) as unknown as MyContextType | null;
 
   if (!context) {
     return <div>Context is not available!</div>;
   }
-
+  
   const { data, comments, fetchComments } = context;
-  const { videoId: initialVideoId } = useParams();
-  const [currentVideoId, setCurrentVideoId] = useState(initialVideoId);
-  const [newComment, setNewComment] = useState('');
-  const [sortOption, setSortOption] = useState('Newest First');
 
-  // Fetch comments only when currentVideoId changes
+  const { videoId: initialVideoId } = useParams() as { videoId: string | undefined };
+  const [currentVideoId, setCurrentVideoId] = useState<string | undefined>(initialVideoId);
+  const [newComment, setNewComment] = useState<string>('');
+  const [sortOption, setSortOption] = useState<string>('Newest First');
+
   useEffect(() => {
     if (currentVideoId) {
       fetchComments(currentVideoId);
     }
-  }, [currentVideoId]); // Only re-fetch comments when video ID changes
+  }, [currentVideoId, fetchComments]);
 
   const videoDetails = data.find((video) => video.id.videoId === currentVideoId);
 
@@ -31,10 +70,9 @@ const VideoPlayer: React.FC = () => {
 
   const relatedVideos = data.filter((video) => video.id.videoId !== currentVideoId);
 
-  // Sorting comments based on selected option
   const sortedComments = [...comments].sort((a, b) => {
-    const dateA = new Date(a.snippet?.topLevelComment?.snippet.publishedAt);
-    const dateB = new Date(b.snippet?.topLevelComment?.snippet.publishedAt);
+    const dateA = new Date(a.snippet.topLevelComment.snippet.publishedAt).getTime();
+    const dateB = new Date(b.snippet.topLevelComment.snippet.publishedAt).getTime();
     return sortOption === 'Newest First' ? dateB - dateA : dateA - dateB;
   });
 
@@ -98,8 +136,8 @@ const VideoPlayer: React.FC = () => {
             <p>No comments available for this video.</p>
           ) : (
             sortedComments.map((comment) => {
-              const topLevelComment = comment.snippet?.topLevelComment?.snippet;
-              return topLevelComment ? (
+              const topLevelComment = comment.snippet.topLevelComment.snippet;
+              return (
                 <div key={comment.id} className="pb-4 mb-4">
                   <div className="flex items-start space-x-3">
                     <img
@@ -117,8 +155,6 @@ const VideoPlayer: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              ) : (
-                <p key={comment.id}>Comment data is unavailable.</p>
               );
             })
           )}

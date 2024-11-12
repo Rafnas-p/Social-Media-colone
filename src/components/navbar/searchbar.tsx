@@ -1,18 +1,24 @@
+// components/Searchbar.tsx
+import Link from 'next/link'; // Import Link for navigation
 import { IoMdSearch } from "react-icons/io";
 import { MdCancel } from "react-icons/md";
 import { useContext, useState, useEffect } from "react";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 
+// Define the structure for each search result item
+type SearchItem = {
+  id: { videoId: string };
+  snippet: {
+    title: string;
+    description: string;
+  };
+};
+
 const Searchbar: React.FC = () => {
   const context = useContext(MyContext);
-
-  if (!context) {
-    return null;
-  }
-
-  const { searchData } = context;
+  const { searchData } = context || {}; // Optional chaining to handle undefined context
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState<SearchItem[]>([]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value.trim());
@@ -20,71 +26,64 @@ const Searchbar: React.FC = () => {
 
   const clearSearch = () => {
     setSearchQuery("");
-    setFilteredData([]); 
+    setFilteredData([]);
   };
 
   useEffect(() => {
-    if (searchQuery) {
-      const results = searchData.filter((item) =>
+    if (searchQuery && searchData) {
+      const results = searchData.filter((item: SearchItem) =>
         item.snippet.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredData(results);
     } else {
-      setFilteredData([]); // Hide results when searchQuery is empty
+      setFilteredData([]);
     }
   }, [searchQuery, searchData]);
 
-  const playVideo = (videoId: string) => {
-    const url = `https://www.youtube.com/watch?v=${videoId}`;
-    window.open(url, "_blank"); 
-  };
-
   return (
     <div className="w-full px-4 sm:px-0 fixed top-4 flex flex-col items-center z-10">
-    <div className="relative w-full sm:w-[500px]">
-      <input
-        type="text"
-        placeholder="Search..."
-        value={searchQuery}
-        onChange={handleInputChange}
-        className="p-3 rounded-full border border-gray-300 w-full h-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100"
-      />
-  
-      <div className="absolute top-0 right-0 h-full w-10 sm:w-12 bg-gray-200 p-2 rounded-r-full border border-gray-300 flex items-center justify-center">
-        <span><IoMdSearch size={18} /></span>
-      </div>
-  
-      {searchQuery && (
-        <button
-          className="absolute top-0 right-10 h-full w-10 sm:w-12 p-2 flex items-center justify-center"
-          onClick={clearSearch}
-        >
-          <MdCancel className="text-gray-500" />
-        </button>
-      )}
-    </div>
-  
-   
-    {searchQuery && (
-      <div className="relative w-full sm:w-[500px] bg-white shadow-lg rounded-lg p-2 max-h-72 overflow-y-auto text-sm z-0">
-        {filteredData.length > 0 ? (
-          filteredData.map((item) => (
-            <div
-              key={item.id.videoId}
-              className="border-b p-2 cursor-pointer hover:bg-gray-100 transition"
-              onClick={() => playVideo(item.id.videoId)}
-            >
-              <h3 className="text-base font-semibold">{item.snippet.title}</h3>
-              <p className="text-xs text-gray-600">{item.snippet.description}</p>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500 text-sm">No results found.</p>
+      <div className="relative w-full sm:w-[500px]">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={handleInputChange}
+          className="p-3 rounded-full border border-gray-300 w-full h-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100"
+        />
+        
+        <div className="absolute top-0 right-0 h-full w-10 sm:w-12 bg-gray-200 p-2 rounded-r-full border border-gray-300 flex items-center justify-center">
+          <span><IoMdSearch size={18} /></span>
+        </div>
+
+        {searchQuery && (
+          <button
+            className="absolute top-0 right-10 h-full w-10 sm:w-12 p-2 flex items-center justify-center"
+            onClick={clearSearch}
+          >
+            <MdCancel className="text-gray-500" />
+          </button>
         )}
       </div>
-    )}
-  </div>
-  
+
+      {searchQuery && (
+        <div className="relative w-full sm:w-[500px] bg-white shadow-lg rounded-lg p-2 max-h-72 overflow-y-auto text-sm z-0">
+          {filteredData.length > 0 ? (
+            filteredData.map((item) => (
+              <div key={item.id.videoId} className="border-b p-2 cursor-pointer hover:bg-gray-100 transition">
+                <Link href={`/search?Id=${item.id.videoId}`} passHref>
+                  <div>
+                    <h3 className="text-base font-semibold">{item.snippet.title}</h3>
+                    <p className="text-xs text-gray-600">{item.snippet.description}</p>
+                  </div>
+                </Link>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-sm">No results found.</p>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 
