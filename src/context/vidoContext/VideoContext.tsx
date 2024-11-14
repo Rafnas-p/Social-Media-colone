@@ -102,6 +102,14 @@ interface Comment {
 interface MyProviderProps {
   children: ReactNode;
 }
+type SearchItem = {
+  id: { videoId: string };
+  snippet: {
+    title: string;
+    description: string;
+  };
+};
+
 
 export const MyContext = createContext<MyContextType | undefined>(undefined);
 
@@ -113,7 +121,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [filteredData, setFilteredData] = useState<SearchItem[]>([]);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -176,7 +184,9 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
       toggleSidebar,
       searchData, 
       loading,
-       error
+       error,
+       filteredData, 
+       setFilteredData
     }}>
       {children}
     </MyContext.Provider>

@@ -2,14 +2,19 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { MyContext } from '@/context/vidoContext/VideoContext';
+
 const SearchPlyer: React.FC = () => {
   const searchParams = useSearchParams();
   const videoId = searchParams.get('Id');
 
-  const context=useContext(MyContext)
-   const {searchData}=context;
+  const context = useContext(MyContext);
+  const { filteredData } = context;
+
+  console.log('filterdvid',filteredData);
+  
   const [data, setData] = useState<any>(null);
 
+  // Fetch data based on videoId
   useEffect(() => {
     if (videoId) {
       const fetchData = async () => {
@@ -28,8 +33,9 @@ const SearchPlyer: React.FC = () => {
   }, [videoId]);
 
   return (
-    <div className="flex flex-col px-4 mt-12 ml-2 bg-white-900 text-gray-800 min-h-screen">
-      <div className="w-2/3 max-w-3xl  ml-16 mt-8">
+    <div className="flex px-4 mt-12 ml-2 bg-white-900 text-gray-800 min-h-screen">
+      {/* Video Player Section */}
+      <div className="w-2/3 max-w-3xl ml-16 mt-8">
         {videoId ? (
           <div className="w-full bg-gray-100 p-4 rounded-xl shadow-lg">
             <iframe
@@ -45,21 +51,31 @@ const SearchPlyer: React.FC = () => {
           <p className="text-center text-gray-500">Loading video...</p>
         )}
       </div>
+       
 
-      <div className="w-2/3 max-w-3xl mx-auto mt-8">
-        {data ? (
-          <div className="bg-white p-4 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-4">Comments</h2>
-            <pre className="text-gray-700 bg-gray-50 p-4 rounded-lg overflow-auto">
-              {JSON.stringify(data, null, 2)}
-            </pre>
-          </div>
-        ) : (
-          <p className="text-gray-500 text-center mt-4">No data found for this video ID.</p>
-        )}
+      <div className="w-1/3 pl-4 mt-8 space-y-4 overflow-y-auto">
+       
+        
+          {filteredData.map((video) => (
+            <div
+              key={video.id.videoId}
+              className="flex items-start space-x-3 cursor-pointer"
+              onClick={() => window.location.href = `?Id=${video.id.videoId}`} // Change video on click
+            >
+              <img
+                src={video.snippet.thumbnails.default.url}
+                alt={video.snippet.title}
+                className="w-24 h-16 rounded-lg"
+              />
+              <div>
+                <p className="text-sm font-semibold line-clamp-2">{video.snippet.title}</p>
+                <p className="text-xs">{video.snippet.channelTitle}</p>
+              </div>
+            </div>
+          ))}
+       
       </div>
     </div>
-
   );
 };
 

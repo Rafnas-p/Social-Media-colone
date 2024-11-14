@@ -5,20 +5,13 @@ import { MdCancel } from "react-icons/md";
 import { useContext, useState, useEffect } from "react";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 
-// Define the structure for each search result item
-type SearchItem = {
-  id: { videoId: string };
-  snippet: {
-    title: string;
-    description: string;
-  };
-};
+
 
 const Searchbar: React.FC = () => {
   const context = useContext(MyContext);
-  const { searchData } = context || {}; // Optional chaining to handle undefined context
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [filteredData, setFilteredData] = useState<SearchItem[]>([]);
+  const { searchData ,filteredData, setFilteredData} = context || {}; 
+  const [searchQuery, setSearchQuery ] = useState<string>("");
+  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value.trim());
@@ -26,7 +19,7 @@ const Searchbar: React.FC = () => {
 
   const clearSearch = () => {
     setSearchQuery("");
-    setFilteredData([]);
+    
   };
 
   useEffect(() => {
@@ -35,9 +28,7 @@ const Searchbar: React.FC = () => {
         item.snippet.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredData(results);
-    } else {
-      setFilteredData([]);
-    }
+    } 
   }, [searchQuery, searchData]);
 
   return (
