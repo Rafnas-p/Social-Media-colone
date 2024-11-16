@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useContext } from 'react';
 import { MyContext } from '../../context/vidoContext/VideoContext';
 import Link from 'next/link';

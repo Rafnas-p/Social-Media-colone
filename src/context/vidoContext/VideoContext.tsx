@@ -36,6 +36,8 @@ interface MyContextType {
   searchData: SearchDataItem[];  
   loading: boolean;
   error: string | null;
+  filteredData: SearchItem[]; 
+  setFilteredData: (data: SearchItem[]) => void;
 }
 
 // Define video and comment types
@@ -125,6 +127,8 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+    console.log('clicked');
+    
   };
 
   // Fetch videos based on selected category

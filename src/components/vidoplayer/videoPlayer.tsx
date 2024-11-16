@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation';
 import React, { useContext, useState, useEffect } from 'react';
 import { MyContext } from '../../context/vidoContext/VideoContext';
 
-// Define the types of the context data
 interface VideoDetails {
   id: {
     videoId: string;
@@ -20,7 +19,6 @@ interface VideoDetails {
     };
   };
 }
-// In VideoContext.tsx, define the `CommentSnippet` structure exactly as it appears in VideoPlayer.tsx.
 interface CommentSnippet {
   snippet: {
     topLevelComment: {
@@ -35,7 +33,6 @@ interface CommentSnippet {
   id: string;
 }
 
-// Ensure `MyContextType` uses `CommentSnippet[]`
 interface MyContextType {
   data: VideoDetails[];
   comments: CommentSnippet[];

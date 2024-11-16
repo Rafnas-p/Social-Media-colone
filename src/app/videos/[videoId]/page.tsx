@@ -2,7 +2,7 @@ import React from 'react'
 import VideoPlayer from "../../../components/vidoplayer/videoPlayer"
 import { MyProvider } from '@/context/vidoContext/VideoContext';
 import Navbar from '@/components/navbar/navbar';
-import Sidebar from '@/components/sidebar/sidebar';
+import Sidebar from '@/components/navbar/sidebar/sidebar';
 
 function Page() {
   return (

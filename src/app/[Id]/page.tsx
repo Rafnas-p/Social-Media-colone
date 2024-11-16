@@ -1,9 +1,9 @@
 import React from 'react'
 import SearchPlyer from '@/components/navbar/searchPlyer'
 import Navbar from '@/components/navbar/navbar'
-import Sidebar from '@/components/sidebar/sidebar'
 import { MyProvider } from '@/context/vidoContext/VideoContext'
 import { AuthContextProvider } from '@/context/authcontext/authcontext'
+import Sidebar from '@/components/sidebar/sidebar'
 function Page() {
   console.log('hudshuhudfdnjsdnj');
 

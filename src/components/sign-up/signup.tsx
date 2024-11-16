@@ -8,9 +8,9 @@ const Signup = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      await googleSignIn(); // Calls the google sign-in function from context
+      await googleSignIn(); 
     } catch (error) {
-      setError(error.message); // Sets error if something goes wrong
+      setError(error.message);
       console.log(error);
     }
   };

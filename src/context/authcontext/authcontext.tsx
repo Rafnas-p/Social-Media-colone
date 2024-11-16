@@ -1,12 +1,25 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
-import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider } from "firebase/auth";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider, User } from "firebase/auth";
 import { auth } from "@/app/fairbase/config";
+import { userAgent } from "next/server";
 
-const AuthContext = createContext();
 
-export const AuthContextProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+interface AuthContextType {
+  user: User | null; 
+  googleSignIn: () => Promise<any>;
+  logOut: () => Promise<void>;
+}
+
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+interface AuthContextProviderProps {
+  children: ReactNode; 
+}
+
+export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
 
   const googleSignIn = () => {
     const provider = new GoogleAuthProvider();
@@ -29,6 +42,8 @@ export const AuthContextProvider = ({ children }) => {
     return () => unsubscribe(); 
   }, []); 
 
+  console.log(user);
+  
   return (
     <AuthContext.Provider value={{ user, googleSignIn, logOut }}>
       {children}
@@ -36,6 +51,12 @@ export const AuthContextProvider = ({ children }) => {
   );
 };
 
-export const UserAuth = () => {
-  return useContext(AuthContext);
+export const UserAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthContextProvider");
+  }
+  
+  return context;
 };

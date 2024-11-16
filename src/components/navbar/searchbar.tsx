@@ -1,17 +1,50 @@
-// components/Searchbar.tsx
 import Link from 'next/link'; // Import Link for navigation
 import { IoMdSearch } from "react-icons/io";
 import { MdCancel } from "react-icons/md";
 import { useContext, useState, useEffect } from "react";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 
+// Define the types for video search data
+interface Thumbnails {
+  default: { url: string; width: number; height: number };
+}
 
+interface Snippet {
+  channelId: string;
+  channelTitle: string;
+  description: string;
+  liveBroadcastContent: string;
+  publishTime: string;
+  publishedAt: string;
+  thumbnails: Thumbnails;
+  title: string;
+}
+
+interface VideoId {
+  kind: string;
+  videoId: string;
+}
+
+interface SearchItem {
+  id: VideoId;
+  snippet: Snippet;
+}
+
+interface MyContextType {
+  searchData: SearchItem[];  
+  filteredData: SearchItem[]; 
+  setFilteredData: React.Dispatch<React.SetStateAction<SearchItem[]>>; 
+}
 
 const Searchbar: React.FC = () => {
-  const context = useContext(MyContext);
-  const { searchData ,filteredData, setFilteredData} = context || {}; 
-  const [searchQuery, setSearchQuery ] = useState<string>("");
+  const context = useContext(MyContext) as MyContextType | undefined;
   
+  if (!context) {
+    throw new Error('MyContext is not available');
+  }
+
+  const { searchData, filteredData, setFilteredData } = context;
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value.trim());
@@ -19,7 +52,6 @@ const Searchbar: React.FC = () => {
 
   const clearSearch = () => {
     setSearchQuery("");
-    
   };
 
   useEffect(() => {
@@ -28,8 +60,10 @@ const Searchbar: React.FC = () => {
         item.snippet.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredData(results);
-    } 
-  }, [searchQuery, searchData]);
+    }
+  }, [searchQuery, searchData, setFilteredData]);
+
+  console.log('filterdata', filteredData);
 
   return (
     <div className="w-full px-4 sm:px-0 fixed top-4 flex flex-col items-center z-10">
@@ -64,7 +98,6 @@ const Searchbar: React.FC = () => {
                 <Link href={`/search?Id=${item.id.videoId}`} passHref>
                   <div>
                     <h3 className="text-base font-semibold">{item.snippet.title}</h3>
-                    <p className="text-xs text-gray-600">{item.snippet.description}</p>
                   </div>
                 </Link>
               </div>
