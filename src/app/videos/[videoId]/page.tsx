@@ -1,5 +1,5 @@
 import React from 'react'
-import VideoPlayer from "../../../components/vidoplayer/videoPlayer"
+import VideoPlayer from "../../../components/videoplayer/videoPlayer"
 import { MyProvider } from '@/context/vidoContext/VideoContext';
 import Navbar from '@/components/navbar/navbar';
 import Sidebar from '@/components/sidebar/sidebar';

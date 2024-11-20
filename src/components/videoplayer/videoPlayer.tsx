@@ -1,4 +1,4 @@
-// app/components/navbar/VideoPlayer.tsx
+
 "use client";
 
 import { useParams } from 'next/navigation';

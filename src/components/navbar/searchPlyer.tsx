@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { MyContext } from '@/context/vidoContext/VideoContext';
+import React, { useContext, useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { MyContext } from "@/context/vidoContext/VideoContext";
 
 interface Thumbnails {
   default: { url: string; width: number; height: number };
@@ -38,11 +38,12 @@ interface Comment {
 
 const SearchPlayer: React.FC = () => {
   const searchParams = useSearchParams();
-  const videoId = searchParams.get('Id');
+  const router = useRouter(); // Using Next.js router
+  const videoId = searchParams.get("Id");
 
   const context = useContext(MyContext);
   if (!context) {
-    throw new Error('MyContext is not available');
+    throw new Error("MyContext is not available");
   }
 
   const { searchData, filteredData, setFilteredData, fetchComments, comments } = context;
@@ -50,16 +51,14 @@ const SearchPlayer: React.FC = () => {
   const [currentVideo, setCurrentVideo] = useState<SearchDataItem | null>(null);
   const [videoComments, setVideoComments] = useState<Comment[]>([]);
 
-  // Update localStorage whenever filteredData changes
   useEffect(() => {
     if (filteredData && filteredData.length > 0) {
-      localStorage.setItem('filteredData', JSON.stringify(filteredData));
+      localStorage.setItem("filteredData", JSON.stringify(filteredData));
     }
   }, [filteredData]);
 
-  // Retrieve filtered data from localStorage or use searchData
   useEffect(() => {
-    const storedFilteredData = localStorage.getItem('filteredData');
+    const storedFilteredData = localStorage.getItem("filteredData");
     if (storedFilteredData) {
       setFilteredData(JSON.parse(storedFilteredData));
     } else if (searchData && searchData.length > 0) {
@@ -67,15 +66,13 @@ const SearchPlayer: React.FC = () => {
     }
   }, [searchData, setFilteredData]);
 
-  // Set current video based on videoId from URL
   useEffect(() => {
     if (videoId && searchData) {
       const video = searchData.find((item) => item.id.videoId === videoId);
-      setCurrentVideo(video || null); // Ensure it's null if not found
+      setCurrentVideo(video || null);
     }
   }, [videoId, searchData]);
 
-  // Fetch comments when current video changes
   useEffect(() => {
     if (currentVideo) {
       fetchComments(currentVideo.id.videoId)
@@ -87,6 +84,10 @@ const SearchPlayer: React.FC = () => {
         });
     }
   }, [currentVideo, fetchComments]);
+
+  const handleVideoClick = (id: string) => {
+    router.push(`?Id=${id}`); // Update URL using Next.js router
+  };
 
   return (
     <div className="flex px-4 mt-12 ml-2 bg-white-900 text-gray-800 min-h-screen">
@@ -106,25 +107,24 @@ const SearchPlayer: React.FC = () => {
           <p className="text-center text-gray-500">Loading video...</p>
         )}
 
-      
-<div className="mt-8">
-  <h2 className="text-xl font-semibold">Comments</h2>
-  {videoComments?.length === 0 ? (
-    <p className="text-gray-500">No comments yet.</p>
-  ) : (
-    <div className="space-y-4">
-      {videoComments?.map((comment) => (
-        <div key={comment.id} className="p-4 border rounded-lg shadow-sm">
-          <p className="text-sm font-semibold">{comment.author}</p>
-          <p className="text-gray-700">{comment.text}</p>
-          <p className="text-xs text-gray-500">
-            {new Date(comment.publishedAt).toLocaleString()}
-          </p>
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold">Comments</h2>
+          {videoComments?.length === 0 ? (
+            <p className="text-gray-500">No comments yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {videoComments?.map((comment) => (
+                <div key={comment.id} className="p-4 border rounded-lg shadow-sm">
+                  <p className="text-sm font-semibold">{comment.author}</p>
+                  <p className="text-gray-700">{comment.text}</p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(comment.publishedAt).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      ))}
-    </div>
-  )}
-</div>
       </div>
 
       <div className="w-1/3 pl-4 mt-8 space-y-4 overflow-y-auto">
@@ -133,7 +133,7 @@ const SearchPlayer: React.FC = () => {
             <div
               key={video.id.videoId}
               className="flex items-start space-x-3 cursor-pointer"
-              onClick={() => window.location.href = `?Id=${video.id.videoId}`} 
+              onClick={() => handleVideoClick(video.id.videoId)}
             >
               <img
                 src={video.snippet.thumbnails.default.url}

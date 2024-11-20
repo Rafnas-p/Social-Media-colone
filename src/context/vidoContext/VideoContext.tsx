@@ -127,11 +127,9 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
-    console.log('clicked');
     
   };
 
-  // Fetch videos based on selected category
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -151,7 +149,6 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
     fetchData();
   }, [selectedcat]);
 
-  // Use useCallback for fetchComments to optimize performance
   const fetchComments = useCallback(async (videoId: string) => {
     try {
       const response = await featchCommentsAPi(videoId);
@@ -166,7 +163,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
     const fetchSearchData = async () => {
       try {
         const data = await fetchSearchApi();
-        setSearchData(data); // Assuming fetchSearchApi returns an array of items
+        setSearchData(data);
         setLoading(false);
       } catch (err) {
         setError('Failed to fetch search data');

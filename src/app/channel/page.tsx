@@ -1,4 +1,4 @@
-import Livevidos from '@/components/vidoplayer/livevidos'
+import Livevidos from '@/components/videoplayer/livevidos'
 import React from 'react'
 
 export default function () {

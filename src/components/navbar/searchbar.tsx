@@ -66,7 +66,7 @@ const Searchbar: React.FC = () => {
   console.log('filterdata', filteredData);
 
   return (
-    <div className="w-full px-4 sm:px-0 fixed top-4 flex flex-col items-center z-10">
+    <div className=" px-4 sm:px-0 fixed top-4 flex flex-col items-center z-10">
       <div className="relative w-full sm:w-[500px]">
         <input
           type="text"
