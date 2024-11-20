@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider, User } from "firebase/auth";
 import { auth } from "@/app/fairbase/config";
-import { userAgent } from "next/server";
+
 
 
 interface AuthContextType {

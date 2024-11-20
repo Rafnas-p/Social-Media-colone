@@ -1,12 +1,11 @@
-"use client";
-import React, { useContext, useState, useEffect, useActionState } from "react";
+"use client"
+import React, { useContext, useState, useEffect } from "react";
 import { BsBellFill } from "react-icons/bs";
 import { IoPersonOutline } from "react-icons/io5";
 import { FaBars } from "react-icons/fa";
 import Searchbar from "./searchbar";
 import { MyContext } from "../../context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
-import { all } from "axios";
 import Link from "next/link";
 
 const Navbar: React.FC = () => {
@@ -14,9 +13,13 @@ const Navbar: React.FC = () => {
   const { googleSignIn, logOut, user } = UserAuth();
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true); 
 
   useEffect(() => {
-    setIsSignedIn(!!user); // Set true if user exists
+    setTimeout(() => {
+      setIsSignedIn(!!user); 
+      setLoading(false); 
+    }, 2000); 
   }, [user]);
 
   const { toggleSidebar } = context;
@@ -40,11 +43,11 @@ const Navbar: React.FC = () => {
   };
 
   const toggleDropdown = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent click event from propagating to the document
+    e.stopPropagation();
     setIsDropdownOpen((prev) => !prev);
   };
 
-  // Close dropdown on outside click
+  
   useEffect(() => {
     const handleOutsideClick = () => {
       setIsDropdownOpen(false);
@@ -58,19 +61,13 @@ const Navbar: React.FC = () => {
       document.removeEventListener("click", handleOutsideClick);
     };
   }, [isDropdownOpen]);
-  
 
   return (
     <nav className="bg-white fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-4 shadow z-10">
       <div className="flex items-center">
-        <button
-          onClick={toggleSidebar}
-          className="mr-2"
-          aria-label="Toggle Sidebar"
-        >
+        <button onClick={toggleSidebar} className="mr-2" aria-label="Toggle Sidebar">
           <FaBars className="text-gray-800" />
         </button>
-
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/3/34/YouTube_logo_%282017%29.png?20170829160812"
           alt="YouTube Logo"
@@ -90,7 +87,12 @@ const Navbar: React.FC = () => {
       </div>
 
       <div className="relative">
-        {isSignedIn ? (
+        {loading ? (
+         
+          <div className="animate-pulse flex items-center">
+            <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+          </div>
+        ) : isSignedIn ? (
           <button
             className="cursor-pointer"
             onClick={toggleDropdown}
@@ -114,36 +116,31 @@ const Navbar: React.FC = () => {
           </div>
         )}
 
-{isDropdownOpen && isSignedIn && (
-  <div className="absolute top-2 mr-9 right-0 w-56 bg-white shadow-lg rounded-md z-20">
-    <div className="flex items-center px-4 py-2 text-gray-800">
-      {/* Profile Image */}
-      <img
-        src={user?.photoURL || "https://via.placeholder.com/150"}
-        alt="Profile"
-        className="w-10 h-10 rounded-full"
-      />
-      {/* User Info */}
-      <div className="ml-3">
-        <p className="text-sm font-medium">{user?.email}</p>
-        <p className="text-sm text-gray-600">{user?.displayName}</p>
-      </div>
-    </div>
-    <Link href="/create-channel" className="block px-4 py-2 text-blue-600 hover:text-blue-800 hover:underline">
-     
-        Create a Channel
-  
-    </Link>
-    <hr className="my-2 border-gray-300" />
-    <button
-      className="block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left"
-      onClick={handleSignOut}
-    >
-      Log Out
-    </button>
-  </div>
-)}
-
+        {isDropdownOpen && isSignedIn && (
+          <div className="absolute top-2 mr-9 right-0 w-56 bg-white shadow-lg rounded-md z-20">
+            <div className="flex items-center px-4 py-2 text-gray-800">
+              <img
+                src={user?.photoURL || "https://via.placeholder.com/150"}
+                alt="Profile"
+                className="w-10 h-10 rounded-full"
+              />
+              <div className="ml-3">
+                <p className="text-sm font-medium">{user?.email}</p>
+                <p className="text-sm text-gray-600">{user?.displayName}</p>
+              </div>
+            </div>
+            <Link href="/create-channel" className="block px-4 py-2 text-blue-600 hover:text-blue-800 hover:underline">
+              Create a Channel
+            </Link>
+            <hr className="my-2 border-gray-300" />
+            <button
+              className="block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left"
+              onClick={handleSignOut}
+            >
+              Log Out
+            </button>
+          </div>
+        )}
       </div>
     </nav>
   );
