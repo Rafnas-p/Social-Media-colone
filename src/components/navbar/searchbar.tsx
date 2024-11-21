@@ -4,7 +4,7 @@ import { MdCancel } from "react-icons/md";
 import { useContext, useState, useEffect } from "react";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 
-// Define the types for video search data
+
 interface Thumbnails {
   default: { url: string; width: number; height: number };
 }
@@ -63,7 +63,7 @@ const Searchbar: React.FC = () => {
     }
   }, [searchQuery, searchData, setFilteredData]);
 
-  console.log('filterdata', filteredData);
+  
 
   return (
     <div className=" px-4 sm:px-0 fixed top-4 flex flex-col items-center z-10">

@@ -38,7 +38,7 @@ interface Comment {
 
 const SearchPlayer: React.FC = () => {
   const searchParams = useSearchParams();
-  const router = useRouter(); // Using Next.js router
+  const router = useRouter();
   const videoId = searchParams.get("Id");
 
   const context = useContext(MyContext);
@@ -46,7 +46,7 @@ const SearchPlayer: React.FC = () => {
     throw new Error("MyContext is not available");
   }
 
-  const { searchData, filteredData, setFilteredData, fetchComments, comments } = context;
+  const { searchData, filteredData, setFilteredData, fetchComments,  } = context;
 
   const [currentVideo, setCurrentVideo] = useState<SearchDataItem | null>(null);
   const [videoComments, setVideoComments] = useState<Comment[]>([]);
@@ -86,7 +86,7 @@ const SearchPlayer: React.FC = () => {
   }, [currentVideo, fetchComments]);
 
   const handleVideoClick = (id: string) => {
-    router.push(`?Id=${id}`); // Update URL using Next.js router
+    router.push(`?Id=${id}`)
   };
 
   return (

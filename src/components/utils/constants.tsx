@@ -7,7 +7,6 @@ import { ImNewspaper } from "react-icons/im";
 import { GiDiamondTrophy, GiEclipse } from "react-icons/gi";
 import { RiLightbulbLine, RiFeedbackLine } from "react-icons/ri";
 import { FiSettings, FiHelpCircle } from "react-icons/fi";
-import { SiAboutdotme } from "react-icons/si";
 import { Url } from 'next/dist/shared/lib/router/router';
 interface Category {
     name: string;

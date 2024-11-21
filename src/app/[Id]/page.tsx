@@ -5,7 +5,7 @@ import { MyProvider } from '@/context/vidoContext/VideoContext'
 import { AuthContextProvider } from '@/context/authcontext/authcontext'
 import Sidebar from '@/components/sidebar/sidebar'
 function Page() {
-  console.log('hudshuhudfdnjsdnj');
+  
 
   
   return (
