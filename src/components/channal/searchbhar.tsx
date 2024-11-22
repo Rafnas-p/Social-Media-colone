@@ -1,8 +1,8 @@
 import React from 'react'
 import { IoMdSearch } from "react-icons/io";
 
-function Searchbhar() {
-    
+function Searchbhar2() {
+
   return (
     <div>
         <div className=" px-4 sm:px-0 fixed top-4 flex flex-col items-center z-10">
@@ -23,4 +23,4 @@ function Searchbhar() {
   )
 }
 
-export default Searchbhar
+export default Searchbhar2

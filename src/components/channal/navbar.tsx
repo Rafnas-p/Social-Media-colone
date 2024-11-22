@@ -1,14 +1,17 @@
-import React, { useContext } from 'react'
+"use client"
+import React, { useContext, useState } from 'react'
 import { FaBars } from "react-icons/fa";
 import { MyContext } from '@/context/vidoContext/VideoContext';
 import { UserAuth } from '@/context/authcontext/authcontext';
 import Link from 'next/link';
+import Searchbhar2 from './searchbhar';
+import { BsBellFill } from 'react-icons/bs';
 function Navbar2() {
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
     const context=useContext(MyContext)
     const {toggleSidebar}=context
-    const {  user,logOut ,} = UserAuth();
+    const {  user,logOut } = UserAuth();
     
   const handleSignOut = async () => {
     try {
@@ -41,7 +44,7 @@ function Navbar2() {
      
 
       <div className="flex items-center justify-center flex-grow">
-        <Searchbar />
+        <Searchbhar2 />
       </div>
 
       <div className="flex items-center">

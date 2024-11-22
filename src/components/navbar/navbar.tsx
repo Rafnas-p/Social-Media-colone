@@ -136,7 +136,7 @@ const handulhomerout=()=>{
                 <p className="text-sm text-gray-600">{user?.displayName}</p>
               </div>
             </div>
-            <Link href="/userAcount" className="block px-4 py-2 text-blue-600 hover:text-blue-800 hover:underline">
+            <Link href="/userAcount" className="block px-4 py-2 hover:text-blue-800 ">
               Create a Channel
             </Link>
             <hr className="my-2 border-gray-300" />

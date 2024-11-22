@@ -1,4 +1,5 @@
-import React, { useContext } from 'react'
+"use client"
+import React, { useContext ,useState} from 'react'
 import { MyContext } from '@/context/vidoContext/VideoContext'
 import { IoHomeOutline, } from "react-icons/io5";
 
@@ -6,11 +7,9 @@ import Link from 'next/link';
 function Sidbar2() {
     const context = useContext(MyContext);
 
-    if (!context) {
-      return null;
-    }
-  
     const { isOpen } = context;
+    
+
   return (
    <>
     <div
