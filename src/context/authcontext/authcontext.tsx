@@ -20,6 +20,7 @@ interface AuthContextProviderProps {
 
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  console.log(user)
 
   const googleSignIn = () => {
     const provider = new GoogleAuthProvider();

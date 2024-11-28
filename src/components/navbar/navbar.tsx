@@ -86,7 +86,7 @@ const handulhomerout=()=>{
         <Searchbar />
       </div>
 
-      <div className="flex items-center">
+      <div className="flex items-center mr-12">
         <BsBellFill
           className="text-gray-800 w-6 h-6 cursor-pointer hover:text-gray-600 transition"
           aria-label="Notifications"
