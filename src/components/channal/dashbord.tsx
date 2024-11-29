@@ -5,7 +5,7 @@ function Dashbord() {
   return (
     <div>
         
-        <ChannelContent />
+      
     </div>
   );
 }

@@ -2,6 +2,7 @@
 import React, { useContext ,useState} from 'react'
 import { MyContext } from '@/context/vidoContext/VideoContext'
 import { IoHomeOutline, } from "react-icons/io5";
+import { LuUserCircle } from "react-icons/lu";
 
 import Link from 'next/link';
 function Sidbar2() {
@@ -26,12 +27,14 @@ function Sidbar2() {
             </span>
           </button>
         </Link>
+         <Link href={'/userAcount'}>
         <button className="flex items-center py-2 px-4 hover:bg-gray-300 transition">
-         
+        <LuUserCircle  className="text-lg mr-4"/>
           <span className={`${isOpen ? "block" : "hidden"} transition-all`}>
-            Shorts
+            User
           </span>
         </button>
+        </Link>
         <button className="flex items-center py-2 px-4 hover:bg-gray-300 transition">
         
           <span className={`${isOpen ? "block" : "hidden"} transition-all`}>

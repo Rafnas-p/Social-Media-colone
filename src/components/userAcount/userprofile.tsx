@@ -5,7 +5,7 @@ import { UserAuth } from "@/context/authcontext/authcontext";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 import UserVideos from "./userVideos"; // Import corrected component
 import Link from "next/link";
-
+import UserShorts from "./userShoerts";
 const Userprofile: React.FC = () => {
   const context = useContext(MyContext);
   const { isOpen } = context;
@@ -35,12 +35,18 @@ const Userprofile: React.FC = () => {
           </span>
         </div>
       </div>
+      <div  className="ml-24 mt-6">
+      <span>
+        <Link href={'/userAcount/videos'}>Videos</Link> 
+        <Link href={'/userAcount/shorts' } className="ml-3">shorts</Link>
+      </span>
+      </div>
       <hr className="border-gray" />
       <div className="mt-6 px-6">
-        <UserVideos />
       </div>
+      
     </>
   );
 };
 
-export default Userprofile;
+export default Userprofile; 

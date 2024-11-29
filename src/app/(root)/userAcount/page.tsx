@@ -1,8 +1,5 @@
 import React from 'react'
-import Userprofile from '@/components/userAcount/userprofile'
-import Navbar from '@/components/navbar/navbar'
-import Sidebar from '@/components/sidebar/sidebar'
-
+import Userprofile from '@/components/userAcount/userprofile';
 function Page() {
   return (
     <div>
