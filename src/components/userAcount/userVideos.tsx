@@ -38,16 +38,15 @@ const UserVideos: React.FC = () => {
   if (error) return <p className="text-red-500">Error: {error}</p>;
 
   const openModal = (videoUrl: string) => {
-    setSelectedVideo(videoUrl); // Set the video for modal
+    setSelectedVideo(videoUrl);
   };
 
   const closeModal = () => {
-    setSelectedVideo(null); // Clear the modal
+    setSelectedVideo(null);
   };
 
   return (
     <div className="ml-16">
-      <h2 className="text-xl font-bold mb-6">Your Videos</h2>
       {videos.length === 0 ? (
         <p className="text-gray-500">No videos found.</p>
       ) : (
@@ -58,11 +57,11 @@ const UserVideos: React.FC = () => {
               className="space-y-2 rounded-lg cursor-pointer"
               onClick={() => openModal(video.videoUrl)}
             >
-             <video
-  src={video.videoUrl}
-  controls
-  className="w-full h-64 md:h-96 rounded-md"
-></video>
+              <video
+                src={video.videoUrl}
+                controls
+                className="w-full h-64 md:h-96 rounded-md"
+              ></video>
               <h3 className="font-bold text-lg">{video.title}</h3>
               <p className="text-sm text-gray-500">{video.description}</p>
             </div>
@@ -70,7 +69,6 @@ const UserVideos: React.FC = () => {
         </div>
       )}
 
-      {/* Modal */}
       {selectedVideo && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-4 relative w-11/12 md:w-3/4 lg:w-1/2">
@@ -80,12 +78,12 @@ const UserVideos: React.FC = () => {
             >
               &times;
             </button>
-            <iframe
+            <video
               src={`${selectedVideo}?autoplay=0&controls=1`}
               title="Selected Video"
               className="w-full h-64 md:h-96 rounded-md"
-              frameBorder="0"
-              allow="encrypted-media"
+              controls
+              
             />
           </div>
         </div>

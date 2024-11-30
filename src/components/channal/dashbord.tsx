@@ -1,10 +1,8 @@
 import React from "react";
-
-import ChannelContent from "./apploadVideo";
 function Dashbord() {
   return (
-    <div>
-        
+    <div className="mt-20 ml-20">
+        <h1>Channel Content</h1>
       
     </div>
   );

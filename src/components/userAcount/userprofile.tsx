@@ -3,9 +3,7 @@
 import React, { useContext } from "react";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import { MyContext } from "@/context/vidoContext/VideoContext";
-import UserVideos from "./userVideos"; // Import corrected component
 import Link from "next/link";
-import UserShorts from "./userShoerts";
 const Userprofile: React.FC = () => {
   const context = useContext(MyContext);
   const { isOpen } = context;
