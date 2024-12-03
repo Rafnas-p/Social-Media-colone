@@ -1,12 +1,33 @@
 "use client";
-import React, { useContext, useEffect, useState } from 'react';
-import { MyContext } from '../../context/vidoContext/VideoContext';
-import Link from 'next/link';
+import React, { useContext, useEffect, useState } from "react";
+import { MyContext } from "../../context/vidoContext/VideoContext";
+import { UserAuth } from "@/context/authcontext/authcontext";
+import { IoVolumeMuteOutline } from "react-icons/io5";
+import { GoUnmute } from "react-icons/go";
+
+import Link from "next/link";
+import axios from "axios";
+
+interface VideoDetails {
+  createdAt: string;
+  description: string;
+  duration: number;
+  publicId: string;
+  title: string;
+  userId: string;
+  videoUrl: string;
+  __v: number;
+  _id: string;
+}
+interface MyContextType {
+  data: VideoDetails[];
+}
 
 const DisplayData: React.FC = () => {
-  const context = useContext(MyContext);
+  const context = useContext(MyContext) as unknown as MyContextType | null;
   const isOpen = context?.isOpen ?? false;
   const [loading, setLoading] = useState<boolean>(true);
+  const { user } = UserAuth();
 
   if (!context) {
     return <div>Loading...</div>;
@@ -17,7 +38,7 @@ const DisplayData: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500)); 
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       setLoading(false);
     };
     fetchData();
@@ -26,11 +47,10 @@ const DisplayData: React.FC = () => {
   return (
     <div
       className={`flex flex-col p-6 transition-all duration-300 mt-20 ${
-        isOpen ? 'ml-64' : 'ml-16'
+        isOpen ? "ml-64" : "ml-16"
       } bg-white-100 min-h-screen`}
     >
       {loading ? (
-        
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {Array(8)
             .fill(0)
@@ -39,9 +59,12 @@ const DisplayData: React.FC = () => {
                 key={index}
                 className="bg-gray-200 animate-pulse rounded-lg p-4"
               >
+                {/* Skeleton for Video Thumbnail */}
                 <div className="w-full h-48 bg-gray-300 rounded-lg"></div>
-                <div className="flex items-start mt-4">
-                  <div className="w-10 h-10 bg-gray-300 rounded-full mr-4"></div>
+
+                {/* Skeleton for Video Details */}
+                <div className="flex items-start mt-4 space-x-4">
+                  <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
                   <div className="flex-1">
                     <div className="h-4 bg-gray-300 rounded-md w-3/4 mb-2"></div>
                     <div className="h-4 bg-gray-300 rounded-md w-1/2"></div>
@@ -54,47 +77,59 @@ const DisplayData: React.FC = () => {
       ) : data.length === 0 ? (
         <p className="text-center text-gray-600">No data found</p>
       ) : (
-    
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 rounded-lg sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 bg-white">
           {data.map((item, index) => (
-            <div key={index} className="transform transition-all duration-300">
-               <Link href={`/videos/${item.id.videoId}`} passHref>
-              <div className="overflow-hidden rounded-lg">  
-                <iframe
-                  className={`w-full ${
-                    isOpen
-                      ? 'h-48 sm:h-40 md:h-32 lg:h-28'
-                      : 'h-56 sm:h-48 md:h-44 lg:h-40'
-                  } rounded-lg`}
-                  src={`https://www.youtube.com/embed/${item.id.videoId}`}
-                  title={item.snippet.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-
+          <div
+          key={index}
+          className="transform transition-all duration-300 overflow-hidden rounded-lg"
+        >
+          <Link href={`/videos/${item._id}`} passHref>
+            <div className="overflow-hidden rounded-lg relative">
+              {/* Video Player */}
+              <video
+                className={`w-full object-cover ${
+                  isOpen
+                    ? "h-48 sm:h-40 md:h-32 lg:h-28"
+                    : "h-56 sm:h-48 md:h-44 lg:h-40"
+                } rounded-lg`}
+                src={item.videoUrl}
+                title={item.title}
+              
+                onMouseEnter={(e) => e.currentTarget.play()}
+                onMouseLeave={(e) => e.currentTarget.pause()}
+              ></video>
+        
+              {/* Mute/Unmute Button */}
              
-                <div className="flex items-start p-4 cursor-pointer">
+        
+              <div className="flex items-start space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 ">
+                {/* Profile Image with Link */}
+                <Link href={"/userAcount"}>
                   <img
-                    src={item.snippet.thumbnails.default.url}
-                    alt="Channel Logo"
-                    className="w-10 h-10 rounded-full mr-4"
+                    src={user?.photoURL || "https://via.placeholder.com/150"}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full object-cover"
                   />
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-gray-900 line-clamp-2">
-                      {item.snippet.title}
-                    </p>
-                    <p className="text-xs font-medium text-gray-700 mt-1">
-                      {item.snippet.channelTitle}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                      {item.snippet.description}
-                    </p>
-                  </div>
+                </Link>
+        
+                {/* Text Container */}
+                <div className="flex flex-col">
+                  <p className="text-sm font-semibold text-gray-800">
+                    {item.description}
+                  </p>
+        
+                  <p className="text-xs text-gray-500">
+                    jddijfijijsijsduhuhudsiunfuhuadjksjdkjaj
+                  </p>
+                  
                 </div>
-              </Link>
+              </div>
             </div>
+          </Link>
+         
+        </div>
+        
+              
           ))}
         </div>
       )}

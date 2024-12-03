@@ -87,14 +87,13 @@ function UserShorts() {
           {shorts.map((short, index) => (
             <div
               key={short._id}
-              className="border rounded-lg p-2 shadow-lg bg-white cursor-pointer"
+              className="border rounded-lg p-2  shadow-lg bg-black cursor-pointer"
               onClick={() => openModal(index)}
             >
     
               <video
                 src={short.videoUrl}
-                controls
-                className="w-full h-64 md:h-96 rounded-md"
+                className="w-full h-96 rounded-md"
                 autoPlay={false}
               ></video>
               <h3 className="text-md font-semibold">{short.title}</h3>

@@ -9,6 +9,8 @@ export default function Page() {
       <>
       <Navbar/>
       <Sidebar/>
+      <DisplayData/>
+     
         </>
       
   );

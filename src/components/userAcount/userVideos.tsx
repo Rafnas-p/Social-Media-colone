@@ -44,23 +44,32 @@ const UserVideos: React.FC = () => {
   const closeModal = () => {
     setSelectedVideo(null);
   };
-
+  const handleMouseEnter = (event: React.MouseEvent<HTMLVideoElement>) => {
+    const videoElement = event.currentTarget;
+    videoElement.play();
+  };
+  const handleMouseLeave = (event: React.MouseEvent<HTMLVideoElement>) => {
+    const videoElement = event.currentTarget;
+    videoElement.pause(); 
+    videoElement.currentTime = 0; 
+  };
   return (
     <div className="ml-16">
       {videos.length === 0 ? (
         <p className="text-gray-500">No videos found.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6">
           {videos.map((video) => (
             <div
               key={video._id}
-              className="space-y-2 rounded-lg cursor-pointer"
+              className=" rounded-lg cursor-pointer"
               onClick={() => openModal(video.videoUrl)}
             >
               <video
                 src={video.videoUrl}
-                controls
-                className="w-full h-64 md:h-96 rounded-md"
+                className="w-full  rounded-md"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
               ></video>
               <h3 className="font-bold text-lg">{video.title}</h3>
               <p className="text-sm text-gray-500">{video.description}</p>

@@ -85,7 +85,6 @@ export const fetchDataFromApi = async (path: string, params?: Record<string, str
       type: 'video',
       maxResults: 50
     });
-    console.log('Results:', results);
   } catch (error) {
     console.error('Error:', error);
   }
@@ -120,6 +119,9 @@ try {
     console.error('Error fetching comments:', error);
   }
 })();
+
+
+
 
 //search
 

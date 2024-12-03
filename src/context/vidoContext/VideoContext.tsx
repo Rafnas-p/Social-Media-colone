@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useCallback, useState, useEffect, ReactNode } from 'react';
 import { fetchDataFromApi, featchCommentsAPi,fetchSearchApi} from '../../components/utils/youtubeApi';
+import axios from 'axios';
 // Define SearchData interface for search results
 interface SearchDataItem {
   kind: string;
@@ -130,25 +131,47 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
     
   };
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetchDataFromApi('search', {
+  //         q: selectedcat,
+  //         part: 'snippet',
+  //         type: 'video',
+  //         maxResults: 20,
+  //       });
+  //       setData(response);
+  //       console.log('Fetched data:', response);
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [selectedcat]);
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAllVideos = async () => {
       try {
-        const response = await fetchDataFromApi('search', {
-          q: selectedcat,
-          part: 'snippet',
-          type: 'video',
-          maxResults: 20,
-        });
-        setData(response);
-        console.log('Fetched data:', response);
-      } catch (error) {
-        console.error('Error fetching data:', error);
+        const response = await axios.get("http://localhost:5000/api/EntairVideos");
+        console.log("Response from API:", response.data);
+  
+        if (response.data && response.data.videos) {
+          setData(response.data.videos);
+          console.log("Updated data state:", response.data.videos);
+        } else {
+          console.error("Invalid API response format");
+        }
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching videos:", err.message);
+        setError(err.message || "Failed to fetch videos");
+        setLoading(false);
       }
     };
-
-    fetchData();
-  }, [selectedcat]);
-
+  
+    fetchAllVideos();
+  }, []);
+  
   const fetchComments = useCallback(async (videoId: string) => {
     try {
       const response = await featchCommentsAPi(videoId);
@@ -173,6 +196,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
 
     fetchSearchData();
   }, []);
+console.log('1',data);
 
   return (
     <MyContext.Provider value={{
