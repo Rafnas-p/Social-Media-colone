@@ -2,11 +2,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { MyContext } from "../../context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
-import { IoVolumeMuteOutline } from "react-icons/io5";
-import { GoUnmute } from "react-icons/go";
-
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import axios from "axios";
 
 interface VideoDetails {
   createdAt: string;
@@ -18,7 +15,16 @@ interface VideoDetails {
   videoUrl: string;
   __v: number;
   _id: string;
+  profil: string;
+  userName: string;
 }
+
+interface User {
+  username: string;
+  profil: string; // Assuming this is the profile image or unique identifier
+  id: string; // User ID
+}
+
 interface MyContextType {
   data: VideoDetails[];
 }
@@ -27,7 +33,9 @@ const DisplayData: React.FC = () => {
   const context = useContext(MyContext) as unknown as MyContextType | null;
   const isOpen = context?.isOpen ?? false;
   const [loading, setLoading] = useState<boolean>(true);
-  const { user } = UserAuth();
+  const { user, allUsers } = UserAuth();
+  const router = useRouter();
+  console.log("allUsers", allUsers);
 
   if (!context) {
     return <div>Loading...</div>;
@@ -59,10 +67,7 @@ const DisplayData: React.FC = () => {
                 key={index}
                 className="bg-gray-200 animate-pulse rounded-lg p-4"
               >
-                {/* Skeleton for Video Thumbnail */}
                 <div className="w-full h-48 bg-gray-300 rounded-lg"></div>
-
-                {/* Skeleton for Video Details */}
                 <div className="flex items-start mt-4 space-x-4">
                   <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
                   <div className="flex-1">
@@ -79,57 +84,45 @@ const DisplayData: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 rounded-lg sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 bg-white">
           {data.map((item, index) => (
-          <div
-          key={index}
-          className="transform transition-all duration-300 overflow-hidden rounded-lg"
-        >
-          <Link href={`/videos/${item._id}`} passHref>
-            <div className="overflow-hidden rounded-lg relative">
-              {/* Video Player */}
-              <video
-                className={`w-full object-cover ${
-                  isOpen
-                    ? "h-48 sm:h-40 md:h-32 lg:h-28"
-                    : "h-56 sm:h-48 md:h-44 lg:h-40"
-                } rounded-lg`}
-                src={item.videoUrl}
-                title={item.title}
-              
-                onMouseEnter={(e) => e.currentTarget.play()}
-                onMouseLeave={(e) => e.currentTarget.pause()}
-              ></video>
-        
-              {/* Mute/Unmute Button */}
-             
-        
-              <div className="flex items-start space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 ">
-                {/* Profile Image with Link */}
-                <Link href={"/userAcount"}>
-                  <img
-                    src={user?.photoURL || "https://via.placeholder.com/150"}
-                    alt="Profile"
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                </Link>
-        
-                {/* Text Container */}
-                <div className="flex flex-col">
-                  <p className="text-sm font-semibold text-gray-800">
-                    {item.description}
-                  </p>
-        
-                  <p className="text-xs text-gray-500">
-                    jddijfijijsijsduhuhudsiunfuhuadjksjdkjaj
-                  </p>
-                  
+            <div
+              key={index}
+              className="transform transition-all duration-300 overflow-hidden rounded-lg"
+            >
+              <Link href={`/videos/${item._id}`} passHref>
+                <div className="overflow-hidden rounded-lg relative">
+                  <video
+                    className={`w-full object-cover ${
+                      isOpen
+                        ? "h-48 sm:h-40 md:h-32 lg:h-28"
+                        : "h-56 sm:h-48 md:h-44 lg:h-40"
+                    } rounded-lg`}
+                    src={item.videoUrl}
+                    title={item.title}
+                    onMouseEnter={(e) => e.currentTarget.play()}
+                    onMouseLeave={(e) => e.currentTarget.pause()}
+                  ></video>
                 </div>
+              </Link>
+              <Link
+                href={`/userAcount?username=${item.userName}`}
+                className="flex items-start space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+              >
+                <img
+                  src={item?.profil}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                />
+              </Link>
+
+              <div className="flex flex-col">
+                <p className="text-sm font-semibold text-gray-800">
+                  {item.description}
+                </p>
+                <p className="text-xs text-gray-500">
+                  jddijfijijsijsduhuhudsiunfuhuadjksjdkjaj
+                </p>
               </div>
             </div>
-          </Link>
-         
-        </div>
-        
-              
           ))}
         </div>
       )}

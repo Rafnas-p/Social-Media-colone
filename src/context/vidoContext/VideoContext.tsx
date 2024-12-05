@@ -196,7 +196,6 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
 
     fetchSearchData();
   }, []);
-console.log('1',data);
 
   return (
     <MyContext.Provider value={{

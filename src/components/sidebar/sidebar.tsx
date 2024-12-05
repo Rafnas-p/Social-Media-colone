@@ -33,12 +33,14 @@ const Sidebar: React.FC = () => {
             </span>
           </button>
         </Link>
+         <Link href='/shorts' passHref>
         <button className="flex items-center py-2 px-4 hover:bg-gray-300 transition">
           <SiYoutubeshorts className="text-lg mr-4" />
           <span className={`${isOpen ? "block" : "hidden"} transition-all`}>
             Shorts
           </span>
         </button>
+        </Link>
         <button className="flex items-center py-2 px-4 hover:bg-gray-300 transition">
           <MdSubscriptions className="text-lg mr-4" />
           <span className={`${isOpen ? "block" : "hidden"} transition-all`}>

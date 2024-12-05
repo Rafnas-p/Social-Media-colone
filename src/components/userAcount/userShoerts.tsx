@@ -2,6 +2,7 @@
 import axios from "axios";
 import React, { useEffect, useState, useRef } from "react";
 import { UserAuth } from "@/context/authcontext/authcontext";
+import { useSearchParams } from "next/navigation";
 
 interface Short {
   _id: string;
@@ -17,7 +18,11 @@ interface Short {
 }
 
 function UserShorts() {
-  const { user } = UserAuth();
+  const { allUsers } = UserAuth();
+  const searchParams = useSearchParams();
+  const username = searchParams.get("username");
+  const user = allUsers.find((user) => user.displayName === username);
+  
   const [shorts, setShorts] = useState<Short[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

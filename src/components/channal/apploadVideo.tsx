@@ -12,7 +12,7 @@ const VideoUploadComponent: React.FC = () => {
   const [title, setTitle] = useState<string>("");
   const [category, setCategory] = useState<string>("video");
   const { user } = UserAuth();
-  console.log(user?.uid);
+  
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files && e.target.files.length > 0) {
@@ -48,6 +48,9 @@ const VideoUploadComponent: React.FC = () => {
     formData.append("video", videoFile);
     formData.append("description", description);
     formData.append("userId", user?.uid || "");
+    formData.append("profil", user?.photoURL || "");
+    formData.append("userName", user?.displayName || "");
+
     formData.append("title", title);
     formData.append("category", category);
 

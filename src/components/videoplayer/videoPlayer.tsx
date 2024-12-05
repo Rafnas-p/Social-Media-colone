@@ -5,6 +5,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { MyContext } from '../../context/vidoContext/VideoContext';
 
 import axios from 'axios';
+import Link from 'next/link';
 
 interface VideoDetails {
   createdAt: string;
@@ -106,7 +107,16 @@ const handleMouseLeave = (event: React.MouseEvent<HTMLVideoElement>) => {
           controls
         ></video>
       </div>
-  
+      <Link
+                href={`/userAcount?username=${videoDetails.userName}`}
+                className="flex items-start space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+              >
+                <img
+                  src={videoDetails?.profil}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                />
+              </Link>
       <div className="flex flex-col space-y-3">
         <h1 className="text-lg font-bold">{videoDetails.title}</h1>
         <p className="text-sm">{videoDetails.description}</p>
@@ -130,6 +140,8 @@ const handleMouseLeave = (event: React.MouseEvent<HTMLVideoElement>) => {
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             ></video>
+
+            
           </div>
   
           {/* Video Details */}

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { UserAuth } from "@/context/authcontext/authcontext";
+import { useSearchParams } from "next/navigation";
 
 interface Video {
   _id: string;
@@ -12,7 +13,10 @@ interface Video {
 }
 
 const UserVideos: React.FC = () => {
-  const { user } = UserAuth();
+  const { allUsers } = UserAuth();
+  const searchParams = useSearchParams();
+  const username = searchParams.get("username");
+  const user = allUsers.find((user) => user.displayName === username);
 
   const [videos, setVideos] = useState<Video[]>([]);
   const [error, setError] = useState<string | null>(null);

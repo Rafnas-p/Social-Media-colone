@@ -1,14 +1,42 @@
 "use client";
 
 import React, { useContext } from "react";
+import { useSearchParams } from "next/navigation";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 import Link from "next/link";
-const Userprofile: React.FC = () => {
-  const context = useContext(MyContext);
-  const { isOpen } = context;
 
-  const { user } = UserAuth();
+// Define type for MyContextType if not already defined
+interface MyContextType {
+  isOpen: boolean;
+}
+
+// Define User type if not already defined
+interface User {
+  displayName: string;
+  email: string;
+  photoURL: string;
+}
+
+const Userprofile: React.FC = () => {
+  const context = useContext(MyContext) as MyContextType | null;
+
+  const searchParams = useSearchParams();
+  const username = searchParams.get("username");
+
+  const { allUsers, user } = UserAuth();
+  console.log("allUsers", allUsers);
+
+  // Use `find` to get the first matching user
+  const selectedUser = allUsers.find((u: User) => u.displayName === username);
+
+  if (!selectedUser) {
+    return <div>User not found</div>;
+  }
+
+  const { isOpen } = context || { isOpen: false }; // Handle null context
+
+  const isCurrentUser = user?.displayName === selectedUser.displayName;
 
   return (
     <>
@@ -18,33 +46,40 @@ const Userprofile: React.FC = () => {
         }`}
       >
         <img
-          src={user?.photoURL || "https://via.placeholder.com/600/61a65"}
+          src={selectedUser.photoURL || "https://via.placeholder.com/600/61a65"}
           alt="Profile"
           className="w-28 h-28 rounded-full"
         />
         <div>
-          <p className="text-lg font-medium ml-3">{user?.displayName}</p>
-          <p className="text-sm font-medium ml-3 text-gray-500">{user?.email}</p>
-          <span>
-            <button className="px-4 text-gray-500">Customize Channel</button>
-            <Link href="/channal" className="text-gray-500">
-              Manage Videos
-            </Link>
-          </span>
+          <p className="text-lg font-medium ml-3">{selectedUser.displayName}</p>
+          <p className="text-sm font-medium ml-3 text-gray-500">{selectedUser.email}</p>
+          {isCurrentUser && (
+            <span>
+              <button className="px-4 text-gray-500">Customize Channel</button>
+              <Link href="/channal" className="text-gray-500">
+                Manage Videos
+              </Link>
+            </span>
+          )}
         </div>
       </div>
-      <div  className="ml-24 mt-6">
-      <span>
-        <Link href={'/userAcount/videos'}>Videos</Link> 
-        <Link href={'/userAcount/shorts' } className="ml-3">shorts</Link>
-      </span>
+      <div className="ml-24 mt-6">
+        <span>
+          <Link href={`/userAcount/videos?username=${selectedUser.displayName}`}>
+            Videos
+          </Link>
+          <Link
+            href={`/userAcount/shorts?username=${selectedUser.displayName}`}
+            className="ml-3"
+          >
+            Shorts
+          </Link>
+        </span>
       </div>
       <hr className="border-gray" />
-      <div className="mt-6 px-6">
-      </div>
-      
+      <div className="mt-6 px-6"></div>
     </>
   );
 };
 
-export default Userprofile; 
+export default Userprofile;
