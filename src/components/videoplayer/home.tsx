@@ -21,12 +21,13 @@ interface VideoDetails {
 
 interface User {
   username: string;
-  profil: string; // Assuming this is the profile image or unique identifier
+  profil: string; 
   id: string; // User ID
 }
 
 interface MyContextType {
   data: VideoDetails[];
+  isOpen: boolean;
 }
 
 const DisplayData: React.FC = () => {
@@ -42,6 +43,7 @@ const DisplayData: React.FC = () => {
   }
 
   const { data } = context;
+console.log("dtaaa",data);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,27 +103,33 @@ const DisplayData: React.FC = () => {
                     onMouseEnter={(e) => e.currentTarget.play()}
                     onMouseLeave={(e) => e.currentTarget.pause()}
                   ></video>
+                  
                 </div>
               </Link>
-              <Link
-                href={`/userAcount?username=${item.userName}`}
-                className="flex items-start space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-              >
-                <img
-                  src={item?.profil}
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover cursor-pointer"
-                />
-              </Link>
+              <div className="flex items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+  {/* Profile Link */}
+  <Link
+    href={`/userAcount?username=${item.userName}`}
+    className="flex-shrink-0"
+  >
+    <img
+      src={item.profil}
+      alt="Profile"
+      className="w-8 h-8 rounded-full object-cover cursor-pointer"
+    />
+  </Link>
 
-              <div className="flex flex-col">
-                <p className="text-sm font-semibold text-gray-800">
-                  {item.description}
-                </p>
-                <p className="text-xs text-gray-500">
-                  jddijfijijsijsduhuhudsiunfuhuadjksjdkjaj
-                </p>
-              </div>
+  {/* Description Link */}
+  <Link href={`/videos/${item._id}`} className="flex-grow">
+    <div className="flex flex-col">
+      <p className="text-sm font-semibold text-gray-800">{item.description}</p>
+      <p className="text-xs text-gray-500">
+{ item.userName  }      </p>
+    </div>
+  </Link>
+</div>
+
+          
             </div>
           ))}
         </div>

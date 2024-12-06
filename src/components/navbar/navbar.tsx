@@ -106,7 +106,7 @@ const handulhomerout=()=>{
             aria-label="Profile"
           >
             <img
-              src={user?.photoURL || "https://via.placeholder.com/150"}
+              src={user?.photoURL || ""}
               alt="Profile"
               className="w-8 h-8 rounded-full"
             />
@@ -127,18 +127,17 @@ const handulhomerout=()=>{
           <div className="absolute top-2 mr-9 right-0 w-56 bg-white shadow-lg rounded-md z-20">
             <div className="flex items-center px-4 py-2 text-gray-800">
               <img
-                src={user?.photoURL || "https://via.placeholder.com/600/61a65"}
+                src={user?.photoURL ||""}
                 alt="Profile"
                 className="w-10 h-10 rounded-full"
               />
               <div className="ml-3">
-                <p className="text-sm font-medium">{user?.email}</p>
                 <p className="text-sm text-gray-600">{user?.displayName}</p>
               </div>
             </div>
-            <Link
+            <Link className="ml-3 text-sm text-blue-600"
                 href={`/userAcount?username=${user?.displayName}`}>
-              Create a Channel
+              View channal
             </Link>
             <hr className="my-2 border-gray-300" />
             <button
