@@ -5,7 +5,7 @@ import { MdOutlineModeEdit } from "react-icons/md";
 
 import Link from "next/link";
 
-function Dashbord() {
+function ShortsBord() {
   const context = useContext(MyContext);
   const [showDescription, setShowDescription] = useState(false);
 
@@ -15,11 +15,11 @@ function Dashbord() {
     );
     return null;
   }
-  const { userVideos } = context;
+  const { shorts } = context;
 
-  console.log("Fetched Data:", userVideos);
+  console.log("Fetched Data:", shorts);
 
-  console.log("userVideos", userVideos);
+  console.log("userVideos", shorts);
 
   return (
     <div className="mt-20 ml-20">
@@ -27,7 +27,7 @@ function Dashbord() {
         <table className="min-w-full border-collapse border border-gray-300">
           <thead>
             <tr className="bg-blue-500 text-white">
-              <th className="border border-gray-300 px-4 py-2">Video</th>
+              <th className="border border-gray-300 px-4 py-2">Shorts</th>
               <th className="border border-gray-300 px-4 py-2">Visibility</th>
               <th className="border border-gray-300 px-4 py-2">Restrictions</th>
               <th className="border border-gray-300 px-4 py-2">Date</th>
@@ -39,8 +39,8 @@ function Dashbord() {
             </tr>
           </thead>
           <tbody>
-            {userVideos.map((video, index) => (
-              <tr key={video._id} className="even:bg-gray-100 odd:bg-white">
+            {shorts.map((short, index) => (
+              <tr key={short._id} className="even:bg-gray-100 odd:bg-white">
                 <td
                   className="flex border border-gray-300 px-4 py-2 relative"
                   onMouseEnter={() => setShowDescription(true)}
@@ -49,21 +49,21 @@ function Dashbord() {
                   <div className="flex space-x-4">
                     {/* Video */}
                     <video className="w-40 h-24">
-                      <source src={video.videoUrl} type="video/mp4" />
+                      <source src={short.videoUrl} type="video/mp4" />
                     </video>
 
                     {/* Title and Description or Icon */}
                     <div>
-                      <p className="font-medium">{video.title || "No Title"}</p>
+                      <p className="font-medium">{short.title || "No Title"}</p>
 
                       {/* Conditionally show description or edit icon */}
                       {showDescription ? (
-                        <Link href={`/edit/${video._id}`}>
+                        <Link href={`/editshorts/${short._id}`}>
                           <MdOutlineModeEdit className="text-gray-500 cursor-pointer" />
                         </Link>
                       ) : (
                         <p className="text-sm text-gray-500 mt-1">
-                          {video.description || "No Description"}
+                          {short.description || "No Description"}
                         </p>
                       )}
                     </div>
@@ -72,27 +72,27 @@ function Dashbord() {
 
                 {/* Visibility Column */}
                 <td className="border border-gray-300 px-4 py-2">
-                  {video.visibility || "Public"}
+                  {short.visibility || "Public"}
                 </td>
                 {/* Restrictions Column */}
                 <td className="border border-gray-300 px-4 py-2">
-                  {video.restrictions || "None"}
+                  {short.restrictions || "None"}
                 </td>
                 {/* Date Column */}
                 <td className="border border-gray-300 px-4 py-2">
-                  {new Date(video.createdAt || Date.now()).toLocaleDateString()}
+                  {new Date(short.createdAt || Date.now()).toLocaleDateString()}
                 </td>
                 {/* Views Column */}
                 <td className="border border-gray-300 px-4 py-2">
-                  {video.views || 0}
+                  {short.views || 0}
                 </td>
                 {/* Comments Column */}
                 <td className="border border-gray-300 px-4 py-2">
-                  {video.comments || 0}
+                  {short.comments || 0}
                 </td>
                 {/* Likes vs Dislikes Column */}
                 <td className="border border-gray-300 px-4 py-2">
-                  {video.likes || 0} (vs {video.dislikes || 0})
+                  {short.likes || 0} (vs {short.dislikes || 0})
                 </td>
               </tr>
             ))}
@@ -103,4 +103,4 @@ function Dashbord() {
   );
 }
 
-export default Dashbord;
+export default ShortsBord;

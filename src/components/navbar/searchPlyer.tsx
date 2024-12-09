@@ -3,21 +3,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { MyContext } from "@/context/vidoContext/VideoContext";
-
-interface Thumbnails {
-  default: { url: string; width: number; height: number };
-}
-
-interface Snippet {
-  channelId: string;
-  channelTitle: string;
-  description: string;
-  liveBroadcastContent: string;
-  publishTime: string;
-  publishedAt: string;
-  thumbnails: Thumbnails;
-  title: string;
-}
+import { UserAuth } from "@/context/authcontext/authcontext";
+import axios from "axios";
 
 interface VideoId {
   kind: string;
@@ -26,7 +13,6 @@ interface VideoId {
 
 interface SearchDataItem {
   id: VideoId;
-  snippet: Snippet;
 }
 
 interface Comment {
@@ -46,10 +32,31 @@ const SearchPlayer: React.FC = () => {
     throw new Error("MyContext is not available");
   }
 
-  const { searchData, filteredData, setFilteredData, fetchComments,  } = context;
+  const { data, filteredData, setFilteredData, fetchComments } = context;
 
   const [currentVideo, setCurrentVideo] = useState<SearchDataItem | null>(null);
   const [videoComments, setVideoComments] = useState<Comment[]>([]);
+  const [playVideo, setPlayVideo] = useState<{ videoUrl: string } | null>(null);
+  const [newComment, setNewComment] = useState<string>("");
+
+  const { user } = UserAuth();
+
+  useEffect(() => {
+    const fetchVideoById = async () => {
+      if (!videoId) return;
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/video/${videoId}`
+        );
+        setPlayVideo(response.data);
+      } catch (error) {
+        console.error("Error fetching video details:", error);
+        setPlayVideo(null);
+      }
+    };
+
+    fetchVideoById();
+  }, [videoId]);
 
   useEffect(() => {
     if (filteredData && filteredData.length > 0) {
@@ -61,42 +68,91 @@ const SearchPlayer: React.FC = () => {
     const storedFilteredData = localStorage.getItem("filteredData");
     if (storedFilteredData) {
       setFilteredData(JSON.parse(storedFilteredData));
-    } else if (searchData && searchData.length > 0) {
-      setFilteredData(searchData);
+    } else if (data && data.length > 0) {
+      setFilteredData(data);
     }
-  }, [searchData, setFilteredData]);
+  }, [data, setFilteredData]);
 
   useEffect(() => {
-    if (videoId && searchData) {
-      const video = searchData.find((item) => item.id.videoId === videoId);
+    if (videoId && data) {
+      const video = data.find((item) => item.videoId === videoId);
       setCurrentVideo(video || null);
     }
-  }, [videoId, searchData]);
+  }, [videoId, data]);
 
   useEffect(() => {
-    if (currentVideo) {
-      fetchComments(currentVideo.id.videoId)
-        .then((commentsData) => {
-          setVideoComments(commentsData);
-        })
-        .catch((error) => {
-          console.error("Error fetching comments:", error);
-        });
+    const fetchComments = async () => {
+      if (!videoId) return;
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/getCommentsById/${videoId}`
+        );
+        setVideoComments(response.data);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    fetchComments();
+  }, [videoId]);
+
+  const postComment = async () => {
+    if (!newComment.trim()) return;
+
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/addComment/${videoId}`,
+        {
+          userId: user?.uid,
+          userName: user?.displayName,
+          userProfile: user?.photoURL,
+          text: newComment,
+        }
+      );
+
+      setVideoComments((prev) => [...prev, response.data]);
+      setNewComment("");
+    } catch (error) {
+      console.error("Error posting comment:", error);
     }
-  }, [currentVideo, fetchComments]);
+  };
 
   const handleVideoClick = (id: string) => {
-    router.push(`?Id=${id}`)
+    router.push(`?Id=${id}`);
   };
+
+  function getRelativeTime(dateString: string) {
+    const now = new Date();
+    const date = new Date(dateString);
+    const diffInMs = now.getTime() - date.getTime(); // Difference in milliseconds
+    const diffInMinutes = Math.floor(diffInMs / 60000);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+    const diffInMonths = Math.floor(diffInDays / 30); // Approximate months
+    const diffInYears = Math.floor(diffInMonths / 12);
+
+    if (diffInMinutes < 60) {
+      return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
+    } else if (diffInHours < 24) {
+      return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
+    } else if (diffInDays < 30) {
+      return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
+    } else if (diffInMonths < 12) {
+      return `${diffInMonths} month${diffInMonths > 1 ? "s" : ""} ago`;
+    } else {
+      return `${diffInYears} year${diffInYears > 1 ? "s" : ""} ago`;
+    }
+  }
+
 
   return (
     <div className="flex px-4 mt-12 ml-2 bg-white-900 text-gray-800 min-h-screen">
       <div className="w-2/3 max-w-3xl ml-16 mt-8">
-        {currentVideo ? (
+        {playVideo ? (
           <div className="w-full bg-gray-100 p-4 rounded-xl shadow-lg">
             <iframe
               className="w-full h-[400px] rounded-xl"
-              src={`https://www.youtube.com/embed/${videoId}`}
+              src={playVideo.videoUrl}
               title="YouTube video player"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -107,23 +163,54 @@ const SearchPlayer: React.FC = () => {
           <p className="text-center text-gray-500">Loading video...</p>
         )}
 
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold">Comments</h2>
-          {videoComments?.length === 0 ? (
-            <p className="text-gray-500">No comments yet.</p>
-          ) : (
-            <div className="space-y-4">
-              {videoComments?.map((comment) => (
-                <div key={comment.id} className="p-4 border rounded-lg shadow-sm">
-                  <p className="text-sm font-semibold">{comment.author}</p>
-                  <p className="text-gray-700">{comment.text}</p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(comment.publishedAt).toLocaleString()}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold">Comments</h2>
+          <div className="flex items-center space-x-2 mt-3">
+            <img
+              src={user?.photoURL || "/default-profile.png"} // Replace with actual user profile image
+              alt="User Profile"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+
+            <input
+              type="text"
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              className="  flex-1 border-b border-gray-300 focus:border-black px-3 py-2 text-sm outline-none transition"
+            />
+
+            {/* Post Button */}
+            <button
+              onClick={postComment}
+              className="text-black font-medium hover:bg-blue-50 px-4 py-1 rounded transition"
+            >
+              Post
+            </button>
+          </div>
+          <div className="mt-5 space-y-4">
+   {Array.isArray(videoComments) && videoComments.length > 0 ? (
+     videoComments.map((comment) => (
+       <div key={comment.id} className="flex items-start space-x-3">
+         <img
+           src={user?.photoURL || ""}
+           alt={comment.author}
+           className="w-8 h-8 rounded-full object-cover"
+         />
+         <div>
+           <p className="text-sm font-semibold">{comment.author}</p>
+           <p className="text-sm">{comment.text}</p>
+           <p className="text-xs text-gray-500">
+             {getRelativeTime(comment.publishedAt)}
+           </p>
+         </div>
+       </div>
+     ))
+   ) : (
+     <p className="text-gray-500">No comments yet.</p>
+   )}
+</div>
+
         </div>
       </div>
 
@@ -131,18 +218,22 @@ const SearchPlayer: React.FC = () => {
         {filteredData && filteredData.length > 0 ? (
           filteredData.map((video) => (
             <div
-              key={video.id.videoId}
+              key={video._id} // Use _id as the unique key
               className="flex items-start space-x-3 cursor-pointer"
-              onClick={() => handleVideoClick(video.id.videoId)}
+              onClick={() => handleVideoClick(video._id)} // Correct navigation
             >
-              <img
-                src={video.snippet.thumbnails.default.url}
-                alt={video.snippet.title}
-                className="w-24 h-16 rounded-lg"
-              />
+              <div className="w-28 h-16 rounded-lg overflow-hidden bg-black">
+                <video
+                  className="w-full h-full object-cover"
+                  src={video.videoUrl}
+                  title="Related Video"
+                ></video>
+              </div>
               <div>
-                <p className="text-sm font-semibold line-clamp-2">{video.snippet.title}</p>
-                <p className="text-xs">{video.snippet.channelTitle}</p>
+                <p className="text-sm font-semibold line-clamp-2">
+                  {video.title}
+                </p>
+                <p className="text-xs">{video.description}</p>
               </div>
             </div>
           ))

@@ -4,14 +4,13 @@ import React, { useContext, useState, useEffect } from "react";
 import { MyContext } from "../../context/vidoContext/VideoContext";
 import { useParams, useRouter } from "next/navigation"; 
 import { UserAuth } from "@/context/authcontext/authcontext";
-
 import axios from "axios";
 import Link from "next/link";
 
 const VideoPlayer: React.FC = () => {
   const context = useContext(MyContext);
   const { videoId: routeVideoId } = useParams();
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();  
   const [currentVideoId, setCurrentVideoId] = useState<string | undefined>(
     routeVideoId
   );
@@ -20,7 +19,6 @@ const VideoPlayer: React.FC = () => {
   const [newComment, setNewComment] = useState<string>("");
   const { user } = UserAuth();
 
-  // Fetch video details
   useEffect(() => {
     const fetchVideoById = async () => {
       if (!currentVideoId) return;
@@ -80,10 +78,9 @@ const VideoPlayer: React.FC = () => {
   }
   console.log("currentVideoId", currentVideoId);
 
-  // Handle video click to change URL
   const handleVideoClick = (videoId: string) => {
-    setCurrentVideoId(videoId); // Update the current video ID in the state
-    router.push(`/videos/${videoId}`); // Update the URL without reloading the page
+    setCurrentVideoId(videoId); 
+    router.push(`/videos/${videoId}`); 
   };
   function getRelativeTime(dateString) {
     const now = new Date();
@@ -135,12 +132,12 @@ const VideoPlayer: React.FC = () => {
             <h4>{user?.displayName}</h4>
           </Link>
         </div>
-        {/* Comment Section */}
+
         <div className="mt-6">
           <h2 className="text-lg font-semibold">Comments</h2>
           <div className="flex items-center space-x-2 mt-3">
             <img
-              src={videoDetails?.profil || "/default-profile.png"} // Replace with actual user profile image
+              src={videoDetails?.profil || "/default-profile.png"} 
               alt="User Profile"
               className="w-10 h-10 rounded-full object-cover"
             />
@@ -182,7 +179,7 @@ const VideoPlayer: React.FC = () => {
         </div>
       </div>
 
-      {/* Related Videos Section */}
+
       <div className="w-full lg:w-1/3 pr-11">
         {context.data
           .filter((video) => video._id !== currentVideoId)
@@ -190,7 +187,7 @@ const VideoPlayer: React.FC = () => {
             <div
               key={video._id}
               className="flex items-center space-x-2 bg-white p-3 rounded-lg cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => handleVideoClick(video._id)} // Use handleVideoClick on click
+              onClick={() => handleVideoClick(video._id)}   
             >
               <div className="w-28 h-16 rounded-lg overflow-hidden bg-black">
                 <video

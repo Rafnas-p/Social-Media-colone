@@ -51,7 +51,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
           email,
           displayName,
           photoURL,
-          channelName: displayName.replace(/\s+/g, "").toLowerCase(), // Example: Creating a channel name
+          channelName: displayName.replace(/\s+/g, "").toLowerCase(), 
         }),
       });
   
@@ -69,7 +69,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        await saveUserToDatabase(currentUser); // Save user to the database
+        await saveUserToDatabase(currentUser); 
       } else {
         setUser(null);
       }

@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import { useSearchParams } from "next/navigation";
-
 interface Video {
   _id: string;
   title: string;

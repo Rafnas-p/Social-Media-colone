@@ -136,7 +136,7 @@ const handulhomerout=()=>{
               </div>
             </div>
             <Link className="ml-3 text-sm text-blue-600"
-                href={`/userAcount?username=${user?.displayName}`}>
+                href={`/userAcount/videos?username=${user?.displayName}`}>
               View channal
             </Link>
             <hr className="my-2 border-gray-300" />

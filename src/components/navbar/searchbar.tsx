@@ -43,7 +43,7 @@ const Searchbar: React.FC = () => {
     throw new Error('MyContext is not available');
   }
 
-  const { searchData, filteredData, setFilteredData } = context;
+  const { data, filteredData, setFilteredData } = context;
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,15 +55,16 @@ const Searchbar: React.FC = () => {
   };
 
   useEffect(() => {
-    if (searchQuery && searchData) {
-      const results = searchData.filter((item: SearchItem) =>
-        item.snippet.title.toLowerCase().includes(searchQuery.toLowerCase())
+    if (searchQuery && data) {
+      const results = data.filter((item: SearchItem) =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredData(results);
     }
-  }, [searchQuery, searchData, setFilteredData]);
+  }, [searchQuery, data, setFilteredData]);
 
   
+console.log("filte", filteredData);
 
   return (
     <div className=" px-4 sm:px-0 fixed top-4 flex flex-col items-center z-10">
@@ -94,10 +95,10 @@ const Searchbar: React.FC = () => {
         <div className="relative w-full sm:w-[500px] bg-white shadow-lg rounded-lg p-2 max-h-72 overflow-y-auto text-sm z-0">
           {filteredData.length > 0 ? (
             filteredData.map((item) => (
-              <div key={item.id.videoId} className="border-b p-2 cursor-pointer hover:bg-gray-100 transition">
-                <Link href={`/search?Id=${item.id.videoId}`} passHref>
+              <div key={item.videoId} className="border-b p-2 cursor-pointer hover:bg-gray-100 transition">
+                <Link href={`/search?Id=${item._id}`} passHref>
                   <div>
-                    <h3 className="text-base font-semibold">{item.snippet.title}</h3>
+                    <h3 className="text-base font-semibold">{item.title}</h3>
                   </div>
                 </Link>
               </div>

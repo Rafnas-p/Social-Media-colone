@@ -1,8 +1,8 @@
 "use client";
 import React, { createContext, useCallback, useState, useEffect, ReactNode } from 'react';
-import { fetchDataFromApi, featchCommentsAPi,fetchSearchApi} from '../../components/utils/youtubeApi';
 import axios from 'axios';
-// Define SearchData interface for search results
+import { UserAuth } from "@/context/authcontext/authcontext";
+
 interface SearchDataItem {
   kind: string;
   id: {
@@ -125,30 +125,17 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [filteredData, setFilteredData] = useState<SearchItem[]>([]);
+  const [userVideos,setUserVideos]=useState([])
+  const [shorts,setShorts]=useState([])
+  const { user } = UserAuth();
+
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
     
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetchDataFromApi('search', {
-  //         q: selectedcat,
-  //         part: 'snippet',
-  //         type: 'video',
-  //         maxResults: 20,
-  //       });
-  //       setData(response);
-  //       console.log('Fetched data:', response);
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [selectedcat]);
+  
   useEffect(() => {
     const fetchAllVideos = async () => {
       try {
@@ -171,31 +158,49 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   
     fetchAllVideos();
   }, []);
+
   
-  const fetchComments = useCallback(async (videoId: string) => {
-    try {
-      const response = await featchCommentsAPi(videoId);
-      setComments(response);
-      console.log('Fetched comments:', response);
-    } catch (error) {
-      console.error('Error fetching comments:', error);
-    }
-  }, []);
+  useEffect(() => {
+    const fetchVideosById = async () => {
+      try {
+        if (!user?.uid) return;
+        const response = await axios.get("http://localhost:5000/api/videos", {
+          params: { userId: user.uid },
+        });
+
+        setUserVideos(response.data.videos);
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch videos.");
+      }
+    };
+
+    fetchVideosById();
+  }, [user?.uid]);
 
   useEffect(() => {
-    const fetchSearchData = async () => {
+    const fetchShorts = async () => {
+      if (!user?.uid) return;
       try {
-        const data = await fetchSearchApi();
-        setSearchData(data);
-        setLoading(false);
+        setLoading(true);
+        const response = await axios.get("http://localhost:5000/api/shorts", {
+          params: { userId: user.uid },
+        });
+        setShorts(response.data.shorts);
       } catch (err) {
-        setError('Failed to fetch search data');
+        console.error("Error fetching shorts:", err);
+        setError("Failed to fetch shorts. Please try again later.");
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchSearchData();
-  }, []);
+    fetchShorts();
+  }, [user?.uid]);
+
+
+
+
+  
 
   return (
     <MyContext.Provider value={{
@@ -203,14 +208,15 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
       setselectedcat,
       data,
       comments,
-      fetchComments,
       isOpen,
       toggleSidebar,
       searchData, 
       loading,
        error,
        filteredData, 
-       setFilteredData
+       setFilteredData,
+       userVideos,
+       shorts,
     }}>
       {children}
     </MyContext.Provider>

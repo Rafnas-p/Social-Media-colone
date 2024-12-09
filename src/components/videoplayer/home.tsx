@@ -21,7 +21,7 @@ interface VideoDetails {
 
 interface User {
   username: string;
-  profil: string; 
+  profil: string;
   id: string; // User ID
 }
 
@@ -43,7 +43,7 @@ const DisplayData: React.FC = () => {
   }
 
   const { data } = context;
-console.log("dtaaa",data);
+  console.log("dtaaa", data);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,15 +67,17 @@ console.log("dtaaa",data);
             .map((_, index) => (
               <div
                 key={index}
-                className="bg-gray-200 animate-pulse rounded-lg p-4"
+                className="bg-gray-200 animate-pulse rounded-lg p-4 flex flex-col space-y-4"
               >
-                <div className="w-full h-48 bg-gray-300 rounded-lg"></div>
-                <div className="flex items-start mt-4 space-x-4">
+                {/* Video Skeleton */}
+                <div className="w-full h-40 bg-gray-300 rounded-lg"></div>
+
+                {/* User Info Skeleton */}
+                <div className="flex items-center space-x-4">
                   <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-                  <div className="flex-1">
-                    <div className="h-4 bg-gray-300 rounded-md w-3/4 mb-2"></div>
-                    <div className="h-4 bg-gray-300 rounded-md w-1/2"></div>
-                    <div className="h-3 bg-gray-300 rounded-md w-full mt-2"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-300 rounded-md w-3/4"></div>
+                    <div className="h-3 bg-gray-300 rounded-md w-1/2"></div>
                   </div>
                 </div>
               </div>
@@ -103,33 +105,30 @@ console.log("dtaaa",data);
                     onMouseEnter={(e) => e.currentTarget.play()}
                     onMouseLeave={(e) => e.currentTarget.pause()}
                   ></video>
-                  
                 </div>
               </Link>
               <div className="flex items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
-  {/* Profile Link */}
-  <Link
-    href={`/userAcount?username=${item.userName}`}
-    className="flex-shrink-0"
-  >
-    <img
-      src={item.profil}
-      alt="Profile"
-      className="w-8 h-8 rounded-full object-cover cursor-pointer"
-    />
-  </Link>
+                <Link
+                  href={`/userAcount/videos?username=${item.userName}`}
+                  className="flex-shrink-0"
+                >
+                  <img
+                    src={item.profil}
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                  />
+                </Link>
 
-  {/* Description Link */}
-  <Link href={`/videos/${item._id}`} className="flex-grow">
-    <div className="flex flex-col">
-      <p className="text-sm font-semibold text-gray-800">{item.description}</p>
-      <p className="text-xs text-gray-500">
-{ item.userName  }      </p>
-    </div>
-  </Link>
-</div>
-
-          
+                {/* Description Link */}
+                <Link href={`/videos/${item._id}`} className="flex-grow">
+                  <div className="flex flex-col">
+                    <p className="text-sm font-semibold text-gray-800">
+                      {item.description}
+                    </p>
+                    <p className="text-xs text-gray-500">{item.userName} </p>
+                  </div>
+                </Link>
+              </div>
             </div>
           ))}
         </div>
