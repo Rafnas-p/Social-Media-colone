@@ -2,15 +2,38 @@
 
 import React, { useContext, useState, useEffect } from "react";
 import { MyContext } from "../../context/vidoContext/VideoContext";
-import { useParams, useRouter } from "next/navigation"; 
+import { useParams, useRouter } from "next/navigation";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axios from "axios";
 import Link from "next/link";
 
+interface VideoDetails {
+  _id: string;
+  title: string;
+  description: string;
+  videoUrl: string;
+  userName: string;
+  profil: string;
+  createdAt: string;
+}
+
+interface CommentSnippet {
+  _id: string;
+  userName: string;
+  userProfile: string;
+  text: string;
+  createdAt: string;
+}
+
+interface MyContextType {
+  data: VideoDetails[];
+  isOpen: boolean;
+}
+
 const VideoPlayer: React.FC = () => {
-  const context = useContext(MyContext);
-  const { videoId: routeVideoId } = useParams();
-  const router = useRouter();  
+  const context = useContext<MyContextType>(MyContext);
+  const { videoId: routeVideoId } = useParams() as { videoId?: string };
+  const router = useRouter();
   const [currentVideoId, setCurrentVideoId] = useState<string | undefined>(
     routeVideoId
   );
@@ -19,6 +42,9 @@ const VideoPlayer: React.FC = () => {
   const [newComment, setNewComment] = useState<string>("");
   const { user } = UserAuth();
 
+  if (!context) {
+    throw new Error("MyContext must be used within a provider");
+  }
   useEffect(() => {
     const fetchVideoById = async () => {
       if (!currentVideoId) return;
@@ -56,7 +82,7 @@ const VideoPlayer: React.FC = () => {
     if (!newComment.trim()) return;
 
     try {
-      const response = await axios.post(
+      const response = await axios.post<CommentSnippet>(
         `http://localhost:5000/api/addComment/${currentVideoId}`,
         {
           userId: user?.uid,
@@ -79,17 +105,18 @@ const VideoPlayer: React.FC = () => {
   console.log("currentVideoId", currentVideoId);
 
   const handleVideoClick = (videoId: string) => {
-    setCurrentVideoId(videoId); 
-    router.push(`/videos/${videoId}`); 
+    setCurrentVideoId(videoId);
+    router.push(`/videos/${videoId}`);
   };
-  function getRelativeTime(dateString) {
+
+  function getRelativeTime(dateString: string): string {
     const now = new Date();
     const date = new Date(dateString);
-    const diffInMs = now - date; // Difference in milliseconds
+    const diffInMs = now.getTime() - date.getTime(); 
     const diffInMinutes = Math.floor(diffInMs / 60000);
     const diffInHours = Math.floor(diffInMinutes / 60);
     const diffInDays = Math.floor(diffInHours / 24);
-    const diffInMonths = Math.floor(diffInDays / 30); // Approximate months
+    const diffInMonths = Math.floor(diffInDays / 30); 
     const diffInYears = Math.floor(diffInMonths / 12);
 
     if (diffInMinutes < 60) {
@@ -122,7 +149,7 @@ const VideoPlayer: React.FC = () => {
         <div className="flex items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
           <Link
             href={`/userAcount?username=${videoDetails.userName}`}
-            className="flex items-start space-x-4  hover:bg-gray-100 rounded-lg transition-colors duration-200"
+            className="flex items-start space-x-4 hover:bg-gray-100 rounded-lg transition-colors duration-200"
           >
             <img
               src={user?.photoURL || ""}
@@ -137,7 +164,7 @@ const VideoPlayer: React.FC = () => {
           <h2 className="text-lg font-semibold">Comments</h2>
           <div className="flex items-center space-x-2 mt-3">
             <img
-              src={videoDetails?.profil || "/default-profile.png"} 
+              src={videoDetails?.profil || "/default-profile.png"}
               alt="User Profile"
               className="w-10 h-10 rounded-full object-cover"
             />
@@ -147,10 +174,9 @@ const VideoPlayer: React.FC = () => {
               placeholder="Write a comment..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              className="  flex-1 border-b border-gray-300 focus:border-black px-3 py-2 text-sm outline-none transition"
+              className="flex-1 border-b border-gray-300 focus:border-black px-3 py-2 text-sm outline-none transition"
             />
 
-            {/* Post Button */}
             <button
               onClick={postComment}
               className="text-black font-medium hover:bg-blue-50 px-4 py-1 rounded transition"
@@ -162,7 +188,7 @@ const VideoPlayer: React.FC = () => {
             {comments.map((comment) => (
               <div key={comment._id} className="flex items-start space-x-3">
                 <img
-                  src={user?.photoURL || ""}
+                  src={comment?.userProfile || ""}
                   alt={comment.userName}
                   className="w-8 h-8 rounded-full object-cover"
                 />
@@ -179,7 +205,6 @@ const VideoPlayer: React.FC = () => {
         </div>
       </div>
 
-
       <div className="w-full lg:w-1/3 pr-11">
         {context.data
           .filter((video) => video._id !== currentVideoId)
@@ -187,7 +212,7 @@ const VideoPlayer: React.FC = () => {
             <div
               key={video._id}
               className="flex items-center space-x-2 bg-white p-3 rounded-lg cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => handleVideoClick(video._id)}   
+              onClick={() => handleVideoClick(video._id)}
             >
               <div className="w-28 h-16 rounded-lg overflow-hidden bg-black">
                 <video
@@ -201,8 +226,8 @@ const VideoPlayer: React.FC = () => {
                   {video.title}
                 </p>
                 <p className="text-xs text-gray-500">
-                    {getRelativeTime(video.createdAt)}
-                  </p>
+                  {getRelativeTime(video.createdAt)}
+                </p>
               </div>
             </div>
           ))}

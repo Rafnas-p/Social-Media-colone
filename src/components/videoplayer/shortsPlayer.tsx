@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import Link from "next/link"; 
+import Link from "next/link";
 import React, { useEffect, useState, useRef } from "react";
 
 interface Short {
@@ -21,7 +21,9 @@ interface Short {
 
 function DisplayShorts() {
   const [shorts, setShorts] = useState<Short[]>([]);
-  const [currentShortIndex, setCurrentShortIndex] = useState<number | null>(null);
+  const [currentShortIndex, setCurrentShortIndex] = useState<number | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -29,7 +31,9 @@ function DisplayShorts() {
   useEffect(() => {
     const fetchAllShorts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/entaireShorts");
+        const response = await axios.get(
+          "http://localhost:5000/api/entaireShorts"
+        );
 
         const shortsData = response.data.shorts || [];
         setShorts(shortsData);
@@ -98,7 +102,9 @@ function DisplayShorts() {
               <span>{shorts[currentShortIndex].title}</span>
               <button
                 onClick={() =>
-                  setCurrentShortIndex(Math.min(currentShortIndex + 1, shorts.length - 1))
+                  setCurrentShortIndex(
+                    Math.min(currentShortIndex + 1, shorts.length - 1)
+                  )
                 }
                 className="text-sm px-4 py-2 bg-gray-700 rounded hover:bg-gray-600"
               >
@@ -114,25 +120,24 @@ function DisplayShorts() {
             ></video>
 
             <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 text-white p-4 rounded-lg flex flex-col space-y-4">
-  <Link
-    href={`/userAcount?username=${shorts[currentShortIndex].userName}`}
-    className="flex items-center space-x-2"
-  >
-    <img
-      src={shorts[currentShortIndex].profil}
-      alt="Profile"
-      className="w-8 h-8 rounded-full object-cover "
-    />
-    <span className="text-sm font-semibold">
-      {shorts[currentShortIndex].userName}
-    </span>
-  </Link>
-  
-  <p className="text-sm text-gray-300">
-    {shorts[currentShortIndex].description}
-  </p>
-</div>
+              <Link
+                href={`/userAcount?username=${shorts[currentShortIndex].userName}`}
+                className="flex items-center space-x-2"
+              >
+                <img
+                  src={shorts[currentShortIndex].profil}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full object-cover "
+                />
+                <span className="text-sm font-semibold">
+                  {shorts[currentShortIndex].userName}
+                </span>
+              </Link>
 
+              <p className="text-sm text-gray-300">
+                {shorts[currentShortIndex].description}
+              </p>
+            </div>
           </div>
         </div>
       )}

@@ -3,8 +3,8 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { UserAuth } from "@/context/authcontext/authcontext";
 
 const CreateChannelForm: React.FC = () => {
-  const { user } = UserAuth(); // Access user details from context
-  const username = user?.displayName || ''; // Default to empty if username is not available
+  const { user } = UserAuth(); 
+  const username = user?.displayName || ''; 
 
   const [channelName, setChannelName] = useState<string>(username);
   const [description, setDescription] = useState<string>('');
@@ -17,7 +17,6 @@ const CreateChannelForm: React.FC = () => {
     }
   };
 
-  // Handle form submission
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData();
@@ -27,7 +26,6 @@ const CreateChannelForm: React.FC = () => {
       formData.append('profilePic', profilePic);
     }
 
-    // Logic to submit the form data to the backend or parent component
     console.log("Form submitted:", {
       channelName,
       description,
@@ -39,7 +37,6 @@ const CreateChannelForm: React.FC = () => {
     <div className="max-w-md mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-bold text-center mb-4">Create Your Channel</h2>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
-        {/* Channel Name */}
         <div className="mb-4">
           <label htmlFor="channelName" className="block text-sm font-medium text-gray-700 mb-2">
             Channel Name
@@ -55,7 +52,6 @@ const CreateChannelForm: React.FC = () => {
           />
         </div>
 
-        {/* Channel Description */}
         <div className="mb-4">
           <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
             Channel Description
@@ -70,7 +66,6 @@ const CreateChannelForm: React.FC = () => {
           />
         </div>
 
-        {/* Profile Picture */}
         <div className="mb-4">
           <label htmlFor="profilePic" className="block text-sm font-medium text-gray-700 mb-2">
             Profile Picture
@@ -84,7 +79,6 @@ const CreateChannelForm: React.FC = () => {
           />
         </div>
 
-        {/* Submit Button */}
         <div className="mt-6">
           <button
             type="submit"

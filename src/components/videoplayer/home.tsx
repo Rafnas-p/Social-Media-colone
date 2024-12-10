@@ -2,7 +2,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { MyContext } from "../../context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 interface VideoDetails {
@@ -22,7 +21,7 @@ interface VideoDetails {
 interface User {
   username: string;
   profil: string;
-  id: string; // User ID
+  id: string;
 }
 
 interface MyContextType {
@@ -34,9 +33,7 @@ const DisplayData: React.FC = () => {
   const context = useContext(MyContext) as unknown as MyContextType | null;
   const isOpen = context?.isOpen ?? false;
   const [loading, setLoading] = useState<boolean>(true);
-  const { user, allUsers } = UserAuth();
-  const router = useRouter();
-  console.log("allUsers", allUsers);
+  const {  allUsers } = UserAuth();
 
   if (!context) {
     return <div>Loading...</div>;
@@ -69,10 +66,8 @@ const DisplayData: React.FC = () => {
                 key={index}
                 className="bg-gray-200 animate-pulse rounded-lg p-4 flex flex-col space-y-4"
               >
-                {/* Video Skeleton */}
                 <div className="w-full h-40 bg-gray-300 rounded-lg"></div>
 
-                {/* User Info Skeleton */}
                 <div className="flex items-center space-x-4">
                   <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
                   <div className="flex-1 space-y-2">
@@ -119,7 +114,6 @@ const DisplayData: React.FC = () => {
                   />
                 </Link>
 
-                {/* Description Link */}
                 <Link href={`/videos/${item._id}`} className="flex-grow">
                   <div className="flex flex-col">
                     <p className="text-sm font-semibold text-gray-800">

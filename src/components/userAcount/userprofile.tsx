@@ -6,12 +6,10 @@ import { UserAuth } from "@/context/authcontext/authcontext";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 import Link from "next/link";
 
-// Define type for MyContextType if not already defined
 interface MyContextType {
   isOpen: boolean;
 }
 
-// Define User type if not already defined
 interface User {
   displayName: string;
   email: string;
@@ -46,7 +44,7 @@ const Userprofile: React.FC = () => {
         }`}
       >
         <img
-          src={selectedUser.photoURL || "https://via.placeholder.com/600/61a65"}
+          src={selectedUser.photoURL || ""}
           alt="Profile"
           className="w-28 h-28 rounded-full"
         />

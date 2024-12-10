@@ -2,16 +2,25 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider, User } from "firebase/auth";
 import { auth } from "@/app/fairbase/config";
+import { Dispatch, SetStateAction } from "react";
+
 import axios from "axios";
 
 
-
 interface AuthContextType {
-  user: User | null; 
-  googleSignIn: () => Promise<any>;
-  logOut: () => Promise<void>;
+  user: User | null;
+  googleSignIn: () => Promise<void>;
+  logOut: () => Promise<void>; 
+  allUsers: UserRecord[]; 
+  setAllUsers: Dispatch<SetStateAction<UserRecord[]>>; 
 }
-
+interface UserRecord {
+  uid: string; 
+  email: string; 
+  displayName: string;
+  photoURL: string; 
+  channelName: string; 
+}
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -21,14 +30,14 @@ interface AuthContextProviderProps {
 
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [allUsers,setAllUsers]=useState([])
+  const [allUsers,setAllUsers]=useState<UserRecord[]>([]);
   console.log(user)
 
-  const googleSignIn = () => {
+  const googleSignIn = async (): Promise<void> => {
     const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
+    await signInWithPopup(auth, provider); 
   };
-
+  
   const logOut = async () => {
     try {
       await signOut(auth); 
@@ -49,9 +58,9 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
         body: JSON.stringify({
           uid,
           email,
-          displayName,
+          displayName:displayName || "Anonymous User", 
           photoURL,
-          channelName: displayName.replace(/\s+/g, "").toLowerCase(), 
+          channelName: (displayName || "AnonymousUser").replace(/\s+/g, "").toLowerCase(),
         }),
       });
   
@@ -90,7 +99,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
     fetchAllUsers();
   }, []);
   return (
-    <AuthContext.Provider value={{ user, googleSignIn, logOut,allUsers}}>
+    <AuthContext.Provider value={{ user, googleSignIn, logOut,allUsers,setAllUsers}}>
       {children}
     </AuthContext.Provider>
   );

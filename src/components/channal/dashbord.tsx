@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext,  useState } from "react";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 import { MdOutlineModeEdit } from "react-icons/md";
 
@@ -15,14 +15,18 @@ function Dashbord() {
     );
     return null;
   }
-  const { userVideos } = context;
+  const { userVideos,isOpen } = context;
 
-  console.log("Fetched Data:", userVideos);
+  console.log("isOpen:", isOpen);
 
-  console.log("userVideos", userVideos);
+  console.log("isOpen", isOpen);
 
   return (
-    <div className="mt-20 ml-20">
+    <div
+    className={`flex flex-col p-6 transition-all duration-300 mt-20 ${
+      isOpen ? "ml-64" : "ml-16"
+    } bg-white-100 min-h-screen`}
+  >
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse border border-gray-300">
           <thead>
@@ -47,16 +51,13 @@ function Dashbord() {
                   onMouseLeave={() => setShowDescription(false)}
                 >
                   <div className="flex space-x-4">
-                    {/* Video */}
                     <video className="w-40 h-24">
                       <source src={video.videoUrl} type="video/mp4" />
                     </video>
 
-                    {/* Title and Description or Icon */}
                     <div>
                       <p className="font-medium">{video.title || "No Title"}</p>
 
-                      {/* Conditionally show description or edit icon */}
                       {showDescription ? (
                         <Link href={`/edit/${video._id}`}>
                           <MdOutlineModeEdit className="text-gray-500 cursor-pointer" />
@@ -70,27 +71,21 @@ function Dashbord() {
                   </div>
                 </td>
 
-                {/* Visibility Column */}
                 <td className="border border-gray-300 px-4 py-2">
                   {video.visibility || "Public"}
                 </td>
-                {/* Restrictions Column */}
                 <td className="border border-gray-300 px-4 py-2">
                   {video.restrictions || "None"}
                 </td>
-                {/* Date Column */}
                 <td className="border border-gray-300 px-4 py-2">
                   {new Date(video.createdAt || Date.now()).toLocaleDateString()}
                 </td>
-                {/* Views Column */}
                 <td className="border border-gray-300 px-4 py-2">
                   {video.views || 0}
                 </td>
-                {/* Comments Column */}
                 <td className="border border-gray-300 px-4 py-2">
                   {video.comments || 0}
                 </td>
-                {/* Likes vs Dislikes Column */}
                 <td className="border border-gray-300 px-4 py-2">
                   {video.likes || 0} (vs {video.dislikes || 0})
                 </td>

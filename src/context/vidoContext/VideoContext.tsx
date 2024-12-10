@@ -2,6 +2,7 @@
 import React, { createContext, useCallback, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 import { UserAuth } from "@/context/authcontext/authcontext";
+import { Key } from 'readline';
 
 interface SearchDataItem {
   kind: string;
@@ -31,17 +32,20 @@ interface MyContextType {
   setselectedcat: (newValue: string) => void;
   data: Video[];
   comments: Comment[];
-  fetchComments: (videoId: string) => void;
+  fetchComments?: (videoId: string) => void;
   isOpen: boolean;
   toggleSidebar: () => void;
-  searchData: SearchDataItem[];  
+  searchData: SearchDataItem[];
   loading: boolean;
   error: string | null;
-  filteredData: SearchItem[]; 
+  filteredData: SearchItem[];
   setFilteredData: (data: SearchItem[]) => void;
+  userVideos: Video[];
+  shorts: Video[];
+  
 }
 
-// Define video and comment types
+
 interface VideoSnippet {
   publishedAt: string;
   channelId: string;
@@ -56,6 +60,18 @@ interface VideoSnippet {
 }
 
 interface Video {
+  _id: Key | null | undefined;
+  videoUrl: string | undefined;
+  title: string;
+  description: string;
+  visibility: string;
+  restrictions: string;
+  createdAt: number;
+  views: number;
+  comments: number;
+  likes: number;
+  dislikes: number;
+  videoId: string;
   kind: string;
   etag: string;
   id: {
@@ -65,47 +81,16 @@ interface Video {
   snippet: VideoSnippet;
 }
 
-interface CommentSnippet {
-  id: string;
-  kind: string;
-  snippet: {
-    canReply: boolean;
-    channelId: string;
-    isPublic: boolean;
-    topLevelComment: {
-      id: string;
-      kind: string;
-      snippet: {
-        textDisplay: string;
-        authorChannelId: { value: string };
-        authorChannelUrl: string;
-        authorDisplayName: string;
-        authorProfileImageUrl: string;
-        canRate: boolean;
-        likeCount: number;
-        publishedAt: string;
-        textOriginal: string;
-        updatedAt: string;
-        videoId: string;
-        viewerRating: string;
-      };
-    };
-    totalReplyCount: number;
-    videoId: string;
-  };
-}
-
-interface Comment {
-  kind: string;
-  etag: string;
-  id: string;
-  snippet: CommentSnippet;
-}
 
 interface MyProviderProps {
   children: ReactNode;
 }
 type SearchItem = {
+  videoId: number;
+  description: ReactNode;
+  title: ReactNode;
+  videoUrl: string | undefined;
+  _id: Key | null | undefined;
   id: { videoId: string };
   snippet: {
     title: string;
@@ -119,14 +104,13 @@ export const MyContext = createContext<MyContextType | undefined>(undefined);
 export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   const [selectedcat, setselectedcat] = useState<string>("New");
   const [data, setData] = useState<Video[]>([]);
-  const [searchData, setSearchData] = useState<SearchDataItem[]>([]);
-  const [comments, setComments] = useState<Comment[]>([]);
+ 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [filteredData, setFilteredData] = useState<SearchItem[]>([]);
-  const [userVideos,setUserVideos]=useState([])
-  const [shorts,setShorts]=useState([])
+  const [userVideos, setUserVideos] = useState<Video[]>([]);
+  const [shorts, setShorts] = useState<Video[]>([]);
   const { user } = UserAuth();
 
 
@@ -149,7 +133,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
           console.error("Invalid API response format");
         }
         setLoading(false);
-      } catch (err) {
+      } catch (err:any) {
         console.error("Error fetching videos:", err.message);
         setError(err.message || "Failed to fetch videos");
         setLoading(false);
@@ -207,10 +191,8 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
       selectedcat,
       setselectedcat,
       data,
-      comments,
       isOpen,
       toggleSidebar,
-      searchData, 
       loading,
        error,
        filteredData, 

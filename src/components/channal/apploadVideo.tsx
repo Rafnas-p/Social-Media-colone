@@ -18,7 +18,7 @@ const VideoUploadComponent: React.FC = () => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
       setVideoFile(selectedFile);
-      setVideoUrl(URL.createObjectURL(selectedFile)); // Generate URL for video preview
+      setVideoUrl(URL.createObjectURL(selectedFile)); 
     }
   };
 

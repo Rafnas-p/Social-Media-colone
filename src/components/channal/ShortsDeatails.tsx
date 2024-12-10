@@ -47,16 +47,13 @@ function ShortsBord() {
                   onMouseLeave={() => setShowDescription(false)}
                 >
                   <div className="flex space-x-4">
-                    {/* Video */}
                     <video className="w-40 h-24">
                       <source src={short.videoUrl} type="video/mp4" />
                     </video>
 
-                    {/* Title and Description or Icon */}
                     <div>
                       <p className="font-medium">{short.title || "No Title"}</p>
 
-                      {/* Conditionally show description or edit icon */}
                       {showDescription ? (
                         <Link href={`/editshorts/${short._id}`}>
                           <MdOutlineModeEdit className="text-gray-500 cursor-pointer" />
@@ -70,27 +67,21 @@ function ShortsBord() {
                   </div>
                 </td>
 
-                {/* Visibility Column */}
                 <td className="border border-gray-300 px-4 py-2">
                   {short.visibility || "Public"}
                 </td>
-                {/* Restrictions Column */}
                 <td className="border border-gray-300 px-4 py-2">
                   {short.restrictions || "None"}
                 </td>
-                {/* Date Column */}
                 <td className="border border-gray-300 px-4 py-2">
                   {new Date(short.createdAt || Date.now()).toLocaleDateString()}
                 </td>
-                {/* Views Column */}
                 <td className="border border-gray-300 px-4 py-2">
                   {short.views || 0}
                 </td>
-                {/* Comments Column */}
                 <td className="border border-gray-300 px-4 py-2">
                   {short.comments || 0}
                 </td>
-                {/* Likes vs Dislikes Column */}
                 <td className="border border-gray-300 px-4 py-2">
                   {short.likes || 0} (vs {short.dislikes || 0})
                 </td>

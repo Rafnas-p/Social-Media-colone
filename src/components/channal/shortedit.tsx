@@ -3,8 +3,16 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
 
+interface ShortsDetails {
+  title: string;
+  description: string;
+  audience: string;
+  videoUrl: string;
+  visibility: string;
+}
+
 export default function ShortEditForm() {
-  const [shortsDetails, setshortsDetails] = useState(null);
+  const [shortsDetails, setshortsDetails] = useState<ShortsDetails | null>(null);
   const { shortsId } = useParams();
 
   console.log("shortsId:", shortsId);
@@ -24,16 +32,15 @@ export default function ShortEditForm() {
     fetchVideoById();
   }, [shortsId]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setshortsDetails((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
+    setshortsDetails((prevDetails) => (prevDetails ? { ...prevDetails, [name]: value } : prevDetails));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!shortsDetails) return;
+
     try {
       await axios.put(`http://localhost:5000/api/updateShortsDetails/${shortsId}`, shortsDetails);
       alert("Video details updated successfully!");
@@ -42,15 +49,13 @@ export default function ShortEditForm() {
     }
   };
 
-  if (!shortsDetails) return <p>Loading..jkjkjjkkkjkj.</p>;
+  if (!shortsDetails) return <p>Loading..</p>;
 
   return (
     <div className="min-h-screen flex bg-gray-100">
-      {/* Left Section */}
       <div className="w-1/2 p-8 bg-white border-r-2">
         <h1 className="text-2xl font-bold mb-4">Edit Video Details</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Title */}
           <div>
             <label className="block text-gray-700 font-bold mb-2" htmlFor="title">
               Title
@@ -66,7 +71,6 @@ export default function ShortEditForm() {
             />
           </div>
 
-          {/* Description */}
           <div>
             <label className="block text-gray-700 font-bold mb-2" htmlFor="description">
               Description
@@ -81,7 +85,6 @@ export default function ShortEditForm() {
             />
           </div>
 
-          {/* Audience */}
           <div>
             <label className="block text-gray-700 font-bold mb-2" htmlFor="audience">
               Audience
@@ -99,7 +102,6 @@ export default function ShortEditForm() {
             </select>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
@@ -109,11 +111,9 @@ export default function ShortEditForm() {
         </form>
       </div>
 
-      {/* Right Section */}
       <div className="w-1/2 p-8 bg-white">
         <h2 className="text-xl font-bold mb-4">Video Preview</h2>
         
-        {/* Video Player */}
         <div className="mb-4">
           <video
             controls
@@ -125,13 +125,11 @@ export default function ShortEditForm() {
           </video>
         </div>
 
-        {/* Video Name */}
         <div className="mb-4">
           <label className="block text-gray-700 font-bold mb-2">Video Name</label>
           <p className="text-gray-700">{shortsDetails.title}</p>
         </div>
 
-        {/* Video URL */}
         <div className="mb-4">
           <label className="block text-gray-700 font-bold mb-2" htmlFor="videoUrl">
             Video URL

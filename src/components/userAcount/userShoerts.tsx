@@ -1,8 +1,9 @@
 "use client";
 import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import { useSearchParams } from "next/navigation";
+import { MyContext } from "@/context/vidoContext/VideoContext";
 
 interface Short {
   _id: string;
@@ -16,19 +17,25 @@ interface Short {
   isShort: boolean;
   createdAt: string;
 }
+interface MyContextType {
+  isOpen: boolean;
+}
 
 function UserShorts() {
   const { allUsers } = UserAuth();
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
   const user = allUsers.find((user) => user.displayName === username);
-  
+  const context = useContext(MyContext) as unknown as MyContextType | null;
+  const isOpen = context?.isOpen ?? false;
+
   const [shorts, setShorts] = useState<Short[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentShortIndex, setCurrentShortIndex] = useState<number | null>(
     null
   );
+
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -85,7 +92,11 @@ function UserShorts() {
   }
 
   return (
-    <div className="p-4">
+    <div
+    className={`flex flex-col p-6 transition-all duration-300  ${
+      isOpen ? "ml-64" : "ml-16"
+    } bg-white-100 min-h-screen`}
+  >
       <h2 className="text-lg font-bold mb-4">Your Shorts</h2>
       {Array.isArray(shorts) && shorts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
