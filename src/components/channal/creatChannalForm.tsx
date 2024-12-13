@@ -10,7 +10,6 @@ const CreateChannelForm: React.FC = () => {
   const [description, setDescription] = useState<string>('');
   const [profilePic, setProfilePic] = useState<File | null>(null);
 
-  // Handle file input
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setProfilePic(e.target.files[0]);

@@ -8,7 +8,7 @@ import Link from 'next/link';
 function Sidbar2() {
     const context = useContext(MyContext);
 
-    const { isOpen } = context;
+    const isOpen = context?.isOpen ?? false;
     
 
   return (
@@ -35,12 +35,7 @@ function Sidbar2() {
           </span>
         </button>
         </Link>
-        <button className="flex items-center py-2 px-4 hover:bg-gray-300 transition">
-        
-          <span className={`${isOpen ? "block" : "hidden"} transition-all`}>
-            Subscriptions
-          </span>
-        </button>
+
         </div>
         </div>
    </>

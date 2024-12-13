@@ -8,6 +8,7 @@ import Link from "next/link";
 function Dashbord() {
   const context = useContext(MyContext);
   const [showDescription, setShowDescription] = useState(false);
+  const isOpen = context?.isOpen ?? false;
 
   if (!context) {
     console.error(
@@ -15,7 +16,7 @@ function Dashbord() {
     );
     return null;
   }
-  const { userVideos,isOpen } = context;
+  const { userVideos, } = context;
 
   console.log("isOpen:", isOpen);
 
@@ -23,9 +24,9 @@ function Dashbord() {
 
   return (
     <div
-    className={`flex flex-col p-6 transition-all duration-300 mt-20 ${
+    className={`flex flex-col p-6 transition-all duration-300  ${
       isOpen ? "ml-64" : "ml-16"
-    } bg-white-100 min-h-screen`}
+    }`}
   >
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse border border-gray-300">

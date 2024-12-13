@@ -1,9 +1,16 @@
+"use client"
 import Link from 'next/link';
-import React from 'react';
-
+import React, { useContext } from 'react';
+import { MyContext } from '@/context/vidoContext/VideoContext';
 function Channalnav() {
+  
+  const context=useContext(MyContext)
+  const isOpen = context?.isOpen ?? false;
+
   return (
-    <div className=" text-black  mt-20 ml-20">
+    <div
+    className={`flex flex-col p-6 transition-all duration-300 mt-20 ${
+      isOpen ? "ml-64" : "ml-16"  }`}>
         <h1 className="text-lg font-bold p-8">Channel Content</h1>
 
         <div className="flex space-x-8  ">

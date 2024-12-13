@@ -18,11 +18,7 @@ interface VideoDetails {
   userName: string;
 }
 
-interface User {
-  username: string;
-  profil: string;
-  id: string;
-}
+
 
 interface MyContextType {
   data: VideoDetails[];
@@ -33,14 +29,12 @@ const DisplayData: React.FC = () => {
   const context = useContext(MyContext) as unknown as MyContextType | null;
   const isOpen = context?.isOpen ?? false;
   const [loading, setLoading] = useState<boolean>(true);
-  const {  allUsers } = UserAuth();
 
   if (!context) {
     return <div>Loading...</div>;
   }
 
   const { data } = context;
-  console.log("dtaaa", data);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,8 +48,7 @@ const DisplayData: React.FC = () => {
   return (
     <div
       className={`flex flex-col p-6 transition-all duration-300 mt-20 ${
-        isOpen ? "ml-64" : "ml-16"
-      } bg-white-100 min-h-screen`}
+        isOpen ? "ml-64" : "ml-16"} bg-white-100 min-h-screen`}
     >
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

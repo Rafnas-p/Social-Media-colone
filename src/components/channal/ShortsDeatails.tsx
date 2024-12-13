@@ -8,6 +8,7 @@ import Link from "next/link";
 function ShortsBord() {
   const context = useContext(MyContext);
   const [showDescription, setShowDescription] = useState(false);
+  const isOpen = context?.isOpen ?? false;
 
   if (!context) {
     console.error(
@@ -22,7 +23,9 @@ function ShortsBord() {
   console.log("userVideos", shorts);
 
   return (
-    <div className="mt-20 ml-20">
+    <div
+    className={`flex flex-col p-6 transition-all duration-300  ${
+      isOpen ? "ml-64" : "ml-16"} bg-white-100 min-h-screen`}>
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse border border-gray-300">
           <thead>

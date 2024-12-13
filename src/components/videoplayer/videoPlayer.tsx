@@ -3,10 +3,12 @@
 import React, { useContext, useState, useEffect } from "react";
 import { MyContext } from "../../context/vidoContext/VideoContext";
 import { useParams, useRouter } from "next/navigation";
+import { AiOutlineDislike } from "react-icons/ai";
+import { AiOutlineLike } from "react-icons/ai";
+
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axios from "axios";
 import Link from "next/link";
-
 interface VideoDetails {
   _id: string;
   title: string;
@@ -40,6 +42,8 @@ const VideoPlayer: React.FC = () => {
   const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
   const [comments, setComments] = useState<CommentSnippet[]>([]);
   const [newComment, setNewComment] = useState<string>("");
+  const [liked, setLiked] = useState<boolean>(false);
+
   const { user } = UserAuth();
 
   if (!context) {
@@ -112,11 +116,11 @@ const VideoPlayer: React.FC = () => {
   function getRelativeTime(dateString: string): string {
     const now = new Date();
     const date = new Date(dateString);
-    const diffInMs = now.getTime() - date.getTime(); 
+    const diffInMs = now.getTime() - date.getTime();
     const diffInMinutes = Math.floor(diffInMs / 60000);
     const diffInHours = Math.floor(diffInMinutes / 60);
     const diffInDays = Math.floor(diffInHours / 24);
-    const diffInMonths = Math.floor(diffInDays / 30); 
+    const diffInMonths = Math.floor(diffInDays / 30);
     const diffInYears = Math.floor(diffInMonths / 12);
 
     if (diffInMinutes < 60) {
@@ -158,13 +162,22 @@ const VideoPlayer: React.FC = () => {
             />
             <h4>{user?.displayName}</h4>
           </Link>
+          <div className="flex items-center border focus:ring-2 shadow-md bg-white rounded-md overflow-hidden cursor-pointer">
+            <div className="p-3 rounded-r-none border-r bg-gray-100 flex-1 flex justify-center items-center cursor-pointer">
+              <AiOutlineLike />
+            </div>
+
+            <div className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center">
+              <AiOutlineDislike />
+            </div>
+          </div>
         </div>
 
         <div className="mt-6">
           <h2 className="text-lg font-semibold">Comments</h2>
           <div className="flex items-center space-x-2 mt-3">
             <img
-              src={videoDetails?.profil || "/default-profile.png"}
+              src={videoDetails?.profil || ""}
               alt="User Profile"
               className="w-10 h-10 rounded-full object-cover"
             />
