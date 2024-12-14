@@ -1,92 +1,144 @@
-"use client"
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+"use client";
+import React, { useState } from "react";
 import { UserAuth } from "@/context/authcontext/authcontext";
+import axios from "axios";
+
+interface ChannelData {
+  name: string;
+  ownerId: string;
+  photoURL: string;
+  handil: string;
+}
 
 const CreateChannelForm: React.FC = () => {
-  const { user } = UserAuth(); 
-  const username = user?.displayName || ''; 
+  const { user } = UserAuth();
+  console.log("user ", user);
 
-  const [channelName, setChannelName] = useState<string>(username);
-  const [description, setDescription] = useState<string>('');
-  const [profilePic, setProfilePic] = useState<File | null>(null);
+  const [channelData, setChannelData] = useState<ChannelData>({
+    name: user?.displayName || "", 
+    ownerId: user?.uid || "", 
+    photoURL: user?.photoURL || "", 
+    handil: `@${user?.displayName || ""}`.trim(), 
+  });
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setProfilePic(e.target.files[0]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>("");
+  const [previewImage, setPreviewImage] = useState<string>(user?.photoURL || "");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setChannelData((prevData) => ({
+      ...prevData,
+      [name]: name === "handil" ? value.trim() : value, 
+    }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const fileURL = URL.createObjectURL(file);
+      setPreviewImage(fileURL); 
+      setChannelData((prevData) => ({
+        ...prevData,
+        photoURL: fileURL, 
+      }));
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setMessage("");
+
+  try {
     const formData = new FormData();
-    formData.append('channelName', channelName);
-    formData.append('description', description);
-    if (profilePic) {
-      formData.append('profilePic', profilePic);
+
+    const fileInput = document.querySelector<HTMLInputElement>("input[type='file']");
+    if (fileInput?.files?.[0]) {
+      formData.append("image", fileInput.files[0]); 
     }
 
-    console.log("Form submitted:", {
-      channelName,
-      description,
-      profilePic,
+    formData.append("name", channelData.name);
+    formData.append("ownerId", channelData.ownerId);
+    formData.append("handil", channelData.handil);
+
+    const response = await axios.post("http://localhost:5000/api/create-channel", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data", 
+      },
     });
-  };
+
+    setMessage(response.data.message);
+  } catch (error: any) {
+    setMessage(error.response?.data?.message || "Something went wrong!");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
-    <div className="max-w-md mx-auto mt-8 p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold text-center mb-4">Create Your Channel</h2>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
+    <div className="max-w-md mx-auto mt-10 p-5 border rounded-md shadow-md bg-white">
+      <h1 className="text-lg font-bold mb-4">
+        {channelData.name ? "Edit Channel" : "Create Channel"}
+      </h1>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4 text-center">
+          <img
+            src={previewImage || channelData.photoURL}
+            alt="User"
+            className="w-24 h-24 rounded-full mx-auto mb-3"
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="block mx-auto text-sm"
+          />
+        </div>
+
         <div className="mb-4">
-          <label htmlFor="channelName" className="block text-sm font-medium text-gray-700 mb-2">
-            Channel Name
+          <label htmlFor="name" className="block font-semibold mb-1">
+            Channel Name:
           </label>
           <input
             type="text"
-            id="channelName"
-            name="channelName"
-            value={channelName}
-            onChange={(e) => setChannelName(e.target.value)}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            id="name"
+            name="name"
+            value={channelData.name}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
             required
           />
         </div>
 
         <div className="mb-4">
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-            Channel Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows={4}
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="profilePic" className="block text-sm font-medium text-gray-700 mb-2">
-            Profile Picture
+          <label htmlFor="handil" className="block font-semibold mb-1">
+            Handle:
           </label>
           <input
-            type="file"
-            id="profilePic"
-            name="profilePic"
-            onChange={handleFileChange}
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="text"
+            id="handil"
+            name="handil"
+            value={channelData.handil}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
           />
         </div>
 
-        <div className="mt-6">
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
-          >
-            Create Channel
-          </button>
-        </div>
+        <input type="hidden" name="ownerId" value={channelData.ownerId} />
+
+        <button
+          type="submit"
+          className={`w-full py-2 rounded ${loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"} text-white font-bold`}
+          disabled={loading}
+        >
+          {loading ? "Saving..." : channelData.name ? "Update Channel" : "Create Channel"}
+        </button>
       </form>
+
+      {message && <p className="mt-4 text-center text-red-500">{message}</p>}
     </div>
   );
 };

@@ -146,7 +146,7 @@ const VideoPlayer: React.FC = () => {
           ></video>
         </div>
 
-        <div className="flex flex-col ">
+        <div className="flex iteflex-col ">
           <h1 className="text-lg font-bold">{videoDetails.title}</h1>
           <p className="text-sm">{videoDetails.description}</p>
         </div>
@@ -162,6 +162,9 @@ const VideoPlayer: React.FC = () => {
             />
             <h4>{user?.displayName}</h4>
           </Link>
+         <button className="bg-black text-white rounded-full text-sm p-1 ">
+           subscrib
+         </button>
           <div className="flex items-center border focus:ring-2 shadow-md bg-white rounded-md overflow-hidden cursor-pointer">
             <div className="p-3 rounded-r-none border-r bg-gray-100 flex-1 flex justify-center items-center cursor-pointer">
               <AiOutlineLike />
