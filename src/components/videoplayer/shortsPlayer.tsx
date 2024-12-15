@@ -28,6 +28,9 @@ function DisplayShorts() {
   const [error, setError] = useState<string | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
+
+
+  
   useEffect(() => {
     const fetchAllShorts = async () => {
       try {

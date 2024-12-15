@@ -27,24 +27,24 @@ interface SearchDataItem {
   };
 }
 
-
 interface MyContextType {
   selectedcat: string;
   setselectedcat: (newValue: string) => void;
   data: Video[];
-  comments: Comment[];
+  comments?: Comment[]; // Optional property
   fetchComments?: (videoId: string) => void;
   isOpen: boolean;
   toggleSidebar: () => void;
-  searchData: SearchDataItem[];
+  searchData?: SearchDataItem[]; // Optional property
   loading: boolean;
   error: string | null;
   filteredData: SearchItem[];
   setFilteredData: (data: SearchItem[]) => void;
   userVideos: Video[];
   shorts: Video[];
-  
+  channels: any[]; // Add channels here
 }
+
 
 
 interface VideoSnippet {
@@ -112,6 +112,9 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   const [filteredData, setFilteredData] = useState<SearchItem[]>([]);
   const [userVideos, setUserVideos] = useState<Video[]>([]);
   const [shorts, setShorts] = useState<Video[]>([]);
+   const [channels, setChannels] = useState<any[]>([]);
+    const [like,setLike]=useState<any[]>(0)
+  
   const { user } = UserAuth();
 
 
@@ -144,7 +147,33 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
     fetchAllVideos();
   }, []);
 
-  
+
+  useEffect(() => {
+    const fetchChannels = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          "http://localhost:5000/api/getchannel",
+          {
+            params: { ownerId: user?.uid },
+          }
+        );
+        setChannels(response.data);
+      } catch (err: any) {
+        setError(err.response?.data?.message || "Failed to fetch channels.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user?.uid) {
+      fetchChannels();
+    }
+  }, [user?.uid]);
+
+  console.log("channels", channels);
+
+
   useEffect(() => {
     const fetchVideosById = async () => {
       try {
@@ -199,6 +228,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
        setFilteredData,
        userVideos,
        shorts,
+       channels,
     }}>
       {children}
     </MyContext.Provider>

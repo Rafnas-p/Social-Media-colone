@@ -2,7 +2,6 @@
 
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { UserAuth } from "@/context/authcontext/authcontext";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -18,16 +17,45 @@ interface MyContextType {
 
 const UserVideos: React.FC = () => {
   const context = useContext(MyContext) as unknown as MyContextType | null;
+const [channels, setChannels] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const { allUsers } = UserAuth();
+  
   const searchParams = useSearchParams();
   const isOpen = context?.isOpen ?? false;
 
   const username = searchParams.get("username");
-  const user = allUsers.find((user) => user.displayName === username);
+  
 
-  const [videos, setVideos] = useState<Video[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  
+
+  useEffect(() => {
+    const fetchChannels = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          "http://localhost:5000/api/getChannelsByName",
+          {
+            params: { userName:username },
+          }
+        );
+        setChannels(response.data);
+      } catch (err: any) {
+        setError(err.response?.data?.message || "Failed to fetch channels.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (username) {
+      fetchChannels();
+    }
+  }, [username]);
+  
+  const user = channels.find((user) => user.name === username);
+  console.log("channels",user);
 
   useEffect(() => {
     const fetchVideos = async () => {

@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent, useContext } from "react";
 import axios from "axios";
 import { UserAuth } from "@/context/authcontext/authcontext";
-
+import { MyContext } from "@/context/vidoContext/VideoContext";
 const VideoUploadComponent: React.FC = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null); 
@@ -12,8 +12,8 @@ const VideoUploadComponent: React.FC = () => {
   const [title, setTitle] = useState<string>("");
   const [category, setCategory] = useState<string>("video");
   const { user } = UserAuth();
-  
-
+  const context=useContext(MyContext)
+const {channels}=context;
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
@@ -47,9 +47,9 @@ const VideoUploadComponent: React.FC = () => {
     const formData = new FormData();
     formData.append("video", videoFile);
     formData.append("description", description);
-    formData.append("userId", user?.uid || "");
-    formData.append("profil", user?.photoURL || "");
-    formData.append("userName", user?.displayName || "");
+    formData.append("userId", channels?.uid || "");
+    formData.append("profil", channels?.photoURL || "");
+    formData.append("userName", channels?.name || "");
 
     formData.append("title", title);
     formData.append("category", category);

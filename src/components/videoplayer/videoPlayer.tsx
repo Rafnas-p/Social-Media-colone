@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, ReactNode } from "react";
 import { MyContext } from "../../context/vidoContext/VideoContext";
 import { useParams, useRouter } from "next/navigation";
 import { AiOutlineDislike } from "react-icons/ai";
@@ -10,12 +10,16 @@ import { UserAuth } from "@/context/authcontext/authcontext";
 import axios from "axios";
 import Link from "next/link";
 interface VideoDetails {
+  likes: any;
+  name: ReactNode;
+  totalSubscribers: ReactNode;
+  photoURL: string;
   _id: string;
   title: string;
   description: string;
   videoUrl: string;
   userName: string;
-  profil: string;
+  profil: string|null;
   createdAt: string;
 }
 
@@ -43,41 +47,14 @@ const VideoPlayer: React.FC = () => {
   const [comments, setComments] = useState<CommentSnippet[]>([]);
   const [newComment, setNewComment] = useState<string>("");
   const [liked, setLiked] = useState<boolean>(false);
-  const [channels, setChannels] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
+ 
   const { user } = UserAuth();
-
+const {channels}=context;
   if (!context) {
     throw new Error("MyContext must be used within a provider");
   }
 
-  useEffect(() => {
-    const fetchChannels = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          "http://localhost:5000/api/getchannel",
-          {
-            params: { ownerId: user?.uid },
-          }
-        );
-        setChannels(response.data);
-      } catch (err: any) {
-        setError(err.response?.data?.message || "Failed to fetch channels.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (user?.uid) {
-      fetchChannels();
-    }
-  }, [user?.uid]);
-
-  console.log("channels", channels);
-
+  
   useEffect(() => {
     const fetchVideoById = async () => {
       if (!currentVideoId) return;
@@ -166,8 +143,7 @@ const VideoPlayer: React.FC = () => {
   return (
     <div className="flex flex-col lg:flex-row px-4 mt-20 ml-14 bg-white text-gray-800 min-h-screen space-y-4 lg:space-y-0 lg:space-x-6">
       <div className="w-full lg:w-2/3 max-w-3xl space-y-4">
-        {channels.map((items, index) => (
-          <div key={items._id || index}>
+       
             <div className="w-full bg-black rounded-xl overflow-hidden shadow-md">
               <video
                 className="w-full h-[400px] object-cover"
@@ -178,7 +154,6 @@ const VideoPlayer: React.FC = () => {
             </div>
             <div className="flex iteflex-col ">
               <h1 className="text-lg font-bold">{videoDetails.title}</h1>
-              <p className="text-sm">{videoDetails.description}</p>
             </div>
             <div className="flex items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
               <Link
@@ -186,15 +161,15 @@ const VideoPlayer: React.FC = () => {
                 className="flex items-center space-x-4"
               >
                 <img
-                  src={items?.photoURL || ""}
+                  src={videoDetails?.profil || null}
                   alt="Profile"
                   className="w-8 h-8 rounded-full object-cover cursor-pointer"
                 />
 
                 <div className="flex flex-col">
-                  <h4 className="font-semibold">{items?.name}</h4>
+                  <h4 className="font-semibold">{videoDetails?.userName}</h4>
                   <p className="text-sm text-gray-500">
-                    {items?.totalSubscribers} subscribers
+                    {videoDetails?.totalSubscribers} subscribers
                   </p>
                 </div>
               </Link>
@@ -206,6 +181,7 @@ const VideoPlayer: React.FC = () => {
               <div className="flex items-center border focus:ring-2 shadow-md bg-white rounded-md overflow-hidden cursor-pointer">
                 <div className="p-3 rounded-r-none border-r bg-gray-100 flex-1 flex justify-center items-center cursor-pointer">
                   <AiOutlineLike />
+                  <p>{videoDetails?.likes.length}</p>
                 </div>
                 <div className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center">
                   <AiOutlineDislike />
@@ -241,8 +217,8 @@ const VideoPlayer: React.FC = () => {
                 {comments.map((comment) => (
                   <div key={comment._id} className="flex items-start space-x-3">
                     <img
-                      src={comment?.userProfile || ""}
-                      alt={comment.userName}
+                      src={ channels? channels.photoURL: comment?.userProfile || ""}
+                      alt={channels? channels.name:comment.userName}
                       className="w-8 h-8 rounded-full object-cover"
                     />
                     <div>
@@ -259,8 +235,8 @@ const VideoPlayer: React.FC = () => {
               </div>
             </div>
           </div>
-        ))}
-      </div>
+       
+      
 
       <div className="w-full lg:w-1/3 pr-11">
         {context.data

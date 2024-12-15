@@ -12,7 +12,7 @@ function Navbar2() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   const context = useContext(MyContext);
-  const { toggleSidebar } = context;
+  const { toggleSidebar,channels } = context;
   const { user, logOut } = UserAuth();
 
   const handleSignOut = async () => {
@@ -91,6 +91,7 @@ function Navbar2() {
                   <p className="text-sm text-gray-600">{user?.displayName}</p>
                 </div>
               </div>
+              
               <Link
                 href="/userAcount"
                 className="block px-4 py-2 text-blue-600 hover:text-blue-800 hover:underline"

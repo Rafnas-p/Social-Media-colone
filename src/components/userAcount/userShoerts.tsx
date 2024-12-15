@@ -22,12 +22,11 @@ interface MyContextType {
 }
 
 function UserShorts() {
-  const { allUsers } = UserAuth();
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
-  const user = allUsers.find((user) => user.displayName === username);
   const context = useContext(MyContext) as unknown as MyContextType | null;
   const isOpen = context?.isOpen ?? false;
+const [channels, setChannels] = useState<any[]>([]);
 
   const [shorts, setShorts] = useState<Short[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,6 +36,36 @@ function UserShorts() {
   );
 
   const modalRef = useRef<HTMLDivElement>(null);
+
+
+
+  useEffect(() => {
+    const fetchChannels = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          "http://localhost:5000/api/getChannelsByName",
+          {
+            params: { userName:username },
+          }
+        );
+        setChannels(response.data);
+      } catch (err: any) {
+        setError(err.response?.data?.message || "Failed to fetch channels.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (username) {
+      fetchChannels();
+    }
+  }, [username]);
+
+
+
+
+  const user = channels.find((user) => user.name === username);
 
   useEffect(() => {
     const fetchShorts = async () => {
