@@ -5,10 +5,10 @@ import { MyContext } from "../../context/vidoContext/VideoContext";
 import { useParams, useRouter } from "next/navigation";
 import { AiOutlineDislike } from "react-icons/ai";
 import { AiOutlineLike } from "react-icons/ai";
-
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axios from "axios";
 import Link from "next/link";
+
 interface VideoDetails {
   likes: any;
   name: ReactNode;
@@ -19,7 +19,7 @@ interface VideoDetails {
   description: string;
   videoUrl: string;
   userName: string;
-  profil: string|null;
+  profil: string | null;
   createdAt: string;
 }
 
@@ -46,15 +46,15 @@ const VideoPlayer: React.FC = () => {
   const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
   const [comments, setComments] = useState<CommentSnippet[]>([]);
   const [newComment, setNewComment] = useState<string>("");
-  const [liked, setLiked] = useState<boolean>(false);
- 
+  const [liked, setLiked] = useState<string>("");
   const { user } = UserAuth();
-const {channels}=context;
+  const { channels } = context;
+
   if (!context) {
     throw new Error("MyContext must be used within a provider");
   }
 
-  
+  // Fetch video details
   useEffect(() => {
     const fetchVideoById = async () => {
       if (!currentVideoId) return;
@@ -72,6 +72,7 @@ const {channels}=context;
     fetchVideoById();
   }, [currentVideoId]);
 
+  // Fetch comments
   useEffect(() => {
     const fetchComments = async () => {
       if (!currentVideoId) return;
@@ -87,6 +88,26 @@ const {channels}=context;
 
     fetchComments();
   }, [currentVideoId]);
+
+  // Fetch like count
+  useEffect(() => {
+    const fetchLikes = async () => {
+      if (!videoDetails) return;
+
+      try {
+        const response = await axios.post("http://localhost:5000/api/likeVideo", {
+          _id: videoDetails._id,
+          uid: user?.uid,
+        });
+
+        setLiked(response.data.likesCount);
+      } catch (error) {
+        console.error("Error liking the video:", error);
+      }
+    };
+
+    fetchLikes();
+  }, [videoDetails, user?.uid]);
 
   const postComment = async () => {
     if (!newComment.trim()) return;
@@ -112,7 +133,6 @@ const {channels}=context;
   if (!videoDetails) {
     return <div>Loading or Video not found!</div>;
   }
-  console.log("currentVideoId", currentVideoId);
 
   const handleVideoClick = (videoId: string) => {
     setCurrentVideoId(videoId);
@@ -140,6 +160,24 @@ const {channels}=context;
     }
   }
 
+  const handleLike = async () => {
+    if (!videoDetails || !user?.uid) return;
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/likeVideo", {
+        _id: videoDetails._id,
+        uid: user?.uid,
+      });
+
+      setLiked(response.data.likesCount);
+    } catch (error) {
+      console.error("Error liking the video:", error);
+    }
+  };
+
+  
+    
+  
   return (
     <div className="flex flex-col lg:flex-row px-4 mt-20 ml-14 bg-white text-gray-800 min-h-screen space-y-4 lg:space-y-0 lg:space-x-6">
       <div className="w-full lg:w-2/3 max-w-3xl space-y-4">
@@ -179,13 +217,13 @@ const {channels}=context;
               </button>
 
               <div className="flex items-center border focus:ring-2 shadow-md bg-white rounded-md overflow-hidden cursor-pointer">
-                <div className="p-3 rounded-r-none border-r bg-gray-100 flex-1 flex justify-center items-center cursor-pointer">
-                  <AiOutlineLike />
-                  <p>{videoDetails?.likes.length}</p>
-                </div>
-                <div className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center">
+                <button onClick={handleLike} className="p-3 rounded-r-none border-r bg-gray-100 flex-1 flex justify-center items-center cursor-pointer">
+                  <AiOutlineLike  />
+                  <p>{liked}</p>
+                </button>
+                <button className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center">
                   <AiOutlineDislike />
-                </div>
+                </button>
               </div>
             </div>
 
