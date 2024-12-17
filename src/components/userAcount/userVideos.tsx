@@ -62,7 +62,7 @@ const [channels, setChannels] = useState<any[]>([]);
       try {
         if (!user?.uid) return;
         const response = await axios.get("http://localhost:5000/api/videos", {
-          params: { userId: user.uid },
+          params: { uid: user.uid },
         });
 
         setVideos(response.data.videos);

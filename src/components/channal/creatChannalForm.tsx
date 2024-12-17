@@ -61,7 +61,7 @@ const CreateChannelForm: React.FC = () => {
     formData.append("name", channelData.name);
     formData.append("ownerId", channelData.ownerId);
     formData.append("handil", channelData.handil);
-
+  formData.append("photoURL",channelData.photoURL)
     const response = await axios.post("http://localhost:5000/api/create-channel", formData, {
       headers: {
         "Content-Type": "multipart/form-data", 

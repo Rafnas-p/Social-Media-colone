@@ -5,6 +5,7 @@ import { UserAuth } from "@/context/authcontext/authcontext";
 import Link from "next/link";
 
 interface VideoDetails {
+  uid: any;
   createdAt: string;
   description: string;
   duration: number;
@@ -101,7 +102,7 @@ const DisplayData: React.FC = () => {
                   className="flex-shrink-0"
                 >
                   <img
-                    src={item.profil}
+                    src={item.uid.photoURL}
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover cursor-pointer"
                   />
@@ -110,7 +111,7 @@ const DisplayData: React.FC = () => {
                 <Link href={`/videos/${item._id}`} className="flex-grow">
                   <div className="flex flex-col">
                     <p className="text-sm font-semibold text-gray-800">
-                      {item.description}
+                      {item.title}
                     </p>
                     <p className="text-xs text-gray-500">{item.userName} </p>
                   </div>

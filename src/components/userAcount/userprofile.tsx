@@ -56,8 +56,8 @@ const Userprofile: React.FC = () => {
 
   const selectedUser = channels.find((u: User) => u.name === username);
 
-
 console.log('me',selectedUser);
+
 
   if (!selectedUser) {
     return <div>User not found</div>;
@@ -66,7 +66,6 @@ console.log('me',selectedUser);
   const { isOpen } = context || { isOpen: false }; 
 
   const isCurrentUser = user?.uid === selectedUser.uid;
-   console.log('hana',isCurrentUser);
    
   return (
     <>
@@ -76,7 +75,7 @@ console.log('me',selectedUser);
         }`}
       >
         <img
-          src={ selectedUser.photoURL || ""}
+          src={ selectedUser.profile          }
           alt="Profile"
           className="w-28 h-28 rounded-full"
         />

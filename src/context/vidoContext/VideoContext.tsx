@@ -179,7 +179,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
       try {
         if (!user?.uid) return;
         const response = await axios.get("http://localhost:5000/api/videos", {
-          params: { userId: user.uid },
+          params: { uid: user.uid },
         });
 
         setUserVideos(response.data.videos);

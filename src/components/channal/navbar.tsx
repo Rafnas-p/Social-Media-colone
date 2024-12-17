@@ -13,6 +13,10 @@ function Navbar2() {
 
   const context = useContext(MyContext);
   const { toggleSidebar,channels } = context;
+  console.log('channels26',channels);
+  
+  const channel=channels.length !== 0;
+
   const { user, logOut } = UserAuth();
 
   const handleSignOut = async () => {
@@ -71,7 +75,7 @@ function Navbar2() {
             aria-label="Profile"
           >
             <img
-              src={user?.photoURL || "https://via.placeholder.com/150"}
+              src={ channel? channels.profile:user?.photoURL }
               alt="Profile"
               className="w-8 h-8 rounded-full"
             />
@@ -80,9 +84,7 @@ function Navbar2() {
             <div className="absolute top-2 mr-9 right-0 w-56 bg-white shadow-lg rounded-md z-20">
               <div className="flex items-center px-4 py-2 text-gray-800">
                 <img
-                  src={
-                    user?.photoURL || "https://via.placeholder.com/600/61a65"
-                  }
+                  src={ channel? channels.profile:user?.photoURL }
                   alt="Profile"
                   className="w-10 h-10 rounded-full"
                 />
@@ -92,12 +94,12 @@ function Navbar2() {
                 </div>
               </div>
               
-              <Link
+              {/* <Link
                 href="/userAcount"
                 className="block px-4 py-2 text-blue-600 hover:text-blue-800 hover:underline"
               >
                 Create a Channel
-              </Link>
+              </Link> */}
               <hr className="my-2 border-gray-300" />
               <button
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left"

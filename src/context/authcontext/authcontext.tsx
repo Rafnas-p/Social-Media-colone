@@ -52,27 +52,29 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
     try {
       const response = await fetch("http://localhost:5000/api/users", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           uid,
           email,
-          displayName:displayName || "Anonymous User", 
+          displayName: displayName || "Anonymous User",
           photoURL,
-          channelName: (displayName || "AnonymousUser").replace(/\s+/g, "").toLowerCase(),
+          channelName: (displayName || "Anonymous User").replace(/\s+/g, "").toLowerCase(),
         }),
       });
   
       const data = await response.json();
+  
       if (!response.ok) {
+        console.error("Error response from backend:", data); // Log backend response
         throw new Error(data.message || "Failed to save user");
       }
-      console.log("User saved successfully:", data.user);
+  
+      console.log("User saved successfully:", data);
     } catch (error) {
       console.error("Error saving user to database:", error);
     }
   };
+  
   
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {

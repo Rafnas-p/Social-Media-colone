@@ -10,6 +10,8 @@ import axios from "axios";
 import Link from "next/link";
 
 interface VideoDetails {
+  uid: any;
+  userId: string |null;
   likes: any;
   name: ReactNode;
   totalSubscribers: ReactNode;
@@ -21,6 +23,7 @@ interface VideoDetails {
   userName: string;
   profil: string | null;
   createdAt: string;
+  videoDetails: VideoDetails | null
 }
 
 interface CommentSnippet {
@@ -47,8 +50,11 @@ const VideoPlayer: React.FC = () => {
   const [comments, setComments] = useState<CommentSnippet[]>([]);
   const [newComment, setNewComment] = useState<string>("");
   const [liked, setLiked] = useState<string>("");
+  const [like, setLike] = useState([]);
+  const [subscribe, setSubscribe] = useState("");
   const { user } = UserAuth();
   const { channels } = context;
+  const channel=channels.length !== 0;
 
   if (!context) {
     throw new Error("MyContext must be used within a provider");
@@ -95,12 +101,16 @@ const VideoPlayer: React.FC = () => {
       if (!videoDetails) return;
 
       try {
-        const response = await axios.post("http://localhost:5000/api/likeVideo", {
-          _id: videoDetails._id,
-          uid: user?.uid,
-        });
+        const response = await axios.post(
+          "http://localhost:5000/api/likeVideo",
+          {
+            _id: videoDetails._id,
+            uid: user?.uid,
+          }
+        );
 
         setLiked(response.data.likesCount);
+        setLike(response.data.likes);
       } catch (error) {
         console.error("Error liking the video:", error);
       }
@@ -108,6 +118,40 @@ const VideoPlayer: React.FC = () => {
 
     fetchLikes();
   }, [videoDetails, user?.uid]);
+
+
+
+
+
+
+
+ // Fetch like count
+ useEffect(() => {
+  const fetchsubscibs = async () => {
+    if (!videoDetails || !videoDetails.userId || !channels) return; // Ensure all required data is available
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/subscribChannel", {
+        uid: videoDetails.userId,
+        channelId: channels._id,
+      });
+
+      setSubscribe(response.data.totalSubscribers);
+    } catch (error) {
+      console.error("Error fetching subscriptions:", error);
+    }
+  };
+
+  fetchsubscibs();
+}, [videoDetails, channels]);
+
+
+
+
+
+
+
+
 
   const postComment = async () => {
     if (!newComment.trim()) return;
@@ -170,111 +214,157 @@ const VideoPlayer: React.FC = () => {
       });
 
       setLiked(response.data.likesCount);
+      setLike(response.data.likes);
     } catch (error) {
       console.error("Error liking the video:", error);
     }
   };
 
-  
-    
-  
-  return (
-    <div className="flex flex-col lg:flex-row px-4 mt-20 ml-14 bg-white text-gray-800 min-h-screen space-y-4 lg:space-y-0 lg:space-x-6">
-      <div className="w-full lg:w-2/3 max-w-3xl space-y-4">
-       
-            <div className="w-full bg-black rounded-xl overflow-hidden shadow-md">
-              <video
-                className="w-full h-[400px] object-cover"
-                src={videoDetails.videoUrl}
-                title="Video Player"
-                controls
-              ></video>
-            </div>
-            <div className="flex iteflex-col ">
-              <h1 className="text-lg font-bold">{videoDetails.title}</h1>
-            </div>
-            <div className="flex items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
-              <Link
-                href={`/userAcount?username=${videoDetails.userName}`}
-                className="flex items-center space-x-4"
-              >
-                <img
-                  src={videoDetails?.profil || null}
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover cursor-pointer"
-                />
+  const handilDislike = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/dislikeVideo",
+        {
+          _id: videoDetails._id,
+          uid: user?.uid,
+        }
+      );
 
-                <div className="flex flex-col">
-                  <h4 className="font-semibold">{videoDetails?.userName}</h4>
-                  <p className="text-sm text-gray-500">
-                    {videoDetails?.totalSubscribers} subscribers
+      setLiked(response.data.likesCount);
+      setLike(response.data.likes);
+    } catch (error) {
+      console.error("Error disliking the video:", error);
+    }
+  };
+  let userId = user?.uid;
+
+  const isliked = like.find((user) => user === userId);
+
+  // const handilSubscrib = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:5000/api/subscribChannel",
+  //       {
+  //         channelId: channels._id,
+  //         uid: user?.uid,
+  //       }
+  //     );
+  //     console.log("API Response:", response.data); // Debug the response data
+
+  //     setSubscribe(response.data.totalSubscribers);
+  //   } catch (error: any) {
+  //     console.error("Errorsubscrib channel:", error);
+  //   }
+  // };
+  console.log("subscribs",videoDetails );
+
+  return (
+    <div className="flex  flex-col lg:flex-row px-4 mt-20 ml-14 bg-white text-gray-800 min-h-screen space-y-4 lg:space-y-0 lg:space-x-6">
+      <div className="w-full lg:w-2/3 max-w-3xl space-y-4">
+        <div className="w-full bg-black rounded-xl overflow-hidden shadow-md">
+          <video
+            className="w-full h-[400px] object-cover"
+            src={videoDetails.videoUrl}
+            title="Video Player"
+            controls
+          ></video>
+        </div>
+        <div className="flex iteflex-col ">
+          <h1 className="text-lg font-bold">{videoDetails.title}</h1>
+        </div>
+        <div className="flex justify-between items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+          <div className="flex">
+            <Link
+              href={`/userAcount?username=${videoDetails.userName}`}
+              className="flex items-center space-x-4"
+            >
+              <img
+                src={videoDetails?.uid.photoURL || null}
+                alt="Profile"
+                className="w-8 h-8 rounded-full object-cover cursor-pointer"
+              />
+
+              <div className="flex flex-col">
+                <h4 className="font-semibold">{videoDetails?.userName}</h4>
+                <p className="text-sm text-gray-500">{subscribe} subscribers</p>
+              </div>
+            </Link>
+            <button
+              // onClick={handilSubscrib}
+              className="bg-black text-white rounded-full w-27 h-9  ml-10 text-sm p-1"
+            >
+              Subscribe
+            </button>
+          </div>
+
+          <div className="flex border focus:ring-2  bg-gray-50 w-28 h-8 rounded-full overflow-hidden cursor-pointer">
+            <button
+              onClick={handleLike}
+              className="p-3 rounded-r-none border-r bg-gray-100 flex-1 flex justify-center items-center cursor-pointer"
+            >
+              <AiOutlineLike
+                className={isliked ? `text-red-500 fill-red-500` : ""}
+              />
+
+              <p>{liked}</p>
+            </button>
+            <button
+              onClick={handilDislike}
+              className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center"
+            >
+              <AiOutlineDislike
+                className={isliked ? "" : `text-red-500 fill-red-500`}
+              />
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <h2 className="text-lg font-semibold">Comments</h2>
+          <div className="flex items-center space-x-2 mt-3">
+            <img
+              src={channel? channels.profile: user?.photoURL}
+              alt="User Profile"
+              className="w-10 h-10 rounded-full object-cover"
+            />
+
+            <input
+              type="text"
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              className="flex-1 border-b border-gray-300 focus:border-black px-3 py-2 text-sm outline-none transition"
+            />
+
+            <button
+              onClick={postComment}
+              className="text-black font-medium hover:bg-blue-50 px-4 py-1 rounded transition"
+            >
+              Post
+            </button>
+          </div>
+          <div className="mt-5 space-y-4">
+            {comments.map((comment) => (
+              <div key={comment._id} className="flex items-start space-x-3">
+                <img
+                  src={
+                     comment?.userProfile || null
+                  }
+                  alt={channels ? channels.name : comment.userName}
+                  className="w-8 h-8 rounded-full object-cover"
+                />
+                <div>
+                  <p className="text-sm font-semibold">{comment.userName}</p>
+                  <p className="text-sm">{comment.text}</p>
+                  <p className="text-xs text-gray-500">
+                    {getRelativeTime(comment.createdAt)}
                   </p>
                 </div>
-              </Link>
-
-              <button className="bg-black text-white rounded-full text-sm p-1">
-                Subscribe
-              </button>
-
-              <div className="flex items-center border focus:ring-2 shadow-md bg-white rounded-md overflow-hidden cursor-pointer">
-                <button onClick={handleLike} className="p-3 rounded-r-none border-r bg-gray-100 flex-1 flex justify-center items-center cursor-pointer">
-                  <AiOutlineLike  />
-                  <p>{liked}</p>
-                </button>
-                <button className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center">
-                  <AiOutlineDislike />
-                </button>
               </div>
-            </div>
-
-            <div className="mt-6">
-              <h2 className="text-lg font-semibold">Comments</h2>
-              <div className="flex items-center space-x-2 mt-3">
-                <img
-                  src={videoDetails?.profil || ""}
-                  alt="User Profile"
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-
-                <input
-                  type="text"
-                  placeholder="Write a comment..."
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  className="flex-1 border-b border-gray-300 focus:border-black px-3 py-2 text-sm outline-none transition"
-                />
-
-                <button
-                  onClick={postComment}
-                  className="text-black font-medium hover:bg-blue-50 px-4 py-1 rounded transition"
-                >
-                  Post
-                </button>
-              </div>
-              <div className="mt-5 space-y-4">
-                {comments.map((comment) => (
-                  <div key={comment._id} className="flex items-start space-x-3">
-                    <img
-                      src={ channels? channels.photoURL: comment?.userProfile || ""}
-                      alt={channels? channels.name:comment.userName}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                    <div>
-                      <p className="text-sm font-semibold">
-                        {comment.userName}
-                      </p>
-                      <p className="text-sm">{comment.text}</p>
-                      <p className="text-xs text-gray-500">
-                        {getRelativeTime(comment.createdAt)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
-       
-      
+        </div>
+      </div>
 
       <div className="w-full lg:w-1/3 pr-11">
         {context.data

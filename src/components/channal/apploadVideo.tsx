@@ -3,6 +3,7 @@ import React, { useState, ChangeEvent, FormEvent, useContext } from "react";
 import axios from "axios";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import { MyContext } from "@/context/vidoContext/VideoContext";
+import { channel } from "diagnostics_channel";
 const VideoUploadComponent: React.FC = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null); 
@@ -47,9 +48,10 @@ const {channels}=context;
     const formData = new FormData();
     formData.append("video", videoFile);
     formData.append("description", description);
-    formData.append("userId", channels?.uid || "");
+    formData.append("uid", channels?.uid || "");
     formData.append("profil", channels?.photoURL || "");
     formData.append("userName", channels?.name || "");
+    formData.append("channelId",channels?._id)
 
     formData.append("title", title);
     formData.append("category", category);
