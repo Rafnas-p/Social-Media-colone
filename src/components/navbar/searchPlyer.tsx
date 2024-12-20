@@ -13,6 +13,7 @@ interface VideoId {
 }
 
 interface SearchDataItem {
+  channelId: any;
   id: VideoId;
   videoId: string;
   title: string;
@@ -50,7 +51,9 @@ const SearchPlayer: React.FC = () => {
   const [newComment, setNewComment] = useState<string>("");
 
   const { user } = UserAuth();
-
+  const { channels } = context;
+  const channel=channels.length !== 0;
+  
   useEffect(() => {
     const fetchVideoById = async () => {
       if (!videoId) return;
@@ -106,6 +109,7 @@ const SearchPlayer: React.FC = () => {
     fetchComments();
   }, [videoId]);
 
+  
   const postComment = async () => {
     if (!newComment.trim()) return;
 
@@ -151,20 +155,19 @@ const SearchPlayer: React.FC = () => {
       return `${diffInYears} year${diffInYears > 1 ? "s" : ""} ago`;
     }
   }
+console.log('playVideo',playVideo);
 
   return (
     <div className="flex px-4 mt-12 ml-2 bg-white-900 text-gray-800 min-h-screen">
       <div className="w-2/3 max-w-3xl ml-16 mt-8">
         {playVideo ? (
           <div className="w-full bg-gray-100 p-4 rounded-xl shadow-lg">
-            <iframe
+            <video
               className="w-full h-[400px] rounded-xl"
               src={playVideo.videoUrl}
               title="Video player"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
+             controls
+            ></video>
           </div>
         ) : (
           <p className="text-center text-gray-500">Loading video...</p>
@@ -181,12 +184,11 @@ const SearchPlayer: React.FC = () => {
             className="flex items-start space-x-4 hover:bg-gray-100 rounded-lg transition-colors duration-200"
           >
             <img
-              src={playVideo?.profil
-                || "/default-profile.png"}
+              src={ playVideo?.channelId ? playVideo?.channelId.profile: playVideo?.userId.photoURL}
               alt="Profile"
               className="w-8 h-8 rounded-full object-cover cursor-pointer"
             />
-            <h4>{playVideo?.userName}</h4>
+            <h4>{playVideo?.userName  }</h4>
           </Link>
         </div>
 
@@ -194,7 +196,7 @@ const SearchPlayer: React.FC = () => {
           <h2 className="text-lg font-semibold">Comments</h2>
           <div className="flex items-center space-x-2 mt-3">
             <img
-              src={user?.photoURL || "/default-profile.png"}
+              src={channel? channels.profile:user?.photoURL }
               alt="User Profile"
               className="w-10 h-10 rounded-full object-cover"
             />

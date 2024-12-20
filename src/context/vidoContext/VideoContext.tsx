@@ -187,7 +187,6 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
 
     fetchVideosById();
   }, [user?._id]);
-console.log('uservideos',userVideos);
 
   useEffect(() => {
     const fetchShorts = async () => {

@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext,  useState } from "react";
+import React, { useContext, useState } from "react";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 import { MdOutlineModeEdit } from "react-icons/md";
 
@@ -16,29 +16,25 @@ function Dashbord() {
     );
     return null;
   }
-  const { userVideos, } = context;
-
- 
+  const { userVideos } = context;
 
   return (
     <div
-    className={`flex flex-col p-6 transition-all duration-300  ${
-      isOpen ? "ml-64" : "ml-16"
-    }`}
-  >
+      className={`flex flex-col p-6 transition-all duration-300  ${
+        isOpen ? "ml-64" : "ml-16"
+      }`}
+    >
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse border border-gray-300">
           <thead>
-            <tr className="bg-blue-500 text-white">
-              <th className="border border-gray-300 px-4 py-2">Video</th>
-              <th className="border border-gray-300 px-4 py-2">Visibility</th>
-              <th className="border border-gray-300 px-4 py-2">Restrictions</th>
-              <th className="border border-gray-300 px-4 py-2">Date</th>
-              <th className="border border-gray-300 px-4 py-2">Views</th>
-              <th className="border border-gray-300 px-4 py-2">Comments</th>
-              <th className="border border-gray-300 px-4 py-2">
-                Likes (vs Dislikes)
-              </th>
+            <tr className=" text-gray-500 text-sm">
+              <th className="border  px-4 py-2">Video</th>
+              <th className="  px-4 py-2">Visibility</th>
+              <th className="  px-4 py-2">Restrictions</th>
+              <th className="  px-4 py-2">Date</th>
+              <th className="  px-4 py-2">Views</th>
+              <th className="  px-4 py-2">Comments</th>
+              <th className=" px-4 py-2">Likes (vs Dislikes)</th>
             </tr>
           </thead>
           <tbody>
@@ -70,21 +66,13 @@ function Dashbord() {
                   </div>
                 </td>
 
-                <td className="border border-gray-300 px-4 py-2">
-                  {video.visibility || "Public"}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {video.restrictions || "None"}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
+                <td className="px-6 py-3">{video.visibility || "Public"}</td>
+                <td className=" px-6 py-3">{video.restrictions || "None"}</td>
+                <td className=" px-6 py-3">
                   {new Date(video.createdAt || Date.now()).toLocaleDateString()}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {video.views || 0}
-                </td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {video.comments || 0}
-                </td>
+                <td className=" px-16 py-3">{video.views || 0}</td>
+                <td className=" px-16 py-9">{video.comments || 0}</td>
                 {/* <td className="border border-gray-300 px-4 py-2">
                   {video.likes || 0} (vs {video.dislikes || 0})
                 </td> */}

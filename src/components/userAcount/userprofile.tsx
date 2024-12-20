@@ -74,13 +74,19 @@ const Userprofile: React.FC = () => {
         }`}
       >
         <img
-          src={ selectedUser.profile          }
+          src={ selectedUser.profile}
           alt="Profile"
           className="w-28 h-28 rounded-full"
         />
         <div>
-          <p className="text-lg font-medium ml-3">{selectedUser.name}</p>
-          <p className="text-sm font-medium ml-3 text-gray-500">{selectedUser.handil}</p>
+          <h1 className=" text-3xl from-neutral-950 p-1 ml-3">{selectedUser.name}</h1>
+          <span className="flex flex-row items-center space-x-4 ml-3">
+  <p className="text-sm font-medium text-gray-500">{selectedUser.handil}</p>
+  <p className="text-sm font-medium text-gray-500">
+  {selectedUser.totalSubscribers} subscribers 
+  </p>
+</span>
+
           {isCurrentUser && (
             <span>
               <button className="px-4 text-gray-500">Customize Channel</button>
