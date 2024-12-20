@@ -56,7 +56,6 @@ const Userprofile: React.FC = () => {
 
   const selectedUser = channels.find((u: User) => u.name === username);
 
-console.log('me',selectedUser);
 
 
   if (!selectedUser) {
@@ -65,7 +64,7 @@ console.log('me',selectedUser);
 
   const { isOpen } = context || { isOpen: false }; 
 
-  const isCurrentUser = user?.uid === selectedUser.uid;
+  const isCurrentUser = user?._id=== selectedUser.userId;
    
   return (
     <>

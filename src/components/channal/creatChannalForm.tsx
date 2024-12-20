@@ -5,18 +5,17 @@ import axios from "axios";
 
 interface ChannelData {
   name: string;
-  ownerId: string;
+  _id: string;
   photoURL: string;
   handil: string;
 }
 
 const CreateChannelForm: React.FC = () => {
   const { user } = UserAuth();
-  console.log("user ", user);
 
   const [channelData, setChannelData] = useState<ChannelData>({
     name: user?.displayName || "", 
-    ownerId: user?.uid || "", 
+    _id: user?._id || "", 
     photoURL: user?.photoURL || "", 
     handil: `@${user?.displayName || ""}`.trim(), 
   });
@@ -59,7 +58,7 @@ const CreateChannelForm: React.FC = () => {
     }
 
     formData.append("name", channelData.name);
-    formData.append("ownerId", channelData.ownerId);
+    formData.append("userId", channelData._id);
     formData.append("handil", channelData.handil);
   formData.append("photoURL",channelData.photoURL)
     const response = await axios.post("http://localhost:5000/api/create-channel", formData, {
@@ -127,7 +126,7 @@ const CreateChannelForm: React.FC = () => {
           />
         </div>
 
-        <input type="hidden" name="ownerId" value={channelData.ownerId} />
+        <input type="hidden" name="_id" value={channelData._id} />
 
         <button
           type="submit"

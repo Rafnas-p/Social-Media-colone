@@ -14,7 +14,6 @@ interface VideoDetails {
 export default function EditForm() {
   const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null); 
   const { videoId } = useParams<{ videoId: string }>(); 
-  console.log("videoId:", videoId);
 
   useEffect(() => {
     const fetchVideoById = async () => {

@@ -102,7 +102,7 @@ const DisplayData: React.FC = () => {
                   className="flex-shrink-0"
                 >
                   <img
-                    src={item.uid.photoURL}
+                    src={item.userId.photoURL}
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover cursor-pointer"
                   />

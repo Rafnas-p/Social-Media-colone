@@ -22,7 +22,6 @@ const Signup = () => {
       console.log(error);
     }
   };
-  console.log(user);
   
 
   return (

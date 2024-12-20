@@ -5,6 +5,8 @@ import { MyContext } from "../../context/vidoContext/VideoContext";
 import { useParams, useRouter } from "next/navigation";
 import { AiOutlineDislike } from "react-icons/ai";
 import { AiOutlineLike } from "react-icons/ai";
+
+
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axios from "axios";
 import Link from "next/link";
@@ -23,7 +25,8 @@ interface VideoDetails {
   userName: string;
   profil: string | null;
   createdAt: string;
-  videoDetails: VideoDetails | null
+  videoDetails: VideoDetails;
+  channelId:any;
 }
 
 interface CommentSnippet {
@@ -78,7 +81,7 @@ const VideoPlayer: React.FC = () => {
     fetchVideoById();
   }, [currentVideoId]);
 
-  // Fetch comments
+
   useEffect(() => {
     const fetchComments = async () => {
       if (!currentVideoId) return;
@@ -119,36 +122,28 @@ const VideoPlayer: React.FC = () => {
     fetchLikes();
   }, [videoDetails, user?.uid]);
 
+  console.log('videoDetails',videoDetails);
+  
 
 
+  useEffect(() => {
+    const fetchSubscribersCount = async () => {
+      if (!videoDetails) return; 
 
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/getSubscribersCount",
+          {  channelId: videoDetails.channelId } 
+        );
 
+        setSubscribe(response.data.subscribersCount);
+      } catch (error) {
+        console.error("Error fetching subscriber count:", error);
+      }
+    };
 
-
- // Fetch like count
- useEffect(() => {
-  const fetchsubscibs = async () => {
-    if (!videoDetails || !videoDetails.userId || !channels) return; // Ensure all required data is available
-
-    try {
-      const response = await axios.post("http://localhost:5000/api/subscribChannel", {
-        uid: videoDetails.userId,
-        channelId: channels._id,
-      });
-
-      setSubscribe(response.data.totalSubscribers);
-    } catch (error) {
-      console.error("Error fetching subscriptions:", error);
-    }
-  };
-
-  fetchsubscibs();
-}, [videoDetails, channels]);
-
-
-
-
-
+    fetchSubscribersCount();
+  }, [videoDetails]); 
 
 
 
@@ -160,9 +155,9 @@ const VideoPlayer: React.FC = () => {
       const response = await axios.post<CommentSnippet>(
         `http://localhost:5000/api/addComment/${currentVideoId}`,
         {
-          userId: user?.uid,
-          userName: user?.displayName,
-          userProfile: user?.photoURL,
+          userId: channels? channels.userId: user?._id,
+          userName:channels? channels.name: user?.displayName,
+          userProfile:channels?channels.profile: user?.photoURL,
           text: newComment,
         }
       );
@@ -240,23 +235,22 @@ const VideoPlayer: React.FC = () => {
 
   const isliked = like.find((user) => user === userId);
 
-  // const handilSubscrib = async () => {
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:5000/api/subscribChannel",
-  //       {
-  //         channelId: channels._id,
-  //         uid: user?.uid,
-  //       }
-  //     );
-  //     console.log("API Response:", response.data); // Debug the response data
+  const handilSubscrib = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/subscribChannel",
+        {
+          channelId: channels._id,
+          uid: user?.uid,
+        }
+      );
 
-  //     setSubscribe(response.data.totalSubscribers);
-  //   } catch (error: any) {
-  //     console.error("Errorsubscrib channel:", error);
-  //   }
-  // };
-  console.log("subscribs",videoDetails );
+      setSubscribe(response.data.subscribers);
+    } catch (error: any) {
+      console.error("Errorsubscrib channel:", error);
+    }
+  };
+
 
   return (
     <div className="flex  flex-col lg:flex-row px-4 mt-20 ml-14 bg-white text-gray-800 min-h-screen space-y-4 lg:space-y-0 lg:space-x-6">
@@ -279,7 +273,7 @@ const VideoPlayer: React.FC = () => {
               className="flex items-center space-x-4"
             >
               <img
-                src={videoDetails?.uid.photoURL || null}
+                src={videoDetails?.userId.photoURL || null}
                 alt="Profile"
                 className="w-8 h-8 rounded-full object-cover cursor-pointer"
               />
@@ -290,7 +284,7 @@ const VideoPlayer: React.FC = () => {
               </div>
             </Link>
             <button
-              // onClick={handilSubscrib}
+              onClick={handilSubscrib}
               className="bg-black text-white rounded-full w-27 h-9  ml-10 text-sm p-1"
             >
               Subscribe

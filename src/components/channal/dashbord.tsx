@@ -18,9 +18,7 @@ function Dashbord() {
   }
   const { userVideos, } = context;
 
-  console.log("isOpen:", isOpen);
-
-  console.log("isOpen", isOpen);
+ 
 
   return (
     <div
@@ -87,9 +85,9 @@ function Dashbord() {
                 <td className="border border-gray-300 px-4 py-2">
                   {video.comments || 0}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">
+                {/* <td className="border border-gray-300 px-4 py-2">
                   {video.likes || 0} (vs {video.dislikes || 0})
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>

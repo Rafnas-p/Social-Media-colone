@@ -48,9 +48,8 @@ const {channels}=context;
     const formData = new FormData();
     formData.append("video", videoFile);
     formData.append("description", description);
-    formData.append("uid", channels?.uid || "");
-    formData.append("profil", channels?.photoURL || "");
-    formData.append("userName", channels?.name || "");
+    formData.append("userId", channels?.userId );
+    formData.append("userName", channels?.name );
     formData.append("channelId",channels?._id)
 
     formData.append("title", title);
@@ -80,6 +79,7 @@ const {channels}=context;
       setCategory("video");
       setVideoUrl(null);
       alert("Video uploaded successfully!");
+      
     } catch (error: any) {
       if (error.response) {
         console.error("Server Error:", error.response.data);

@@ -23,7 +23,6 @@ const router=useRouter()
   }, [user]);
 
   const { toggleSidebar,channels } = context;
-  console.log('channels',channels);
   
 const channel=channels.length !== 0;
   const handleSignIn = async () => {
@@ -108,7 +107,7 @@ const handulhomerout=()=>{
             aria-label="Profile"
           >
             <img
-              src={user?.photoURL || ""}
+              src={channel? channels.profile:user?.photoURL||null}
               alt="Profile"
               className="w-8 h-8 rounded-full"
             />

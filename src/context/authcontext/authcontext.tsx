@@ -14,7 +14,8 @@ interface AuthContextType {
   allUsers: UserRecord[]; 
   setAllUsers: Dispatch<SetStateAction<UserRecord[]>>; 
 }
-interface UserRecord {
+export interface UserRecord {
+  _id?:string
   uid: string; 
   email: string; 
   displayName: string;
@@ -31,7 +32,6 @@ interface AuthContextProviderProps {
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [allUsers,setAllUsers]=useState<UserRecord[]>([]);
-  console.log(user)
 
   const googleSignIn = async (): Promise<void> => {
     const provider = new GoogleAuthProvider();
@@ -69,18 +69,32 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
         throw new Error(data.message || "Failed to save user");
       }
   
-      console.log("User saved successfully:", data);
     } catch (error) {
       console.error("Error saving user to database:", error);
     }
   };
   
   
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+  //     if (currentUser) {
+    
+  //       setUser(currentUser);
+  //       await saveUserToDatabase(currentUser); 
+  //     } else {
+  //       setUser(null);
+  //     }
+  //   });
+  //   return () => unsubscribe();
+  // }, []);
+  
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        setUser(currentUser);
-        await saveUserToDatabase(currentUser); 
+        await saveUserToDatabase(currentUser);
+
+        const response = await axios.get(`http://localhost:5000/api/getUserById/${currentUser.uid}`);
+        setUser(response.data); // Replace the Firebase user with the MongoDB user
       } else {
         setUser(null);
       }

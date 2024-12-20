@@ -15,7 +15,6 @@ export default function ShortEditForm() {
   const [shortsDetails, setshortsDetails] = useState<ShortsDetails | null>(null);
   const { shortsId } = useParams();
 
-  console.log("shortsId:", shortsId);
 
   useEffect(() => {
     const fetchVideoById = async () => {

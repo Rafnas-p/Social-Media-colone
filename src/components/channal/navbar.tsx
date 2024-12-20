@@ -13,7 +13,6 @@ function Navbar2() {
 
   const context = useContext(MyContext);
   const { toggleSidebar,channels } = context;
-  console.log('channels26',channels);
   
   const channel=channels.length !== 0;
 

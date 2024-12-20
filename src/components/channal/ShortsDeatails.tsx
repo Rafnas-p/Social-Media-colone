@@ -18,9 +18,7 @@ function ShortsBord() {
   }
   const { shorts } = context;
 
-  console.log("Fetched Data:", shorts);
 
-  console.log("userVideos", shorts);
 
   return (
     <div

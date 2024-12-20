@@ -54,15 +54,16 @@ const [channels, setChannels] = useState<any[]>([]);
     }
   }, [username]);
   
+  
   const user = channels.find((user) => user.name === username);
-  console.log("channels",user);
+console.log(user);
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        if (!user?.uid) return;
+        if (!user?.userId) return;
         const response = await axios.get("http://localhost:5000/api/videos", {
-          params: { uid: user.uid },
+          params: { userId: user.userId },
         });
 
         setVideos(response.data.videos);
@@ -72,7 +73,7 @@ const [channels, setChannels] = useState<any[]>([]);
     };
 
     fetchVideos();
-  }, [user?.uid]);
+  }, [user?.userId]);
 
   if (error) return <p className="text-red-500">Error: {error}</p>;
 

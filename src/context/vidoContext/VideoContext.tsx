@@ -128,11 +128,9 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
     const fetchAllVideos = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/EntairVideos");
-        console.log("Response from API:", response.data);
   
         if (response.data && response.data.videos) {
           setData(response.data.videos);
-          console.log("Updated data state:", response.data.videos);
         } else {
           console.error("Invalid API response format");
         }
@@ -155,7 +153,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
         const response = await axios.get(
           "http://localhost:5000/api/getchannel",
           {
-            params: { ownerId: user?.uid },
+            params: { ownerId: user?._id },
           }
         );
         setChannels(response.data);
@@ -171,15 +169,14 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
     }
   }, [user?.uid]);
 
-  console.log("channels", channels);
 
 
   useEffect(() => {
     const fetchVideosById = async () => {
       try {
-        if (!user?.uid) return;
+        if (!user?._id) return;
         const response = await axios.get("http://localhost:5000/api/videos", {
-          params: { uid: user.uid },
+          params: { userId: user._id },
         });
 
         setUserVideos(response.data.videos);
@@ -189,7 +186,8 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
     };
 
     fetchVideosById();
-  }, [user?.uid]);
+  }, [user?._id]);
+console.log('uservideos',userVideos);
 
   useEffect(() => {
     const fetchShorts = async () => {
