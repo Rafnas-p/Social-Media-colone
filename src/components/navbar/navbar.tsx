@@ -107,7 +107,7 @@ const handulhomerout=()=>{
             aria-label="Profile"
           >
             <img
-              src={channel? channels.profile:user?.photoURL||null}
+              src={channel? channels.profile:user?.photoURL}
               alt="Profile"
               className="w-8 h-8 rounded-full"
             />
@@ -128,7 +128,7 @@ const handulhomerout=()=>{
           <div className="absolute top-2 mr-9 right-0 w-56 bg-white shadow-lg rounded-md z-20">
             <div className="flex items-center px-4 py-2 text-gray-800">
               <img
-                src={ channel? channels.profile:user?.photoURL||null }
+                src={ channel? channels.profile:user?.photoURL}
                 alt="Profile"
                 className="w-10 h-10 rounded-full"
               />

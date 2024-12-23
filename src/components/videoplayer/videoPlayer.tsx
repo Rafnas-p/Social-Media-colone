@@ -6,14 +6,13 @@ import { useParams, useRouter } from "next/navigation";
 import { AiOutlineDislike } from "react-icons/ai";
 import { AiOutlineLike } from "react-icons/ai";
 
-
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axios from "axios";
 import Link from "next/link";
 
 interface VideoDetails {
   uid: any;
-  userId: string |null;
+  userId: string | null;
   likes: any;
   name: ReactNode;
   totalSubscribers: ReactNode;
@@ -26,7 +25,7 @@ interface VideoDetails {
   profil: string | null;
   createdAt: string;
   videoDetails: VideoDetails;
-  channelId:any;
+  channelId: any;
 }
 
 interface CommentSnippet {
@@ -55,9 +54,10 @@ const VideoPlayer: React.FC = () => {
   const [liked, setLiked] = useState<string>("");
   const [like, setLike] = useState([]);
   const [subscribe, setSubscribe] = useState("");
+  const [subscribers, setSubscribers] = useState([]);
   const { user } = UserAuth();
   const { channels } = context;
-  const channel=channels.length !== 0;
+  const channel = channels.length !== 0;
 
   if (!context) {
     throw new Error("MyContext must be used within a provider");
@@ -80,7 +80,6 @@ const VideoPlayer: React.FC = () => {
 
     fetchVideoById();
   }, [currentVideoId]);
-
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -122,31 +121,27 @@ const VideoPlayer: React.FC = () => {
     fetchLikes();
   }, [videoDetails, user?.uid]);
 
-  console.log('videoDetails',videoDetails);
-  
-
+  console.log("videoDetails", videoDetails);
 
   useEffect(() => {
     const fetchSubscribersCount = async () => {
-      if (!videoDetails) return; 
+      if (!videoDetails) return;
 
       try {
         const response = await axios.post(
           "http://localhost:5000/api/getSubscribersCount",
-          {  channelId: videoDetails.channelId } 
+          { channelId: videoDetails.channelId }
         );
 
         setSubscribe(response.data.subscribersCount);
+        setSubscribers(response.data.subscribers || []);
       } catch (error) {
         console.error("Error fetching subscriber count:", error);
       }
     };
 
     fetchSubscribersCount();
-  }, [videoDetails]); 
-
-
-
+  }, [videoDetails, user?.uid]);
 
   const postComment = async () => {
     if (!newComment.trim()) return;
@@ -155,9 +150,9 @@ const VideoPlayer: React.FC = () => {
       const response = await axios.post<CommentSnippet>(
         `http://localhost:5000/api/addComment/${currentVideoId}`,
         {
-          userId: channels? channels.userId: user?._id,
-          userName:channels? channels.name: user?.displayName,
-          userProfile:channels?channels.profile: user?.photoURL,
+          userId: channels ? channels.userId : user?._id,
+          userName: channels ? channels.name : user?.displayName,
+          userProfile: channels ? channels.profile : user?.photoURL,
           text: newComment,
         }
       );
@@ -244,13 +239,13 @@ const VideoPlayer: React.FC = () => {
           uid: user?.uid,
         }
       );
-
-      setSubscribe(response.data.subscribers);
+      setSubscribers(response.data.subscribers || []);
     } catch (error: any) {
       console.error("Errorsubscrib channel:", error);
     }
   };
-
+  const isUserSubscribed =
+    Array.isArray(subscribers) && subscribers.includes(user?.uid);
 
   return (
     <div className="flex  flex-col lg:flex-row px-4 mt-20 ml-14 bg-white text-gray-800 min-h-screen space-y-4 lg:space-y-0 lg:space-x-6">
@@ -285,9 +280,11 @@ const VideoPlayer: React.FC = () => {
             </Link>
             <button
               onClick={handilSubscrib}
-              className="bg-black text-white rounded-full w-27 h-9  ml-10 text-sm p-1"
+              className={`${
+                isUserSubscribed ? "bg-white text-black" : "bg-black text-white"
+              } rounded-full w-27 h-9 ml-10 text-sm p-1 transition-all duration-300`}
             >
-              Subscribe
+              {isUserSubscribed ? "Subscribed" : "Subscribe"}
             </button>
           </div>
 
@@ -317,7 +314,7 @@ const VideoPlayer: React.FC = () => {
           <h2 className="text-lg font-semibold">Comments</h2>
           <div className="flex items-center space-x-2 mt-3">
             <img
-              src={channel? channels.profile: user?.photoURL}
+              src={channel ? channels.profile : user?.photoURL}
               alt="User Profile"
               className="w-10 h-10 rounded-full object-cover"
             />
@@ -341,9 +338,7 @@ const VideoPlayer: React.FC = () => {
             {comments.map((comment) => (
               <div key={comment._id} className="flex items-start space-x-3">
                 <img
-                  src={
-                     comment?.userProfile || null
-                  }
+                  src={comment?.userProfile || null}
                   alt={channels ? channels.name : comment.userName}
                   className="w-8 h-8 rounded-full object-cover"
                 />

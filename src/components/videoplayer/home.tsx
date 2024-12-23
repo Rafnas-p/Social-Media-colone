@@ -5,6 +5,7 @@ import { UserAuth } from "@/context/authcontext/authcontext";
 import Link from "next/link";
 
 interface VideoDetails {
+  channelId: any;
   uid: any;
   createdAt: string;
   description: string;
@@ -36,6 +37,7 @@ const DisplayData: React.FC = () => {
   }
 
   const { data } = context;
+console.log('data',data);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -102,7 +104,7 @@ const DisplayData: React.FC = () => {
                   className="flex-shrink-0"
                 >
                   <img
-                    src={item.userId.photoURL}
+                    src={item.channelId.profile}
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover cursor-pointer"
                   />

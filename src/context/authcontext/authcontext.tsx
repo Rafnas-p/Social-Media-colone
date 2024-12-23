@@ -1,8 +1,9 @@
 "use client";
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider, User } from "firebase/auth";
+import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider, User,getIdToken } from "firebase/auth";
 import { auth } from "@/app/fairbase/config";
 import { Dispatch, SetStateAction } from "react";
+import Cookies from "js-cookie";
 
 import axios from "axios";
 
@@ -35,8 +36,36 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
 
   const googleSignIn = async (): Promise<void> => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider); 
+  
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const currentUser = result.user;
+  
+      // Get JWT token
+      const token = await currentUser.getIdToken();
+  
+      // Save user to the database and get MongoDB _id
+      const mongoDbId = await saveUserToDatabase(currentUser);
+  
+      // Set cookies
+      Cookies.set("token", token, {
+        expires: 1, // Expires in 1 day
+        secure: true, // Use only in HTTPS
+        sameSite: "strict", // Protect against CSRF
+      });
+  
+      Cookies.set("mongoDbId", mongoDbId, {
+        expires: 1, // Expires in 1 day
+        secure: true,
+        sameSite: "strict",
+      });
+  
+      console.log("JWT Token and MongoDB ID stored in cookies:", token, mongoDbId);
+    } catch (error) {
+      console.error("Error during Google sign-in:", error);
+    }
   };
+  
   
   const logOut = async () => {
     try {
@@ -61,13 +90,14 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
           channelName: (displayName || "Anonymous User").replace(/\s+/g, "").toLowerCase(),
         }),
       });
-  
-      const data = await response.json();
-  
+
       if (!response.ok) {
-        console.error("Error response from backend:", data); // Log backend response
-        throw new Error(data.message || "Failed to save user");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to save user");
       }
+      const data = await response.json();
+      return data._id;
+      
   
     } catch (error) {
       console.error("Error saving user to database:", error);
@@ -75,18 +105,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
   };
   
   
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-  //     if (currentUser) {
-    
-  //       setUser(currentUser);
-  //       await saveUserToDatabase(currentUser); 
-  //     } else {
-  //       setUser(null);
-  //     }
-  //   });
-  //   return () => unsubscribe();
-  // }, []);
+ 
   
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {

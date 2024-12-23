@@ -20,16 +20,14 @@ interface User {
 
 const Userprofile: React.FC = () => {
   const context = useContext(MyContext) as MyContextType | null;
- const [channels, setChannels] = useState<any[]>([]);
+  const [channels, setChannels] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);  
-  
+  const [error, setError] = useState<string | null>(null);
+
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
 
-  const {  user } = UserAuth();
-
-
+  const { user } = UserAuth();
 
   useEffect(() => {
     const fetchChannels = async () => {
@@ -38,7 +36,7 @@ const Userprofile: React.FC = () => {
         const response = await axios.get(
           "http://localhost:5000/api/getChannelsByName",
           {
-            params: { userName:username },
+            params: { userName: username },
           }
         );
         setChannels(response.data);
@@ -56,16 +54,14 @@ const Userprofile: React.FC = () => {
 
   const selectedUser = channels.find((u: User) => u.name === username);
 
-
-
   if (!selectedUser) {
     return <div>User not found</div>;
   }
 
-  const { isOpen } = context || { isOpen: false }; 
+  const { isOpen } = context || { isOpen: false };
 
-  const isCurrentUser = user?._id=== selectedUser.userId;
-   
+  const isCurrentUser = user?._id === selectedUser.userId;
+
   return (
     <>
       <div
@@ -74,18 +70,22 @@ const Userprofile: React.FC = () => {
         }`}
       >
         <img
-          src={ selectedUser.profile}
+          src={selectedUser.profile}
           alt="Profile"
           className="w-28 h-28 rounded-full"
         />
         <div>
-          <h1 className=" text-3xl from-neutral-950 p-1 ml-3">{selectedUser.name}</h1>
+          <h1 className=" text-3xl from-neutral-950 p-1 ml-3">
+            {selectedUser.name}
+          </h1>
           <span className="flex flex-row items-center space-x-4 ml-3">
-  <p className="text-sm font-medium text-gray-500">{selectedUser.handil}</p>
-  <p className="text-sm font-medium text-gray-500">
-  {selectedUser.totalSubscribers} subscribers 
-  </p>
-</span>
+            <p className="text-sm font-medium text-gray-500">
+              {selectedUser.handil}
+            </p>
+            <p className="text-sm font-medium text-gray-500">
+              {selectedUser.totalSubscribers} subscribers
+            </p>
+          </span>
 
           {isCurrentUser && (
             <span>
