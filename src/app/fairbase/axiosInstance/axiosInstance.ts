@@ -10,7 +10,8 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const token = Cookies.get("token"); // Retrieve the JWT token from cookies
     const mongoDbId = Cookies.get("mongoDbId"); // Retrieve the MongoDB _id from cookies
-
+   console.log(' mongoDbId', mongoDbId);
+   
     if (token) {
       config.headers.Authorization = `Bearer ${token}`; // Add JWT token as Authorization header
     }

@@ -49,17 +49,18 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({ childr
   
       // Set cookies
       Cookies.set("token", token, {
-        expires: 1, // Expires in 1 day
+        expires: 7, // Expires in 1 day
         secure: true, // Use only in HTTPS
         sameSite: "strict", // Protect against CSRF
       });
   
       Cookies.set("mongoDbId", mongoDbId, {
-        expires: 1, // Expires in 1 day
+        expires: 7, // Expires in 1 day
         secure: true,
         sameSite: "strict",
       });
-  
+      console.log("All Cookies After Setting:", Cookies.get());
+
       console.log("JWT Token and MongoDB ID stored in cookies:", token, mongoDbId);
     } catch (error) {
       console.error("Error during Google sign-in:", error);

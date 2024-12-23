@@ -5,7 +5,8 @@ import { MyContext } from "../../context/vidoContext/VideoContext";
 import { useParams, useRouter } from "next/navigation";
 import { AiOutlineDislike } from "react-icons/ai";
 import { AiOutlineLike } from "react-icons/ai";
-
+import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
+import Cookies from "js-cookie";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axios from "axios";
 import Link from "next/link";
@@ -53,12 +54,16 @@ const VideoPlayer: React.FC = () => {
   const [newComment, setNewComment] = useState<string>("");
   const [liked, setLiked] = useState<string>("");
   const [like, setLike] = useState([]);
+  const[ dislike,setdisLike]=useState([])
   const [subscribe, setSubscribe] = useState("");
   const [subscribers, setSubscribers] = useState([]);
   const { user } = UserAuth();
   const { channels } = context;
   const channel = channels.length !== 0;
-
+  const token = Cookies.get("token");
+  const  mongoDbId=Cookies.get("mongoDbId")
+  console.log('102',mongoDbId);
+  
   if (!context) {
     throw new Error("MyContext must be used within a provider");
   }
@@ -97,6 +102,7 @@ const VideoPlayer: React.FC = () => {
     fetchComments();
   }, [currentVideoId]);
 
+  
   // Fetch like count
   useEffect(() => {
     const fetchLikes = async () => {
@@ -104,10 +110,10 @@ const VideoPlayer: React.FC = () => {
 
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/likeVideo",
+          "http://localhost:5000/api/likeVideoCount",
           {
             _id: videoDetails._id,
-            uid: user?.uid,
+            uid: user?._id,
           }
         );
 
@@ -119,7 +125,7 @@ const VideoPlayer: React.FC = () => {
     };
 
     fetchLikes();
-  }, [videoDetails, user?.uid]);
+  }, [videoDetails, user?._id]);
 
   console.log("videoDetails", videoDetails);
 
@@ -195,40 +201,64 @@ const VideoPlayer: React.FC = () => {
   }
 
   const handleLike = async () => {
-    if (!videoDetails || !user?.uid) return;
-
+    if (!videoDetails || !user?._id) return;
+  
     try {
-      const response = await axios.post("http://localhost:5000/api/likeVideo", {
-        _id: videoDetails._id,
-        uid: user?.uid,
-      });
+      const response = await axiosInstance.post(
+        "http://localhost:5000/api/likeVideo",
+        {
+          _id: videoDetails._id, // MongoDB ID of the video
+          uid: user?._id, // User ID from your authentication
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // JWT Token
+            "X-MongoDb-Id": mongoDbId, // MongoDB ID as a custom header
+          },
+        }
+      );
+      
+      setLiked(response.data.likesCount); // Update the likes count
+      setLike(response.data.likes); // Update the like status
 
-      setLiked(response.data.likesCount);
-      setLike(response.data.likes);
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error liking the video:", error);
+      if (error.response) {
+        console.error("Response error:", error.response);
+      } else if (error.request) {
+        console.error("Request error:", error.request);
+      } else {
+        console.error("Error message:", error.message);
+      }
     }
+    
   };
+  console.log('like', like);
+
+const islike = Array.isArray(like) && like.includes(user?._id);
+console.log('islike', islike);  // true or false
+
 
   const handilDislike = async () => {
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "http://localhost:5000/api/dislikeVideo",
         {
           _id: videoDetails._id,
-          uid: user?.uid,
-        }
+          uid: user?._id,
+        },
       );
-
-      setLiked(response.data.likesCount);
-      setLike(response.data.likes);
+setLike(response.data.likes)
+setLiked(response.data.dislikes)
+      setdisLike(response.data.dislikarray);
     } catch (error) {
       console.error("Error disliking the video:", error);
     }
   };
-  let userId = user?.uid;
-
-  const isliked = like.find((user) => user === userId);
+  console.log('dislik', dislike);
+  
+  const isdislike = Array.isArray(dislike) && dislike.includes(user?._id);
+console.log('isdislike', isdislike);  // true or false
 
   const handilSubscrib = async () => {
     try {
@@ -268,7 +298,7 @@ const VideoPlayer: React.FC = () => {
               className="flex items-center space-x-4"
             >
               <img
-                src={videoDetails?.userId.photoURL || null}
+                src={videoDetails?.userId.photoURL}
                 alt="Profile"
                 className="w-8 h-8 rounded-full object-cover cursor-pointer"
               />
@@ -293,20 +323,22 @@ const VideoPlayer: React.FC = () => {
               onClick={handleLike}
               className="p-3 rounded-r-none border-r bg-gray-100 flex-1 flex justify-center items-center cursor-pointer"
             >
-              <AiOutlineLike
-                className={isliked ? `text-red-500 fill-red-500` : ""}
-              />
+             <AiOutlineLike
+  className={islike ? "text-red-500" : "text-gray-500"} 
+/>
+
 
               <p>{liked}</p>
             </button>
             <button
-              onClick={handilDislike}
-              className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center"
-            >
-              <AiOutlineDislike
-                className={isliked ? "" : `text-red-500 fill-red-500`}
-              />
-            </button>
+  onClick={handilDislike}
+  className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center"
+>
+  <AiOutlineDislike
+    className={isdislike ? "text-red-500" : ""} // Use isdislike for conditional styling
+  />
+</button>
+
           </div>
         </div>
 
