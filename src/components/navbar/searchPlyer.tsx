@@ -155,7 +155,6 @@ const SearchPlayer: React.FC = () => {
       return `${diffInYears} year${diffInYears > 1 ? "s" : ""} ago`;
     }
   }
-console.log('playVideo',playVideo);
 
   return (
     <div className="flex px-4 mt-12 ml-2 bg-white-900 text-gray-800 min-h-screen">

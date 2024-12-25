@@ -37,7 +37,6 @@ const DisplayData: React.FC = () => {
   }
 
   const { data } = context;
-console.log('data',data);
 
   useEffect(() => {
     const fetchData = async () => {

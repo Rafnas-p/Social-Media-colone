@@ -120,7 +120,7 @@ const Searchbhar2: React.FC = () => {
                       src={item.videoUrl}
                       title="Video Player"
                     ></video>
-                    <h3 className="text-base font-semibold">{item.title}</h3>
+                    <h3 className="text-base ">{item.title}</h3>
                   </span>
                 </Link>
               </div>

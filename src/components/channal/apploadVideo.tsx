@@ -51,7 +51,6 @@ const {channels}=context;
     formData.append("userId", channels?.userId );
     formData.append("userName", channels?.name );
     formData.append("channelId",channels?._id)
-
     formData.append("title", title);
     formData.append("category", category);
 
@@ -92,7 +91,7 @@ const {channels}=context;
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-br from-rose-400 to-red-500 mt-14">
+    <div className="flex items-center justify-center h-screen bg-gradient-to-brmt-1 mt-14">
       <div className="p-8 bg-white rounded-2xl shadow-lg max-w-md w-full">
         <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Video Upload</h1>
         <form onSubmit={handleUpload} className="space-y-6">
@@ -165,7 +164,7 @@ const {channels}=context;
          
           <button
   type="submit"
-  className="w-full py-3 px-4 bg-gradient-to-r from-rose-400 to-red-500 font-semibold rounded-lg shadow-md hover:bg-gradient-to-r hover:from-red-500 hover:to-rose-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+  className="w-full py-3 px-4 bg-gradient-to-r bg-black  text-white font-semibold rounded-lg shadow-md hover:bg-gradient-to-r"
 >
   Upload Video
 </button>

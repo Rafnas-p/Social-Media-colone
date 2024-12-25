@@ -77,7 +77,7 @@ const handulhomerout=()=>{
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/3/34/YouTube_logo_%282017%29.png?20170829160812"
           alt="YouTube Logo"
-          className="h-6 w-20 md:ml-8 cursor-pointer"
+          className="h-5 w-15  cursor-pointer"
           onClick={handulhomerout}
         />
         </Link>
@@ -87,9 +87,9 @@ const handulhomerout=()=>{
         <Searchbar />
       </div>
 
-      <div className="flex items-center mr-12">
+      <div className="flex items-center mr-8">
         <BsBellFill
-          className="text-gray-800 w-6 h-6 cursor-pointer hover:text-gray-600 transition"
+          className="text-gray-800 w-5 h-5 cursor-pointer hover:text-gray-600 transition"
           aria-label="Notifications"
         />
       </div>
@@ -125,7 +125,7 @@ const handulhomerout=()=>{
         )}
 
         {isDropdownOpen && isSignedIn && (
-          <div className="absolute top-2 mr-9 right-0 w-56 bg-white shadow-lg rounded-md z-20">
+          <div className="absolute top-2 mr-8 right-2 w-52 bg-white shadow-lg rounded-md z-20">
             <div className="flex items-center px-4 py-2 text-gray-800">
               <img
                 src={ channel? channels.profile:user?.photoURL}

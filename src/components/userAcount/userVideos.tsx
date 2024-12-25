@@ -56,7 +56,6 @@ const [channels, setChannels] = useState<any[]>([]);
   
   
   const user = channels.find((user) => user.name === username);
-console.log(user);
 
   useEffect(() => {
     const fetchVideos = async () => {
@@ -105,7 +104,7 @@ console.log(user);
                   onMouseEnter={handleMouseEnter}
                   onMouseLeave={handleMouseLeave}
                 ></video>
-                <h3 className="font-bold text-lg">{video.title}</h3>
+                <h3 className="font-bold text-sm">{video.title}</h3>
                 <p className="text-sm text-gray-500">{video.description}</p>
               </Link>
             </div>

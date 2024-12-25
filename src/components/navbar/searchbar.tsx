@@ -105,7 +105,7 @@ const Searchbar: React.FC = () => {
       </div>
 
       {searchQuery && (
-        <div className="relative w-full sm:w-[500px] bg-white shadow-lg rounded-lg p-2 max-h-72 overflow-y-auto text-sm z-0">
+        <div className="relative w-full sm:w-[500px] bg-white shadow-lg rounded-lg p-2 max-h-72 overflow-y-auto text-5xl z-0">
           {filteredData.length > 0 ? (
             <>
               {filteredData.map((item) => (
@@ -115,7 +115,7 @@ const Searchbar: React.FC = () => {
                 >
                   <Link href={`/search?Id=${item._id}`} passHref>
                     <div>
-                      <h3 className="text-base font-semibold">{item.title}</h3>
+                      <h3 className="text-sm font-bold">{item.title}</h3>
                     </div>
                   </Link>
                 </div>
@@ -127,7 +127,7 @@ const Searchbar: React.FC = () => {
                 >
                   <Link href={`/userAcount/videos?username=${item.userName}`} passHref>
                     <div>
-                      <h3 className="text-base font-semibold">{item.userName}</h3>
+                      <h3 className="text-base font-bold">{item.userName}</h3>
                     </div>
                   </Link>
                 </div>

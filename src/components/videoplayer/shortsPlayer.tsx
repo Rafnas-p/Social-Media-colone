@@ -2,9 +2,11 @@
 
 import axios from "axios";
 import Link from "next/link";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
+import { MyContext } from "../../context/vidoContext/VideoContext";
 
 interface Short {
+  channelId: any;
   _id: string;
   title: string;
   description: string;
@@ -18,8 +20,14 @@ interface Short {
   userName: string;
   createdAt: string;
 }
+interface MyContextType {
+  
+  isOpen: boolean;
+}
 
 function DisplayShorts() {
+  const context = useContext<MyContextType>(MyContext);
+
   const [shorts, setShorts] = useState<Short[]>([]);
   const [currentShortIndex, setCurrentShortIndex] = useState<number | null>(
     null
@@ -27,6 +35,7 @@ function DisplayShorts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const { channels } = context;
 
 
 
@@ -82,18 +91,19 @@ function DisplayShorts() {
   if (error) {
     return <p className="text-red-500">{error}</p>;
   }
+ 
 
   return (
-    <div className="mt-14">
+    <div className="mt-18">
       {currentShortIndex !== null && shorts[currentShortIndex] && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-80"
+          className="fixed inset-0 flex items-center  justify-center bg-white bg-opacity-80"
           onWheel={(e) => handleScroll(e)}
           ref={modalRef}
           tabIndex={-1}
         >
-          <div className="relative w-1/5 h-full flex flex-col items-center">
-            <div className="absolute top-0 left-0 right-0 bg-black bg-opacity-70 text-white flex justify-between p-2 z-10">
+          <div className="relative w-1/5 max-h-screen   flex flex-col items-center">
+            <div className="absolute top-0 left-0 right-0 rounded-lg bg-black bg-opacity-70 text-white flex justify-between p-2 z-10">
               <button
                 onClick={() =>
                   setCurrentShortIndex(Math.max(currentShortIndex - 1, 0))
@@ -109,7 +119,7 @@ function DisplayShorts() {
                     Math.min(currentShortIndex + 1, shorts.length - 1)
                   )
                 }
-                className="text-sm px-4 py-2 bg-gray-700 rounded hover:bg-gray-600"
+                className="text-sm px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600"
               >
                 Next
               </button>
@@ -119,7 +129,7 @@ function DisplayShorts() {
               controls
               src={shorts[currentShortIndex].videoUrl}
               autoPlay
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-lg"
             ></video>
 
             <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 text-white p-4 rounded-lg flex flex-col space-y-4">
@@ -128,7 +138,8 @@ function DisplayShorts() {
                 className="flex items-center space-x-2"
               >
                 <img
-                  src={shorts[currentShortIndex].profil}
+                  src={shorts[currentShortIndex].channelId
+                    .profile}
                   alt="Profile"
                   className="w-8 h-8 rounded-full object-cover "
                 />

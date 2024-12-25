@@ -79,7 +79,7 @@ const Userprofile: React.FC = () => {
             {selectedUser.name}
           </h1>
           <span className="flex flex-row items-center space-x-4 ml-3">
-            <p className="text-sm font-medium text-gray-500">
+            <p className="text-sm font-medium text-gray-500 ml-1">
               {selectedUser.handil}
             </p>
             <p className="text-sm font-medium text-gray-500">

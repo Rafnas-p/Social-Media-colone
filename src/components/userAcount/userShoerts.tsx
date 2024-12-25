@@ -66,14 +66,15 @@ const [channels, setChannels] = useState<any[]>([]);
 
 
   const user = channels.find((user) => user.name === username);
+console.log('UserShorts',user);
 
   useEffect(() => {
     const fetchShorts = async () => {
-      if (!user?.uid) return;
+      if (!user?.userId) return;
       try {
         setLoading(true);
         const response = await axios.get("http://localhost:5000/api/shorts", {
-          params: { userId: user.uid },
+          params: { userId: user.userId },
         });
         setShorts(response.data.shorts);
       } catch (err) {
@@ -85,7 +86,7 @@ const [channels, setChannels] = useState<any[]>([]);
     };
 
     fetchShorts();
-  }, [user?.uid]);
+  }, [user?.userId]);
 
   const openModal = (index: number) => {
     setCurrentShortIndex(index);
@@ -138,10 +139,10 @@ const [channels, setChannels] = useState<any[]>([]);
     
               <video
                 src={short.videoUrl}
-                className="w-full h-96 rounded-md"
+                className="w-full h-full object-cover rounded-lg"
                 autoPlay={false}
               ></video>
-              <h3 className="text-md font-semibold">{short.title}</h3>
+              <h3 className="text-md  mt-1font-semibold">{short.title}</h3>
               <p className="text-sm text-gray-600">{short.description}</p>
             </div>
           ))}
@@ -170,7 +171,7 @@ const [channels, setChannels] = useState<any[]>([]);
               src={shorts[currentShortIndex].videoUrl}
               controls
               autoPlay
-              className="w-96 h-full rounded-md"
+                className="w-full h-full object-cover rounded-lg"
             ></video>
             
             <h3 className="text-lg font-semibold">

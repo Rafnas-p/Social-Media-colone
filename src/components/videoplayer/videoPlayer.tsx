@@ -54,16 +54,15 @@ const VideoPlayer: React.FC = () => {
   const [newComment, setNewComment] = useState<string>("");
   const [liked, setLiked] = useState<string>("");
   const [like, setLike] = useState([]);
-  const[ dislike,setdisLike]=useState([])
+  const [dislike, setdisLike] = useState([]);
   const [subscribe, setSubscribe] = useState("");
   const [subscribers, setSubscribers] = useState([]);
   const { user } = UserAuth();
   const { channels } = context;
   const channel = channels.length !== 0;
   const token = Cookies.get("token");
-  const  mongoDbId=Cookies.get("mongoDbId")
-  console.log('102',mongoDbId);
-  
+  const mongoDbId = Cookies.get("mongoDbId");
+
   if (!context) {
     throw new Error("MyContext must be used within a provider");
   }
@@ -102,7 +101,6 @@ const VideoPlayer: React.FC = () => {
     fetchComments();
   }, [currentVideoId]);
 
-  
   // Fetch like count
   useEffect(() => {
     const fetchLikes = async () => {
@@ -202,7 +200,7 @@ const VideoPlayer: React.FC = () => {
 
   const handleLike = async () => {
     if (!videoDetails || !user?._id) return;
-  
+
     try {
       const response = await axiosInstance.post(
         "http://localhost:5000/api/likeVideo",
@@ -217,11 +215,10 @@ const VideoPlayer: React.FC = () => {
           },
         }
       );
-      
+
       setLiked(response.data.likesCount); // Update the likes count
       setLike(response.data.likes); // Update the like status
-
-    } catch (error:any) {
+    } catch (error: any) {
       console.error("Error liking the video:", error);
       if (error.response) {
         console.error("Response error:", error.response);
@@ -231,13 +228,9 @@ const VideoPlayer: React.FC = () => {
         console.error("Error message:", error.message);
       }
     }
-    
   };
-  console.log('like', like);
 
-const islike = Array.isArray(like) && like.includes(user?._id);
-console.log('islike', islike);  // true or false
-
+  const islike = Array.isArray(like) && like.includes(user?._id);
 
   const handilDislike = async () => {
     try {
@@ -246,19 +239,17 @@ console.log('islike', islike);  // true or false
         {
           _id: videoDetails._id,
           uid: user?._id,
-        },
+        }
       );
-setLike(response.data.likes)
-setLiked(response.data.dislikes)
+      setLike(response.data.likes);
+      setLiked(response.data.dislikes);
       setdisLike(response.data.dislikarray);
     } catch (error) {
       console.error("Error disliking the video:", error);
     }
   };
-  console.log('dislik', dislike);
-  
+
   const isdislike = Array.isArray(dislike) && dislike.includes(user?._id);
-console.log('isdislike', isdislike);  // true or false
 
   const handilSubscrib = async () => {
     try {
@@ -276,6 +267,7 @@ console.log('isdislike', isdislike);  // true or false
   };
   const isUserSubscribed =
     Array.isArray(subscribers) && subscribers.includes(user?.uid);
+console.log('videoDetails',videoDetails);
 
   return (
     <div className="flex  flex-col lg:flex-row px-4 mt-20 ml-14 bg-white text-gray-800 min-h-screen space-y-4 lg:space-y-0 lg:space-x-6">
@@ -298,7 +290,7 @@ console.log('isdislike', isdislike);  // true or false
               className="flex items-center space-x-4"
             >
               <img
-                src={videoDetails?.userId.photoURL}
+                src={videoDetails?.userId?.photoURL}
                 alt="Profile"
                 className="w-8 h-8 rounded-full object-cover cursor-pointer"
               />
@@ -323,22 +315,20 @@ console.log('isdislike', isdislike);  // true or false
               onClick={handleLike}
               className="p-3 rounded-r-none border-r bg-gray-100 flex-1 flex justify-center items-center cursor-pointer"
             >
-             <AiOutlineLike
-  className={islike ? "text-red-500" : "text-gray-500"} 
-/>
-
+              <AiOutlineLike
+                className={islike ? "text-red-500" : "text-gray-500"}
+              />
 
               <p>{liked}</p>
             </button>
             <button
-  onClick={handilDislike}
-  className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center"
->
-  <AiOutlineDislike
-    className={isdislike ? "text-red-500" : ""} // Use isdislike for conditional styling
-  />
-</button>
-
+              onClick={handilDislike}
+              className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center"
+            >
+              <AiOutlineDislike
+                className={isdislike ? "text-red-500" : ""} // Use isdislike for conditional styling
+              />
+            </button>
           </div>
         </div>
 
@@ -370,7 +360,7 @@ console.log('isdislike', isdislike);  // true or false
             {comments.map((comment) => (
               <div key={comment._id} className="flex items-start space-x-3">
                 <img
-                  src={comment?.userProfile || null}
+                  src={comment?.userProfile }
                   alt={channels ? channels.name : comment.userName}
                   className="w-8 h-8 rounded-full object-cover"
                 />

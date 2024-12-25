@@ -49,9 +49,9 @@ const Sidebar: React.FC = () => {
         </button>
         <hr />
         <button className="flex items-center py-2 px-3 hover:bg-gray-300 transition">
-          <IoPersonOutline className="text-black-600 text-sm mr-2" />
+          <IoPersonOutline className="text-black-600 text-sm ml-1" />
           <GrFormNext
-            className={`${isOpen ? "block" : "hidden"} text-gray-600 text-sm`}
+            className={`${isOpen ? "block" : "hidden"} text-gray-600 text-sm  `}
           />
           <span className={`${isOpen ? "block" : "hidden"} text-sm`}>You</span>
         </button>

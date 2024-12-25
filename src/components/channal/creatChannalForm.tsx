@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { UserAuth } from "@/context/authcontext/authcontext";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 
 interface ChannelData {
@@ -12,6 +13,7 @@ interface ChannelData {
 
 const CreateChannelForm: React.FC = () => {
   const { user } = UserAuth();
+  const router = useRouter(); // Initialize useRouter
 
   const [channelData, setChannelData] = useState<ChannelData>({
     name: user?.displayName || "", 
@@ -68,6 +70,7 @@ const CreateChannelForm: React.FC = () => {
     });
 
     setMessage(response.data.message);
+    router.push("/");
   } catch (error: any) {
     setMessage(error.response?.data?.message || "Something went wrong!");
   } finally {
@@ -133,7 +136,7 @@ const CreateChannelForm: React.FC = () => {
           className={`w-full py-2 rounded ${loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"} text-white font-bold`}
           disabled={loading}
         >
-          {loading ? "Saving..." : channelData.name ? "Update Channel" : "Create Channel"}
+          {loading ? "Saving..." : channelData.name ? "Create Channel" : "Create Channel"}
         </button>
       </form>
 
