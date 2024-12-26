@@ -18,6 +18,7 @@ function ShortsBord() {
   }
   const { shorts } = context;
 
+console.log('shorts',shorts);
 
 
   return (
@@ -27,16 +28,13 @@ function ShortsBord() {
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse border border-gray-300">
           <thead>
-            <tr className="bg-blue-500 text-white">
-              <th className="border border-gray-300 px-4 py-2">Shorts</th>
-              <th className="border border-gray-300 px-4 py-2">Visibility</th>
-              <th className="border border-gray-300 px-4 py-2">Restrictions</th>
-              <th className="border border-gray-300 px-4 py-2">Date</th>
-              <th className="border border-gray-300 px-4 py-2">Views</th>
-              <th className="border border-gray-300 px-4 py-2">Comments</th>
-              <th className="border border-gray-300 px-4 py-2">
-                Likes (vs Dislikes)
-              </th>
+          <tr className="text-gray-500 text-sm">
+            <th className="border px-4 py-2">Video</th>
+            <th className="border px-4 py-2">Visibility</th>
+            <th className="border px-4 py-2">Restrictions</th>
+            <th className="border px-4 py-2">Date</th>
+            <th className="border px-4 py-2">Views</th>
+            <th className="border px-4 py-2">Comments</th>
             </tr>
           </thead>
           <tbody>

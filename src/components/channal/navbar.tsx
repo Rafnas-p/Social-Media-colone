@@ -88,7 +88,6 @@ function Navbar2() {
                   className="w-10 h-10 rounded-full"
                 />
                 <div className="ml-3">
-                  <p className="text-sm font-medium">{user?.email}</p>
                   <p className="text-sm text-gray-600">{user?.displayName}</p>
                 </div>
               </div>

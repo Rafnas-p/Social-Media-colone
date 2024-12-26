@@ -5,7 +5,11 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axios from "axios";
+import Cookies from "js-cookie";
+
 import Link from "next/link";
+import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
+import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
 
 interface VideoId {
   kind: string;
@@ -25,6 +29,7 @@ interface SearchDataItem {
 }
 
 interface Comment {
+  userName: ReactNode;
   createdAt(createdAt: any): React.ReactNode;
   userProfile: string;
   id: string;
@@ -49,11 +54,17 @@ const SearchPlayer: React.FC = () => {
   const [videoComments, setVideoComments] = useState<Comment[]>([]);
   const [playVideo, setPlayVideo] = useState<SearchDataItem | null>(null);
   const [newComment, setNewComment] = useState<string>("");
-
+  const [subscribe, setSubscribe] = useState("");
+  const [liked, setLiked] = useState<string>("");
+  const [like, setLike] = useState([]);
+  const [dislike, setdisLike] = useState([]);
+  const [subscribers, setSubscribers] = useState([]);
+  const token = Cookies.get("token");
+  const mongoDbId = Cookies.get("mongoDbId");
   const { user } = UserAuth();
   const { channels } = context;
-  const channel=channels.length !== 0;
-  
+  const channel = channels.length !== 0;
+
   useEffect(() => {
     const fetchVideoById = async () => {
       if (!videoId) return;
@@ -94,6 +105,82 @@ const SearchPlayer: React.FC = () => {
   }, [videoId, data]);
 
   useEffect(() => {
+    const fetchLikes = async () => {
+      if (!playVideo) return;
+
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/likeVideoCount",
+          {
+            _id: playVideo._id,
+            uid: user?._id,
+          }
+        );
+
+        setLiked(response.data.likesCount);
+        setLike(response.data.likes);
+      } catch (error) {
+        console.error("Error liking the video:", error);
+      }
+    };
+
+    fetchLikes();
+  }, [playVideo, user?._id]);
+
+  const handleLike = async () => {
+    if (!playVideo || !user?._id) return;
+
+    try {
+      const response = await axiosInstance.post(
+        "http://localhost:5000/api/likeVideo",
+        {
+          _id: playVideo._id,
+          uid: user?._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "X-MongoDb-Id": mongoDbId,
+          },
+        }
+      );
+
+      setLiked(response.data.likesCount);
+      setLike(response.data.likes);
+    } catch (error: any) {
+      console.error("Error liking the video:", error);
+      if (error.response) {
+        console.error("Response error:", error.response);
+      } else if (error.request) {
+        console.error("Request error:", error.request);
+      } else {
+        console.error("Error message:", error.message);
+      }
+    }
+  };
+
+  const islike = Array.isArray(like) && like.includes(user?._id);
+
+  const handilDislike = async () => {
+    try {
+      const response = await axiosInstance.post(
+        "http://localhost:5000/api/dislikeVideo",
+        {
+          _id: playVideo._id,
+          uid: user?._id,
+        }
+      );
+      setLike(response.data.likes);
+      setLiked(response.data.dislikes);
+      setdisLike(response.data.dislikarray);
+    } catch (error) {
+      console.error("Error disliking the video:", error);
+    }
+  };
+
+  const isdislike = Array.isArray(dislike) && dislike.includes(user?._id);
+
+  useEffect(() => {
     const fetchComments = async () => {
       if (!videoId) return;
       try {
@@ -109,7 +196,26 @@ const SearchPlayer: React.FC = () => {
     fetchComments();
   }, [videoId]);
 
-  
+  useEffect(() => {
+    const fetchSubscribersCount = async () => {
+      if (!playVideo) return;
+
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/getSubscribersCount",
+          { channelId: playVideo.channelId }
+        );
+
+        setSubscribe(response.data.subscribersCount);
+        setSubscribers(response.data.totalSubscribers);
+      } catch (error) {
+        console.error("Error fetching subscriber count:", error);
+      }
+    };
+
+    fetchSubscribersCount();
+  }, [playVideo, user?.uid]);
+
   const postComment = async () => {
     if (!newComment.trim()) return;
 
@@ -138,11 +244,11 @@ const SearchPlayer: React.FC = () => {
   function getRelativeTime(dateString: string): string {
     const now = new Date();
     const date = new Date(dateString);
-    const diffInMs = now.getTime() - date.getTime(); 
+    const diffInMs = now.getTime() - date.getTime();
     const diffInMinutes = Math.floor(diffInMs / 60000);
     const diffInHours = Math.floor(diffInMinutes / 60);
     const diffInDays = Math.floor(diffInHours / 24);
-    const diffInMonths = Math.floor(diffInDays / 30); 
+    const diffInMonths = Math.floor(diffInDays / 30);
     const diffInYears = Math.floor(diffInMonths / 12);
 
     if (diffInMinutes < 60) {
@@ -156,16 +262,36 @@ const SearchPlayer: React.FC = () => {
     }
   }
 
+  const handilSubscrib = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/subscribChannel",
+        {
+          _id: playVideo.channelId._id,
+          uid: user?.uid,
+        }
+      );
+      setSubscribers(response.data.subscribers || []);
+    } catch (error: any) {
+      console.error("Errorsubscrib channel:", error);
+    }
+  };
+  console.log("subers", subscribers);
+
+  const isUserSubscribed =
+    Array.isArray(subscribers) && subscribers.includes(user?.uid);
+  console.log("isUserSubscribed", isUserSubscribed);
+
   return (
     <div className="flex px-4 mt-12 ml-2 bg-white-900 text-gray-800 min-h-screen">
       <div className="w-2/3 max-w-3xl ml-16 mt-8">
         {playVideo ? (
-          <div className="w-full bg-gray-100 p-4 rounded-xl shadow-lg">
+          <div className="w-full bg-black rounded-xl overflow-hidden shadow-md">
             <video
-              className="w-full h-[400px] rounded-xl"
+              className="w-full h-[400px] object-cover"
               src={playVideo.videoUrl}
               title="Video player"
-             controls
+              controls
             ></video>
           </div>
         ) : (
@@ -183,19 +309,54 @@ const SearchPlayer: React.FC = () => {
             className="flex items-start space-x-4 hover:bg-gray-100 rounded-lg transition-colors duration-200"
           >
             <img
-              src={ playVideo?.channelId ? playVideo?.channelId.profile: playVideo?.userId.photoURL}
+              src={
+                playVideo?.channelId
+                  ? playVideo?.channelId.profile
+                  : playVideo?.userId.photoURL
+              }
               alt="Profile"
               className="w-8 h-8 rounded-full object-cover cursor-pointer"
             />
-            <h4>{playVideo?.userName  }</h4>
+
+            <div className="flex flex-col">
+              <h4 className="font-semibold">{playVideo?.channelId.name}</h4>
+              <p className="text-sm text-gray-500">{subscribe} subscribers</p>
+            </div>
           </Link>
+          <button
+            onClick={handilSubscrib}
+            className={`${
+              isUserSubscribed ? "bg-white text-black" : "bg-black text-white"
+            } rounded-full w-27 h-9 ml-10 text-sm p-1 transition-all duration-300`}
+          >
+            {isUserSubscribed ? "Subscribed" : "Subscribe"}
+          </button>
+
+          <div className="flex border focus:ring-2  bg-gray-50 w-28 h-8 rounded-full overflow-hidden cursor-pointer">
+            <button
+              onClick={handleLike}
+              className="p-3 rounded-r-none border-r bg-gray-100 flex-1 flex justify-center items-center cursor-pointer"
+            >
+              <AiOutlineLike
+                className={islike ? "text-red-500" : "text-gray-500"}
+              />
+
+              <p>{liked}</p>
+            </button>
+            <button
+              onClick={handilDislike}
+              className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center"
+            >
+              <AiOutlineDislike className={isdislike ? "text-red-500" : ""} />
+            </button>
+          </div>
         </div>
 
         <div className="mt-6">
           <h2 className="text-lg font-semibold">Comments</h2>
           <div className="flex items-center space-x-2 mt-3">
             <img
-              src={channel? channels.profile:user?.photoURL }
+              src={channel ? channels.profile : user?.photoURL}
               alt="User Profile"
               className="w-10 h-10 rounded-full object-cover"
             />
@@ -217,18 +378,25 @@ const SearchPlayer: React.FC = () => {
           <div className="mt-5 space-y-4">
             {videoComments.length > 0 ? (
               videoComments.map((comment, index) => (
-                <div key={comment.id || index} className="flex items-start space-x-3">
+                <div
+                  key={comment.id || index}
+                  className="flex items-start space-x-3"
+                >
                   <img
-                    src={comment.userProfile || "/default-profile.png"}
-                    alt={comment.author}
+                    src={comment?.userProfile}
+                    alt={channels ? channels.name : comment.userName}
                     className="w-8 h-8 rounded-full object-cover"
                   />
                   <div>
-                    <p className="text-sm font-semibold">{comment.author}</p>
-                    <p className="text-sm">{comment.text}</p>
-                    <p className="text-xs text-gray-500">
-                    {getRelativeTime(comment.createdAt)}
-                    </p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold">
+                        {comment.userName}
+                      </p>
+                      <p className="text-xs ml-1 text-gray-500">
+                        {getRelativeTime(comment?.createdAt)}
+                      </p>
+                    </div>
+                    <p className="text-sm">{comment?.text}</p>
                   </div>
                 </div>
               ))
@@ -243,7 +411,7 @@ const SearchPlayer: React.FC = () => {
         {filteredData.length > 0 ? (
           filteredData.map((video, index) => (
             <div
-              key={video._id|| index}
+              key={video._id || index}
               className="flex items-start space-x-3 cursor-pointer"
               onClick={() => handleVideoClick(video._id)}
             >
@@ -254,9 +422,13 @@ const SearchPlayer: React.FC = () => {
                   title="Related Video"
                 ></video>
               </div>
-              <div>
-                <p className="text-sm font-semibold line-clamp-2">{video.title}</p>
-                <p className="text-xs">{video.description}</p>
+              <div className="flex-1">
+                <p className="text-sm font-semibold line-clamp-2">
+                  {video.title}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {getRelativeTime(video.createdAt)}
+                </p>
               </div>
             </div>
           ))

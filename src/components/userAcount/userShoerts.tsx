@@ -133,16 +133,16 @@ console.log('UserShorts',user);
           {shorts.map((short, index) => (
             <div
               key={short._id}
-              className="border rounded-lg p-2  shadow-lg bg-black cursor-pointer"
+              className=" cursor-pointer"
               onClick={() => openModal(index)}
             >
     
               <video
                 src={short.videoUrl}
-                className="w-full h-full object-cover rounded-lg"
+                className="w-52 h-80 object-cover rounded-lg"
                 autoPlay={false}
               ></video>
-              <h3 className="text-md  mt-1font-semibold">{short.title}</h3>
+              <h3 className="text-md mt-3 mt-1font-semibold">{short.title}</h3>
               <p className="text-sm text-gray-600">{short.description}</p>
             </div>
           ))}
@@ -159,7 +159,7 @@ console.log('UserShorts',user);
           ref={modalRef}
           tabIndex={-1}
         >
-          <div className="bg-black rounded-lg p-4 relative w-96">
+          <div className=" rounded-lg p-4 relative w-80">
             <button
               className="absolute top-2 right-2 text-black p-2 hover:bg-gray-300"
               onClick={closeModal}

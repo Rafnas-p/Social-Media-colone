@@ -87,6 +87,7 @@ interface MyProviderProps {
   children: ReactNode;
 }
 type SearchItem = {
+  createdAt(createdAt: any): React.ReactNode;
   videoId: number;
   description: ReactNode;
   title: ReactNode;
@@ -194,7 +195,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
       try {
         setLoading(true);
         const response = await axios.get("http://localhost:5000/api/shorts", {
-          params: { userId: user.uid },
+          params: { userId: user._id },
         });
         setShorts(response.data.shorts);
       } catch (err) {
@@ -206,7 +207,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
     };
 
     fetchShorts();
-  }, [user?.uid]);
+  }, [user?._id]);
 
 
 

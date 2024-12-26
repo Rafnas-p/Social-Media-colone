@@ -105,7 +105,11 @@ const [channels, setChannels] = useState<any[]>([]);
                   onMouseLeave={handleMouseLeave}
                 ></video>
                 <h3 className="font-bold text-sm">{video.title}</h3>
-                <p className="text-sm text-gray-500">{video.description}</p>
+                <p className="text-sm text-gray-500">
+  {video.description.length > 15 
+    ? `${video.description.slice(0, 15)}...` 
+    : video.description}
+</p>
               </Link>
             </div>
           ))}

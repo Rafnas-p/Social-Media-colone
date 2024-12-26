@@ -101,6 +101,7 @@ const VideoPlayer: React.FC = () => {
     fetchComments();
   }, [currentVideoId]);
 
+  
   // Fetch like count
   useEffect(() => {
     const fetchLikes = async () => {
@@ -138,7 +139,7 @@ const VideoPlayer: React.FC = () => {
         );
 
         setSubscribe(response.data.subscribersCount);
-        setSubscribers(response.data.subscribers || []);
+        setSubscribers(response.data.totalSubscribers);
       } catch (error) {
         console.error("Error fetching subscriber count:", error);
       }
@@ -146,6 +147,9 @@ const VideoPlayer: React.FC = () => {
 
     fetchSubscribersCount();
   }, [videoDetails, user?.uid]);
+console.log('1',subscribe);
+console.log('2',subscribers);
+
 
   const postComment = async () => {
     if (!newComment.trim()) return;
@@ -157,11 +161,11 @@ const VideoPlayer: React.FC = () => {
           userId: channels ? channels.userId : user?._id,
           userName: channels ? channels.name : user?.displayName,
           userProfile: channels ? channels.profile : user?.photoURL,
-          text: newComment,
+          text: newComment, 
         }
       );
 
-      setComments((prev) => [...prev, response.data]);
+      setComments((prev) => [...prev, response.data] );
       setNewComment("");
     } catch (error) {
       console.error("Error posting comment:", error);
@@ -205,19 +209,19 @@ const VideoPlayer: React.FC = () => {
       const response = await axiosInstance.post(
         "http://localhost:5000/api/likeVideo",
         {
-          _id: videoDetails._id, // MongoDB ID of the video
-          uid: user?._id, // User ID from your authentication
+          _id: videoDetails._id,
+          uid: user?._id,
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // JWT Token
-            "X-MongoDb-Id": mongoDbId, // MongoDB ID as a custom header
+            Authorization: `Bearer ${token}`,
+            "X-MongoDb-Id": mongoDbId,
           },
         }
       );
 
-      setLiked(response.data.likesCount); // Update the likes count
-      setLike(response.data.likes); // Update the like status
+      setLiked(response.data.likesCount);
+      setLike(response.data.likes);
     } catch (error: any) {
       console.error("Error liking the video:", error);
       if (error.response) {
@@ -256,7 +260,7 @@ const VideoPlayer: React.FC = () => {
       const response = await axios.post(
         "http://localhost:5000/api/subscribChannel",
         {
-          channelId: channels._id,
+          _id:videoDetails.channelId._id,
           uid: user?.uid,
         }
       );
@@ -265,9 +269,11 @@ const VideoPlayer: React.FC = () => {
       console.error("Errorsubscrib channel:", error);
     }
   };
+  console.log('subers',subscribers);
+  
   const isUserSubscribed =
     Array.isArray(subscribers) && subscribers.includes(user?.uid);
-console.log('videoDetails',videoDetails);
+  console.log("isUserSubscribed", isUserSubscribed);
 
   return (
     <div className="flex  flex-col lg:flex-row px-4 mt-20 ml-14 bg-white text-gray-800 min-h-screen space-y-4 lg:space-y-0 lg:space-x-6">
@@ -286,17 +292,17 @@ console.log('videoDetails',videoDetails);
         <div className="flex justify-between items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
           <div className="flex">
             <Link
-              href={`/userAcount?username=${videoDetails.userName}`}
+              href={`/userAcount?username=${videoDetails?.channelId.name}`}
               className="flex items-center space-x-4"
             >
               <img
-                src={videoDetails?.userId?.photoURL}
+                src={videoDetails?.channelId.profile}
                 alt="Profile"
                 className="w-8 h-8 rounded-full object-cover cursor-pointer"
               />
 
               <div className="flex flex-col">
-                <h4 className="font-semibold">{videoDetails?.userName}</h4>
+                <h4 className="font-semibold">{videoDetails?.channelId.name}</h4>
                 <p className="text-sm text-gray-500">{subscribe} subscribers</p>
               </div>
             </Link>
@@ -325,9 +331,7 @@ console.log('videoDetails',videoDetails);
               onClick={handilDislike}
               className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center"
             >
-              <AiOutlineDislike
-                className={isdislike ? "text-red-500" : ""} // Use isdislike for conditional styling
-              />
+              <AiOutlineDislike className={isdislike ? "text-red-500" : ""} />
             </button>
           </div>
         </div>
@@ -360,16 +364,18 @@ console.log('videoDetails',videoDetails);
             {comments.map((comment) => (
               <div key={comment._id} className="flex items-start space-x-3">
                 <img
-                  src={comment?.userProfile }
+                  src={comment?.userProfile}
                   alt={channels ? channels.name : comment.userName}
                   className="w-8 h-8 rounded-full object-cover"
                 />
                 <div>
-                  <p className="text-sm font-semibold">{comment.userName}</p>
-                  <p className="text-sm">{comment.text}</p>
-                  <p className="text-xs text-gray-500">
-                    {getRelativeTime(comment.createdAt)}
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold">{comment.userName}</p>
+                    <p className="text-xs ml-1 text-gray-500">
+                      {getRelativeTime(comment?.createdAt)}
+                    </p>
+                  </div>
+                  <p className="text-sm">{comment?.text}</p>
                 </div>
               </div>
             ))}

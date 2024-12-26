@@ -116,11 +116,10 @@ export default function ShortEditForm() {
         <div className="mb-4">
           <video
             controls
-            className="w-full rounded"
+            className="w-92 h-4/5 object-cover rounded-lg"
             src={shortsDetails.videoUrl}
             type="video/mp4"
           >
-            Your browser does not support the video tag.
           </video>
         </div>
 
@@ -143,7 +142,6 @@ export default function ShortEditForm() {
           />
         </div>
 
-        {/* Visibility */}
         <div className="mb-4">
           <label className="block text-gray-700 font-bold mb-2">Visibility</label>
           <select

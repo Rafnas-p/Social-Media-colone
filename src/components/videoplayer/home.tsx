@@ -114,7 +114,7 @@ const DisplayData: React.FC = () => {
                     <p className="text-sm font-semibold text-gray-800">
                       {item.title}
                     </p>
-                    <p className="text-xs text-gray-500">{item.userName} </p>
+                    <p className="text-xs text-gray-500">{item.channelId.name} </p>
                   </div>
                 </Link>
               </div>
@@ -122,7 +122,9 @@ const DisplayData: React.FC = () => {
           ))}
         </div>
       )}
+      
     </div>
+   
   );
 };
 
