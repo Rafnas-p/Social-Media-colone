@@ -87,12 +87,14 @@ const handulhomerout=()=>{
         <Searchbar />
       </div>
 
-      <div className="flex items-center mr-8">
-        <BsBellFill
-          className="text-gray-800 w-5 h-5 cursor-pointer hover:text-gray-600 transition"
-          aria-label="Notifications"
-        />
-      </div>
+      <div
+      className={`text-gray-800 w-5 h-5 cursor-pointer hover:text-gray-600 transition ${
+        isSignedIn ? "mr-3 mt-1" : "mr-2"
+      }`}
+      aria-label="Notifications"
+    >
+     <BsBellFill/>
+    </div>
 
       <div className="relative">
         {loading ? (

@@ -5,7 +5,15 @@ import Link from "next/link";
 import React, { useEffect, useState, useRef, useContext } from "react";
 import { MyContext } from "../../context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
+import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 
+interface User {
+  _id: string;
+  uid: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+}
 interface Short {
   channelId: string;
   _id: string;
@@ -39,9 +47,8 @@ function DisplayShorts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
-  const { user } = UserAuth();
+    const { user } = UserAuth() as { user: User | null };
 
-  // Fetch all shorts
   useEffect(() => {
     const fetchAllShorts = async () => {
       try {
@@ -68,7 +75,10 @@ function DisplayShorts() {
     fetchAllShorts();
   }, []);
 
-  // Fetch subscriber count
+ 
+
+
+
   useEffect(() => {
     const fetchSubscribersCount = async () => {
       if (currentShortIndex === null || !shorts[currentShortIndex]) return;
@@ -78,8 +88,9 @@ function DisplayShorts() {
           "http://localhost:5000/api/getSubscribersCount",
           { channelId: shorts[currentShortIndex].channelId }
         );
+
         setSubscribe(response.data.subscribersCount);
-        setSubscribers(response.data.subscribers || []);
+        setSubscribers(response.data.totalSubscribers);
       } catch (error) {
         console.error("Error fetching subscriber count:", error);
       }
@@ -88,18 +99,18 @@ function DisplayShorts() {
     fetchSubscribersCount();
   }, [currentShortIndex, shorts]);
 
-  const handleSubscribe = async () => {
+  
+  const handilSubscrib = async () => {
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "http://localhost:5000/api/subscribChannel",
         {
-          channelId: channels?._id,
-          uid: user?.uid,
+          _id:channels?._id,
         }
       );
       setSubscribers(response.data.subscribers || []);
-    } catch (error) {
-      console.error("Error subscribing to channel:", error);
+    } catch (error: any) {
+      console.error("Errorsubscrib channel:", error);
     }
   };
 
@@ -155,7 +166,7 @@ function DisplayShorts() {
                 className="flex items-center space-x-2"
               >
                 <img
-                  src={shorts[currentShortIndex].channelId.profile}
+                  src={shorts[currentShortIndex].channelId?.profile}
                   alt="Profile"
                   className="w-6 h-6 rounded-full object-cover"
                 />
@@ -164,7 +175,7 @@ function DisplayShorts() {
                 </span>
               </Link>
               <button
-                onClick={handleSubscribe}
+                onClick={handilSubscrib}
                 className={`${
                   isUserSubscribed ? "bg-white text-black" : "bg-black text-white"
                 } rounded-full w-24 h-8 text-sm px-4 transition-all duration-300`}

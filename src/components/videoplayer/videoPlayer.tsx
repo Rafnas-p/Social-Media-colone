@@ -10,6 +10,13 @@ import Cookies from "js-cookie";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axios from "axios";
 import Link from "next/link";
+interface User {
+  _id: string;
+  uid: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+}
 
 interface VideoDetails {
   uid: any;
@@ -57,7 +64,7 @@ const VideoPlayer: React.FC = () => {
   const [dislike, setdisLike] = useState([]);
   const [subscribe, setSubscribe] = useState("");
   const [subscribers, setSubscribers] = useState([]);
-  const { user } = UserAuth();
+    const { user } = UserAuth() as { user: User | null };
   const { channels } = context;
   const channel = channels.length !== 0;
   const token = Cookies.get("token");
@@ -67,7 +74,7 @@ const VideoPlayer: React.FC = () => {
     throw new Error("MyContext must be used within a provider");
   }
 
-  // Fetch video details
+
   useEffect(() => {
     const fetchVideoById = async () => {
       if (!currentVideoId) return;
@@ -102,7 +109,6 @@ const VideoPlayer: React.FC = () => {
   }, [currentVideoId]);
 
   
-  // Fetch like count
   useEffect(() => {
     const fetchLikes = async () => {
       if (!videoDetails) return;
@@ -112,7 +118,7 @@ const VideoPlayer: React.FC = () => {
           "http://localhost:5000/api/likeVideoCount",
           {
             _id: videoDetails._id,
-            uid: user?._id,
+           
           }
         );
 
@@ -124,9 +130,9 @@ const VideoPlayer: React.FC = () => {
     };
 
     fetchLikes();
-  }, [videoDetails, user?._id]);
+  }, [videoDetails]);
 
-  console.log("videoDetails", videoDetails);
+  console.log("videoDetails",liked);
 
   useEffect(() => {
     const fetchSubscribersCount = async () => {
@@ -147,18 +153,15 @@ const VideoPlayer: React.FC = () => {
 
     fetchSubscribersCount();
   }, [videoDetails, user?.uid]);
-console.log('1',subscribe);
-console.log('2',subscribers);
 
 
   const postComment = async () => {
     if (!newComment.trim()) return;
 
     try {
-      const response = await axios.post<CommentSnippet>(
+      const response = await axiosInstance.post<CommentSnippet>(
         `http://localhost:5000/api/addComment/${currentVideoId}`,
         {
-          userId: channels ? channels.userId : user?._id,
           userName: channels ? channels.name : user?.displayName,
           userProfile: channels ? channels.profile : user?.photoURL,
           text: newComment, 
@@ -209,8 +212,7 @@ console.log('2',subscribers);
       const response = await axiosInstance.post(
         "http://localhost:5000/api/likeVideo",
         {
-          _id: videoDetails._id,
-          uid: user?._id,
+          channelId: videoDetails._id,
         },
         {
           headers: {
@@ -241,8 +243,7 @@ console.log('2',subscribers);
       const response = await axiosInstance.post(
         "http://localhost:5000/api/dislikeVideo",
         {
-          _id: videoDetails._id,
-          uid: user?._id,
+          channelId: videoDetails._id,
         }
       );
       setLike(response.data.likes);
@@ -257,11 +258,10 @@ console.log('2',subscribers);
 
   const handilSubscrib = async () => {
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "http://localhost:5000/api/subscribChannel",
         {
           _id:videoDetails.channelId._id,
-          uid: user?.uid,
         }
       );
       setSubscribers(response.data.subscribers || []);
@@ -269,7 +269,6 @@ console.log('2',subscribers);
       console.error("Errorsubscrib channel:", error);
     }
   };
-  console.log('subers',subscribers);
   
   const isUserSubscribed =
     Array.isArray(subscribers) && subscribers.includes(user?.uid);
@@ -309,7 +308,7 @@ console.log('2',subscribers);
             <button
               onClick={handilSubscrib}
               className={`${
-                isUserSubscribed ? "bg-white text-black" : "bg-black text-white"
+                isUserSubscribed ? "bg-gray-100 max-w-28 h-8 text-gray-600" : "bg-black text-white"
               } rounded-full w-27 h-9 ml-10 text-sm p-1 transition-all duration-300`}
             >
               {isUserSubscribed ? "Subscribed" : "Subscribe"}

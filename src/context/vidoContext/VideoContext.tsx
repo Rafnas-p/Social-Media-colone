@@ -3,7 +3,6 @@ import React, { createContext, useCallback, useState, useEffect, ReactNode } fro
 import axios from 'axios';
 import { UserAuth } from "@/context/authcontext/authcontext";
 import { Key } from 'readline';
-import { get } from 'http';
 
 interface SearchDataItem {
   kind: string;
@@ -26,24 +25,35 @@ interface SearchDataItem {
     };
   };
 }
+interface User {
+  _id: string;
+  uid: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+}
+
 
 interface MyContextType {
   selectedcat: string;
   setselectedcat: (newValue: string) => void;
   data: Video[];
-  comments?: Comment[]; // Optional property
+  comments?: Comment[]; 
   fetchComments?: (videoId: string) => void;
   isOpen: boolean;
   toggleSidebar: () => void;
-  searchData?: SearchDataItem[]; // Optional property
+  searchData?: SearchDataItem[]; 
   loading: boolean;
   error: string | null;
   filteredData: SearchItem[];
   setFilteredData: (data: SearchItem[]) => void;
   userVideos: Video[];
   shorts: Video[];
-  channels: any[]; // Add channels here
+  channels: any[]; 
+  isSignedIn:boolean;
+  user: User | null; 
 }
+
 
 
 
@@ -110,13 +120,15 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+    const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
+  
   const [filteredData, setFilteredData] = useState<SearchItem[]>([]);
   const [userVideos, setUserVideos] = useState<Video[]>([]);
   const [shorts, setShorts] = useState<Video[]>([]);
-   const [channels, setChannels] = useState<any[]>([]);
+const [channels, setChannels] = useState<any[]>([]);
     const [like,setLike]=useState<any[]>(0)
   
-  const { user } = UserAuth();
+    const { user } = UserAuth() as { user: User | null };
 
 
   const toggleSidebar = () => {
@@ -124,7 +136,15 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
     
   };
 
-  
+   useEffect(() => {
+      setTimeout(() => {
+        setIsSignedIn(!!user); 
+        setLoading(false); 
+      }, 2000); 
+    }, [user]);
+
+    console.log('isSignedIn',isSignedIn);
+    
   useEffect(() => {
     const fetchAllVideos = async () => {
       try {
@@ -227,6 +247,8 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
        userVideos,
        shorts,
        channels,
+       user,
+       isSignedIn
     }}>
       {children}
     </MyContext.Provider>

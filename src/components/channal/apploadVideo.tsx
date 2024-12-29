@@ -6,20 +6,20 @@ import { MyContext } from "@/context/vidoContext/VideoContext";
 import { channel } from "diagnostics_channel";
 const VideoUploadComponent: React.FC = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [videoUrl, setVideoUrl] = useState<string | null>(null); 
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [description, setDescription] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [title, setTitle] = useState<string>("");
   const [category, setCategory] = useState<string>("video");
   const { user } = UserAuth();
-  const context=useContext(MyContext)
-const {channels}=context;
+  const context = useContext(MyContext);
+  const { channels } = context;
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
       setVideoFile(selectedFile);
-      setVideoUrl(URL.createObjectURL(selectedFile)); 
+      setVideoUrl(URL.createObjectURL(selectedFile));
     }
   };
 
@@ -48,9 +48,9 @@ const {channels}=context;
     const formData = new FormData();
     formData.append("video", videoFile);
     formData.append("description", description);
-    formData.append("userId", channels?.userId );
-    formData.append("userName", channels?.name );
-    formData.append("channelId",channels?._id)
+    formData.append("userId", channels?.userId);
+    formData.append("userName", channels?.name);
+    formData.append("channelId", channels?._id);
     formData.append("title", title);
     formData.append("category", category);
 
@@ -78,7 +78,6 @@ const {channels}=context;
       setCategory("video");
       setVideoUrl(null);
       alert("Video uploaded successfully!");
-      
     } catch (error: any) {
       if (error.response) {
         console.error("Server Error:", error.response.data);
@@ -93,7 +92,9 @@ const {channels}=context;
   return (
     <div className="flex items-center justify-center h-screen bg-gradient-to-brmt-1 mt-14">
       <div className="p-8 bg-white rounded-2xl shadow-lg max-w-md w-full">
-        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Video Upload</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">
+          Video Upload
+        </h1>
         <form onSubmit={handleUpload} className="space-y-6">
           <div>
             <label
@@ -113,7 +114,6 @@ const {channels}=context;
             />
           </div>
 
-    
           <div>
             <label
               htmlFor="video"
@@ -149,7 +149,6 @@ const {channels}=context;
             />
           </div>
 
-        
           {uploadProgress > 0 && (
             <div>
               <progress
@@ -161,17 +160,14 @@ const {channels}=context;
             </div>
           )}
 
-         
           <button
-  type="submit"
-  className="w-full py-3 px-4 bg-gradient-to-r bg-black  text-white font-semibold rounded-lg shadow-md hover:bg-gradient-to-r"
->
-  Upload Video
-</button>
-
+            type="submit"
+            className="w-full py-3 px-4 bg-gradient-to-r bg-black  text-white font-semibold rounded-lg shadow-md hover:bg-gradient-to-r"
+          >
+            Upload Video
+          </button>
         </form>
 
-       
         {thumbnail && (
           <div className="mt-8">
             <h3 className="text-lg font-medium text-gray-700">Thumbnail:</h3>

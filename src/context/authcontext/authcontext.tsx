@@ -56,17 +56,18 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       const result = await signInWithPopup(auth, provider);
       const currentUser = result.user;
 
-      // Get JWT token
       const token = await currentUser.getIdToken();
 
-      // Save user to the database and get MongoDB _id
       const mongoDbId = await saveUserToDatabase(currentUser);
 
-      // Set cookies
       Cookies.set("token", token, { secure: true, sameSite: "strict" });
       Cookies.set("mongoDbId", mongoDbId, { secure: true, sameSite: "strict" });
 
-      console.log("JWT Token and MongoDB ID stored in cookies:", token, mongoDbId);
+      console.log(
+        "JWT Token and MongoDB ID stored in cookies:",
+        token,
+        mongoDbId
+      );
     } catch (error) {
       console.error("Error during Google sign-in:", error);
     }
@@ -88,7 +89,9 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     }
   };
 
-  const saveUserToDatabase = async (user: User): Promise<string | undefined> => {
+  const saveUserToDatabase = async (
+    user: User
+  ): Promise<string | undefined> => {
     const { uid, email, displayName, photoURL } = user;
 
     try {
@@ -100,7 +103,9 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
           email,
           displayName: displayName || "Anonymous User",
           photoURL,
-          channelName: (displayName || "Anonymous User").replace(/\s+/g, "").toLowerCase(),
+          channelName: (displayName || "Anonymous User")
+            .replace(/\s+/g, "")
+            .toLowerCase(),
         }),
       });
 
@@ -116,7 +121,6 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     }
   };
 
-  // Refresh token periodically
   useEffect(() => {
     const refreshToken = async () => {
       const currentUser = auth.currentUser;
@@ -136,7 +140,6 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     return () => clearInterval(interval);
   }, []);
 
-  // Monitor auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -160,7 +163,9 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   useEffect(() => {
     const fetchAllUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/getallusers");
+        const response = await axios.get(
+          "http://localhost:5000/api/getallusers"
+        );
         setAllUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -171,7 +176,9 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, googleSignIn, logOut, allUsers, setAllUsers }}>
+    <AuthContext.Provider
+      value={{ user, googleSignIn, logOut, allUsers, setAllUsers }}
+    >
       {children}
     </AuthContext.Provider>
   );

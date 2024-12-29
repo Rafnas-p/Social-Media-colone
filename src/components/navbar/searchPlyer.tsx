@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, useState } from "react";
+import React, { ReactNode, useContext, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
@@ -15,8 +15,15 @@ interface VideoId {
   kind: string;
   videoId: string;
 }
-
+interface User {
+  _id: string;
+  uid: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+}
 interface SearchDataItem {
+  _id: any;
   channelId: any;
   id: VideoId;
   videoId: string;
@@ -61,7 +68,7 @@ const SearchPlayer: React.FC = () => {
   const [subscribers, setSubscribers] = useState([]);
   const token = Cookies.get("token");
   const mongoDbId = Cookies.get("mongoDbId");
-  const { user } = UserAuth();
+    const { user } = UserAuth() as { user: User | null };
   const { channels } = context;
   const channel = channels.length !== 0;
 
@@ -220,10 +227,9 @@ const SearchPlayer: React.FC = () => {
     if (!newComment.trim()) return;
 
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `http://localhost:5000/api/addComment/${videoId}`,
         {
-          userId: user?.uid,
           userName: user?.displayName,
           userProfile: user?.photoURL,
           text: newComment,
@@ -264,11 +270,10 @@ const SearchPlayer: React.FC = () => {
 
   const handilSubscrib = async () => {
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         "http://localhost:5000/api/subscribChannel",
         {
           _id: playVideo.channelId._id,
-          uid: user?.uid,
         }
       );
       setSubscribers(response.data.subscribers || []);
@@ -383,8 +388,8 @@ const SearchPlayer: React.FC = () => {
                   className="flex items-start space-x-3"
                 >
                   <img
-                    src={comment?.userProfile}
-                    alt={channels ? channels.name : comment.userName}
+                  src={comment?.userProfile}
+                  alt={channels ? channels.name : comment.userName}
                     className="w-8 h-8 rounded-full object-cover"
                   />
                   <div>

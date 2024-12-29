@@ -13,11 +13,12 @@ interface MyContextType {
 
 interface User {
   name: string | null;
-  displayName: string;
+  _id: string;
+  uid: string;
   email: string;
-  photoURL: string;
+  displayName?: string;
+  photoURL?: string;
 }
-
 const Userprofile: React.FC = () => {
   const context = useContext(MyContext) as MyContextType | null;
   const [channels, setChannels] = useState<any[]>([]);
@@ -27,7 +28,7 @@ const Userprofile: React.FC = () => {
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
 
-  const { user } = UserAuth();
+    const { user } = UserAuth() as { user: User | null };
 
   useEffect(() => {
     const fetchChannels = async () => {
@@ -61,6 +62,7 @@ const Userprofile: React.FC = () => {
   const { isOpen } = context || { isOpen: false };
 
   const isCurrentUser = user?._id === selectedUser.userId;
+console.log('selectedUser',selectedUser);
 
   return (
     <>
@@ -97,7 +99,8 @@ const Userprofile: React.FC = () => {
           )}
         </div>
       </div>
-      <div className="ml-24 mt-6">
+      {isOpen ? 
+      <div className="ml-64 mt-6">
         <span>
           <Link href={`/userAcount/videos?username=${selectedUser.name}`}>
             Videos
@@ -110,6 +113,19 @@ const Userprofile: React.FC = () => {
           </Link>
         </span>
       </div>
+      : <div className="ml-24 mt-6">
+      <span>
+        <Link href={`/userAcount/videos?username=${selectedUser.name}`}>
+          Videos
+        </Link>
+        <Link
+          href={`/userAcount/shorts?username=${selectedUser.name}`}
+          className="ml-3"
+        >
+          Shorts
+        </Link>
+      </span>
+    </div> }
       <hr className="border-gray" />
       <div className="mt-6 px-6"></div>
     </>

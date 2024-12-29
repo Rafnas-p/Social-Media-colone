@@ -50,7 +50,7 @@ const DisplayData: React.FC = () => {
   return (
     <div
       className={`flex flex-col p-6 transition-all duration-300 mt-20 ${
-        isOpen ? "ml-64" : "ml-16"} bg-white-100 min-h-screen`}
+        isOpen ? "ml-64" : "ml-16"} `} style={{ minHeight: '100vh', overflowY: 'auto' }}
     >
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

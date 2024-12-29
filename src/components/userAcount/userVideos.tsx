@@ -17,19 +17,15 @@ interface MyContextType {
 
 const UserVideos: React.FC = () => {
   const context = useContext(MyContext) as unknown as MyContextType | null;
-const [channels, setChannels] = useState<any[]>([]);
+  const [channels, setChannels] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [videos, setVideos] = useState<Video[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  
   const searchParams = useSearchParams();
   const isOpen = context?.isOpen ?? false;
 
   const username = searchParams.get("username");
-  
-
-  
 
   useEffect(() => {
     const fetchChannels = async () => {
@@ -38,7 +34,7 @@ const [channels, setChannels] = useState<any[]>([]);
         const response = await axios.get(
           "http://localhost:5000/api/getChannelsByName",
           {
-            params: { userName:username },
+            params: { userName: username },
           }
         );
         setChannels(response.data);
@@ -53,8 +49,7 @@ const [channels, setChannels] = useState<any[]>([]);
       fetchChannels();
     }
   }, [username]);
-  
-  
+
   const user = channels.find((user) => user.name === username);
 
   useEffect(() => {
@@ -106,10 +101,10 @@ const [channels, setChannels] = useState<any[]>([]);
                 ></video>
                 <h3 className="font-bold text-sm">{video.title}</h3>
                 <p className="text-sm text-gray-500">
-  {video.description.length > 15 
-    ? `${video.description.slice(0, 15)}...` 
-    : video.description}
-</p>
+                  {video.description.length > 15
+                    ? `${video.description.slice(0, 15)}...`
+                    : video.description}
+                </p>
               </Link>
             </div>
           ))}

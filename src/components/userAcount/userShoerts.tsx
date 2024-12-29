@@ -127,7 +127,6 @@ console.log('UserShorts',user);
       isOpen ? "ml-64" : "ml-16"
     } bg-white-100 min-h-screen`}
   >
-      <h2 className="text-lg font-bold mb-4">Your Shorts</h2>
       {Array.isArray(shorts) && shorts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
           {shorts.map((short, index) => (

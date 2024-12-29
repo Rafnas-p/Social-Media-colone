@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 
 interface ChannelData {
   name: string;
@@ -63,7 +64,7 @@ const CreateChannelForm: React.FC = () => {
     formData.append("userId", channelData._id);
     formData.append("handil", channelData.handil);
   formData.append("photoURL",channelData.photoURL)
-    const response = await axios.post("http://localhost:5000/api/create-channel", formData, {
+    const response = await axiosInstance.post("http://localhost:5000/api/create-channel", formData, {
       headers: {
         "Content-Type": "multipart/form-data", 
       },
