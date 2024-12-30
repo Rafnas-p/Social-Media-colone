@@ -71,7 +71,6 @@ const CreateChannelForm: React.FC = () => {
     });
 
     setMessage(response.data.message);
-    router.push("/");
   } catch (error: any) {
     setMessage(error.response?.data?.message || "Something went wrong!");
   } finally {

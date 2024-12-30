@@ -64,16 +64,16 @@ const VideoPlayer: React.FC = () => {
   const [dislike, setdisLike] = useState([]);
   const [subscribe, setSubscribe] = useState("");
   const [subscribers, setSubscribers] = useState([]);
-    const { user } = UserAuth() as { user: User | null };
+  const { user } = UserAuth() as { user: User | null };
   const { channels } = context;
   const channel = channels.length !== 0;
   const token = Cookies.get("token");
   const mongoDbId = Cookies.get("mongoDbId");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   if (!context) {
     throw new Error("MyContext must be used within a provider");
   }
-
 
   useEffect(() => {
     const fetchVideoById = async () => {
@@ -108,7 +108,6 @@ const VideoPlayer: React.FC = () => {
     fetchComments();
   }, [currentVideoId]);
 
-  
   useEffect(() => {
     const fetchLikes = async () => {
       if (!videoDetails) return;
@@ -118,7 +117,6 @@ const VideoPlayer: React.FC = () => {
           "http://localhost:5000/api/likeVideoCount",
           {
             _id: videoDetails._id,
-           
           }
         );
 
@@ -131,8 +129,6 @@ const VideoPlayer: React.FC = () => {
 
     fetchLikes();
   }, [videoDetails]);
-
-  console.log("videoDetails",liked);
 
   useEffect(() => {
     const fetchSubscribersCount = async () => {
@@ -154,8 +150,11 @@ const VideoPlayer: React.FC = () => {
     fetchSubscribersCount();
   }, [videoDetails, user?.uid]);
 
-
   const postComment = async () => {
+    if (!user?._id) {
+      setIsModalOpen(true);
+      return;
+    }
     if (!newComment.trim()) return;
 
     try {
@@ -164,11 +163,11 @@ const VideoPlayer: React.FC = () => {
         {
           userName: channels ? channels.name : user?.displayName,
           userProfile: channels ? channels.profile : user?.photoURL,
-          text: newComment, 
+          text: newComment,
         }
       );
 
-      setComments((prev) => [...prev, response.data] );
+      setComments((prev) => [...prev, response.data]);
       setNewComment("");
     } catch (error) {
       console.error("Error posting comment:", error);
@@ -206,6 +205,11 @@ const VideoPlayer: React.FC = () => {
   }
 
   const handleLike = async () => {
+    if (!user?._id) {
+      setIsModalOpen(true);
+      return;
+    }
+
     if (!videoDetails || !user?._id) return;
 
     try {
@@ -239,6 +243,11 @@ const VideoPlayer: React.FC = () => {
   const islike = Array.isArray(like) && like.includes(user?._id);
 
   const handilDislike = async () => {
+    if (!user?._id) {
+      setIsModalOpen(true);
+      return;
+    }
+
     try {
       const response = await axiosInstance.post(
         "http://localhost:5000/api/dislikeVideo",
@@ -257,11 +266,15 @@ const VideoPlayer: React.FC = () => {
   const isdislike = Array.isArray(dislike) && dislike.includes(user?._id);
 
   const handilSubscrib = async () => {
+    if (!user?._id) {
+      setIsModalOpen(true);
+      return;
+    }
     try {
       const response = await axiosInstance.post(
         "http://localhost:5000/api/subscribChannel",
         {
-          _id:videoDetails.channelId._id,
+          _id: videoDetails.channelId._id,
         }
       );
       setSubscribers(response.data.subscribers || []);
@@ -269,7 +282,7 @@ const VideoPlayer: React.FC = () => {
       console.error("Errorsubscrib channel:", error);
     }
   };
-  
+
   const isUserSubscribed =
     Array.isArray(subscribers) && subscribers.includes(user?.uid);
   console.log("isUserSubscribed", isUserSubscribed);
@@ -301,14 +314,18 @@ const VideoPlayer: React.FC = () => {
               />
 
               <div className="flex flex-col">
-                <h4 className="font-semibold">{videoDetails?.channelId.name}</h4>
+                <h4 className="font-semibold">
+                  {videoDetails?.channelId.name}
+                </h4>
                 <p className="text-sm text-gray-500">{subscribe} subscribers</p>
               </div>
             </Link>
             <button
               onClick={handilSubscrib}
               className={`${
-                isUserSubscribed ? "bg-gray-100 max-w-28 h-8 text-gray-600" : "bg-black text-white"
+                isUserSubscribed
+                  ? "bg-gray-100 max-w-28 h-8 text-gray-600"
+                  : "bg-black text-white"
               } rounded-full w-27 h-9 ml-10 text-sm p-1 transition-all duration-300`}
             >
               {isUserSubscribed ? "Subscribed" : "Subscribe"}
@@ -335,11 +352,36 @@ const VideoPlayer: React.FC = () => {
           </div>
         </div>
 
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-4 rounded-md shadow-lg w-64">
+              <h2 className="text-lg font-semibold mb-2 text-center">
+                Login Required
+              </h2>
+              <p className="text-sm text-gray-500 mb-4 text-center">
+                Sign in to make your opinion count.{" "}
+              </p>
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="bg-blue-500 text-white px-3 py-1.5 rounded-md hover:bg-blue-600 transition"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="mt-6">
           <h2 className="text-lg font-semibold">Comments</h2>
           <div className="flex items-center space-x-2 mt-3">
             <img
-              src={channel ? channels.profile : user?.photoURL}
+              src={
+                channel?.profile ||
+                user?.photoURL ||
+                "https://via.placeholder.com/150?text=Default+Image"
+              }
               alt="User Profile"
               className="w-10 h-10 rounded-full object-cover"
             />

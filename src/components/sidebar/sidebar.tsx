@@ -74,10 +74,10 @@ const Sidebar: React.FC = () => {
           <div className="text-sm">
             Sign in to like videos, comment, and subscribe.
           </div>
-          <div
-            className="flex items-center space-x-2 bg-blue-100 text-gray-800 px-3 py-1 rounded-full cursor-pointer hover:bg-blue-200 transition"
+          <div className="flex items-center ml-6 space-x-2 border border-blue-500 text-gray-800 px-2 py-1 rounded-full cursor-pointer hover:bg-blue-100 transition"
             onClick={handleSignIn}
           >
+
             <div className="flex items-center justify-center w-4 h-4 rounded-full bg-blue-500 text-white">
               <IoPersonOutline className="w-3 h-3" />
             </div>
