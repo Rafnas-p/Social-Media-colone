@@ -80,7 +80,7 @@ function DisplayShortsGrid() {
 
   return (
     <div
-      className={`flex flex-col transition-all duration-300 mt-1 ${
+      className={`flex flex-col transition-all duration-300  ${
         isOpen ? "ml-64" : "ml-16"
       } bg-white-100 min-h-screen`}
     >

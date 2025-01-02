@@ -6,7 +6,7 @@ import { MyContext } from "@/context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axios from "axios";
 import Cookies from "js-cookie";
-
+import RelativeTime from "../reusebile/RelativeTime";
 import Link from "next/link";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
@@ -247,27 +247,6 @@ const SearchPlayer: React.FC = () => {
     router.push(`?Id=${id}`);
   };
 
-  function getRelativeTime(dateString: string): string {
-    const now = new Date();
-    const date = new Date(dateString);
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInMinutes = Math.floor(diffInMs / 60000);
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    const diffInDays = Math.floor(diffInHours / 24);
-    const diffInMonths = Math.floor(diffInDays / 30);
-    const diffInYears = Math.floor(diffInMonths / 12);
-
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
-    } else if (diffInHours < 24) {
-      return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
-    } else if (diffInMonths < 12) {
-      return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
-    } else {
-      return `${diffInYears} year${diffInYears > 1 ? "s" : ""} ago`;
-    }
-  }
-
   const handilSubscrib = async () => {
     try {
       const response = await axiosInstance.post(
@@ -370,7 +349,7 @@ const SearchPlayer: React.FC = () => {
               placeholder="Write a comment..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              className="flex-1 border-b border-gray-300 focus:border-black px-3 py-2 text-sm outline-none transition"
+              className="flex-1 border-b border-gray-300 focus:border-black px-3  py-2 text-sm outline-none transition"
             />
             <button
               onClick={postComment}
@@ -398,7 +377,8 @@ const SearchPlayer: React.FC = () => {
                         {comment.userName}
                       </p>
                       <p className="text-xs ml-1 text-gray-500">
-                        {getRelativeTime(comment?.createdAt)}
+                        <RelativeTime dateString={comment?.createdAt} />
+
                       </p>
                     </div>
                     <p className="text-sm">{comment?.text}</p>
@@ -432,7 +412,7 @@ const SearchPlayer: React.FC = () => {
                   {video.title}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {getRelativeTime(video.createdAt)}
+                   <RelativeTime dateString={video.createdAt} />
                 </p>
               </div>
             </div>

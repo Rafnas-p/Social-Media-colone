@@ -7,7 +7,9 @@ import { AiOutlineDislike } from "react-icons/ai";
 import { AiOutlineLike } from "react-icons/ai";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 import Cookies from "js-cookie";
+
 import { UserAuth } from "@/context/authcontext/authcontext";
+import RelativeTime from "../reusebile/RelativeTime";
 import axios from "axios";
 import Link from "next/link";
 interface User {
@@ -59,6 +61,8 @@ const VideoPlayer: React.FC = () => {
   const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
   const [comments, setComments] = useState<CommentSnippet[]>([]);
   const [newComment, setNewComment] = useState<string>("");
+  const [openDropdownId, setOpenDropdownId] = useState(null);
+
   const [liked, setLiked] = useState<string>("");
   const [like, setLike] = useState([]);
   const [dislike, setdisLike] = useState([]);
@@ -182,28 +186,6 @@ const VideoPlayer: React.FC = () => {
     setCurrentVideoId(videoId);
     router.push(`/videos/${videoId}`);
   };
-
-  function getRelativeTime(dateString: string): string {
-    const now = new Date();
-    const date = new Date(dateString);
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInMinutes = Math.floor(diffInMs / 60000);
-    const diffInHours = Math.floor(diffInMinutes / 60);
-    const diffInDays = Math.floor(diffInHours / 24);
-    const diffInMonths = Math.floor(diffInDays / 30);
-    const diffInYears = Math.floor(diffInMonths / 12);
-
-    if (diffInMinutes < 60) {
-      return `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
-    } else if (diffInHours < 24) {
-      return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
-    } else if (diffInMonths < 12) {
-      return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
-    } else {
-      return `${diffInYears} year${diffInYears > 1 ? "s" : ""} ago`;
-    }
-  }
-
   const handleLike = async () => {
     if (!user?._id) {
       setIsModalOpen(true);
@@ -287,6 +269,23 @@ const VideoPlayer: React.FC = () => {
     Array.isArray(subscribers) && subscribers.includes(user?.uid);
   console.log("isUserSubscribed", isUserSubscribed);
 
+  const toggleDropdown = (id) => {
+    setOpenDropdownId((prevId) => (prevId === id ? null : id)); 
+  };
+  const handleDelete = async (_id: string) => {
+    try {
+      const response = await axiosInstance.delete(
+        `http://localhost:5000/api/deleteComment/${_id}` 
+      );
+  
+      console.log("Comment deleted:", response.data);
+  
+      setComments((prevComments) => prevComments.filter(comment => comment._id !== _id));
+    } catch (error: any) {
+      console.error("Error in delete comment:", error);
+    }
+  };
+  
   return (
     <div className="flex  flex-col lg:flex-row px-4 mt-20 ml-14 bg-white text-gray-800 min-h-screen space-y-4 lg:space-y-0 lg:space-x-6">
       <div className="w-full lg:w-2/3 max-w-3xl space-y-4">
@@ -304,7 +303,7 @@ const VideoPlayer: React.FC = () => {
         <div className="flex justify-between items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
           <div className="flex">
             <Link
-              href={`/userAcount?username=${videoDetails?.channelId.name}`}
+              href={`/userAcount/videos?username=${videoDetails?.channelId.name}`}
               className="flex items-center space-x-4"
             >
               <img
@@ -372,10 +371,9 @@ const VideoPlayer: React.FC = () => {
             </div>
           </div>
         )}
-
         <div className="mt-6">
           <h2 className="text-lg font-semibold">Comments</h2>
-          <div className="flex items-center space-x-2 mt-3">
+          <div className="flex items-center space-x-3 mt-3">
             <img
               src={
                 channel?.profile ||
@@ -385,15 +383,15 @@ const VideoPlayer: React.FC = () => {
               alt="User Profile"
               className="w-10 h-10 rounded-full object-cover"
             />
-
-            <input
-              type="text"
-              placeholder="Write a comment..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              className="flex-1 border-b border-gray-300 focus:border-black px-3 py-2 text-sm outline-none transition"
-            />
-
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Write a comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+                className="flex-1 border-b border-gray-300 focus:border-black px-3 w-full py-2 text-sm outline-none transition"
+              />
+            </div>
             <button
               onClick={postComment}
               className="text-black font-medium hover:bg-blue-50 px-4 py-1 rounded transition"
@@ -401,22 +399,42 @@ const VideoPlayer: React.FC = () => {
               Post
             </button>
           </div>
+
           <div className="mt-5 space-y-4">
             {comments.map((comment) => (
               <div key={comment._id} className="flex items-start space-x-3">
                 <img
                   src={comment?.userProfile}
-                  alt={channels ? channels.name : comment.userName}
-                  className="w-8 h-8 rounded-full object-cover"
+                  alt={comment.userName}
+                  className="w-10 h-10 rounded-full object-cover"
                 />
-                <div>
-                  <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mr-9">
                     <p className="text-sm font-semibold">{comment.userName}</p>
-                    <p className="text-xs ml-1 text-gray-500">
-                      {getRelativeTime(comment?.createdAt)}
-                    </p>
+                    <div className="relative ">
+                      <button
+                        onClick={() => toggleDropdown(comment._id)}
+                        className="text-gray-500 hover:text-gray-700"
+                      >
+                        ⋮
+                      </button>
+                      {openDropdownId === comment._id && (
+                        <div className="absolute right-0 mt-2 w-32 bg-white shadow-lg border rounded-md z-10">
+                        
+                          <button
+                            onClick={() => {
+                              handleDelete(comment._id);
+                              setOpenDropdownId(null);
+                            }}
+                            className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-sm">{comment?.text}</p>
+                  <p className="text-sm mt-1">{comment?.text}</p>
                 </div>
               </div>
             ))}
@@ -445,7 +463,7 @@ const VideoPlayer: React.FC = () => {
                   {video.title}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {getRelativeTime(video.createdAt)}
+                  <RelativeTime dateString={video.createdAt} />
                 </p>
               </div>
             </div>

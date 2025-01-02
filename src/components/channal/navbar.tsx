@@ -10,12 +10,12 @@ import Searchbhar2 from "./searchbhar";
 
 function Navbar2() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const [isImageLoading, setIsImageLoading] = useState<boolean>(true); // Manage image loading state
 
   const context = useContext(MyContext);
-  const { toggleSidebar,channels } = context;
-  
-  const channel=channels.length !== 0;
+  const { toggleSidebar, channels } = context;
 
+  const channel = channels.length !== 0;
   const { user, logOut } = UserAuth();
 
   const handleSignOut = async () => {
@@ -31,9 +31,13 @@ function Navbar2() {
     setIsDropdownOpen((prev) => !prev);
   };
 
+  const handleImageLoad = () => {
+    setIsImageLoading(false); // Hide skeleton when image loads
+  };
+
   return (
     <div>
-      <nav className="bg-white fixed inset-0 flex items-center justify-center h-16 px-4 shadow z-30">
+      <nav className="bg-white fixed top-0 left-0 right-0 h-16 flex items-center justify-between px-4 shadow z-30">
         <div className="flex items-center">
           <button
             onClick={toggleSidebar}
@@ -52,16 +56,14 @@ function Navbar2() {
           />
         </Link>
 
-        <div className="flex items-center justify-between flex-grow ml-44">
+        <div className="flex items-center justify-center flex-grow">
           <Searchbhar2 />
         </div>
 
         <div className="flex items-center">
           <Link href={"/channal/upload"}>
             <span className="flex items-center space-x-2 p-2 bg-gray-100 rounded-full mr-7 cursor-pointer transition">
-              
-              <RiVideoAddFill className=" w-5 h-5 " aria-label="Create Video" />
-              
+              <RiVideoAddFill className="w-5 h-5" aria-label="Create Video" />
               <span className="text-black text-xs font-medium">Create</span>
             </span>
           </Link>
@@ -73,17 +75,23 @@ function Navbar2() {
             onClick={toggleDropdown}
             aria-label="Profile"
           >
+            {isImageLoading && (
+              <div className="w-8 h-8 bg-gray-300 rounded-full animate-pulse"></div>
+            )}
             <img
-              src={ channel? channels.profile:user?.photoURL }
+              src={channel ? channels.profile : user?.photoURL}
               alt="Profile"
-              className="w-8 h-8 rounded-full"
+              className={`w-8 h-8 rounded-full ${
+                isImageLoading ? "hidden" : ""
+              }`}
+              onLoad={handleImageLoad}
             />
           </button>
           {isDropdownOpen && (
             <div className="absolute top-2 mr-9 right-0 w-56 bg-white shadow-lg rounded-md z-20">
               <div className="flex items-center px-4 py-2 text-gray-800">
                 <img
-                  src={ channel? channels.profile:user?.photoURL }
+                  src={channel ? channels.profile : user?.photoURL}
                   alt="Profile"
                   className="w-10 h-10 rounded-full"
                 />
@@ -91,13 +99,7 @@ function Navbar2() {
                   <p className="text-sm text-gray-600">{user?.displayName}</p>
                 </div>
               </div>
-              
-              {/* <Link
-                href="/userAcount"
-                className="block px-4 py-2 text-blue-600 hover:text-blue-800 hover:underline"
-              >
-                Create a Channel
-              </Link> */}
+
               <hr className="my-2 border-gray-300" />
               <button
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-200 w-full text-left"

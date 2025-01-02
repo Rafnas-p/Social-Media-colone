@@ -62,7 +62,7 @@ const Userprofile: React.FC = () => {
   const { isOpen } = context || { isOpen: false };
 
   const isCurrentUser = user?._id === selectedUser.userId;
-console.log('selectedUser',selectedUser);
+console.log('selectedUser',channels);
 
   return (
     <>

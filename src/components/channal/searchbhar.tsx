@@ -58,13 +58,11 @@ const Searchbhar2: React.FC = () => {
     setSearchQuery(e.target.value.trim());
   };
 
-  // Clear search results
   const clearSearch = () => {
     setSearchQuery("");
     setFilteredData([]);
   };
 
-  // Effect to filter user videos based on search query
   useEffect(() => {
     if (searchQuery && userVideos) {
       const results = userVideos.filter(
@@ -75,13 +73,13 @@ const Searchbhar2: React.FC = () => {
       );
       setFilteredData(results);
     } else {
-      setFilteredData([]); // Reset if search query is empty
+      setFilteredData([]); 
     }
   }, [searchQuery, userVideos, setFilteredData]);
 
   return (
     <div className="px-4 sm:px-0 fixed top-4 flex flex-col items-center z-10">
-      <div className="relative w-full sm:w-[500px]">
+      <div className="relative w-full sm:w-[500px]  max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
         <input
           type="text"
           placeholder="Search..."
@@ -90,21 +88,20 @@ const Searchbhar2: React.FC = () => {
           className="p-3 rounded-full border border-gray-300 w-full h-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100"
         />
 
-        <div className="absolute top-0 right-0 h-full w-10 sm:w-12 bg-gray-200 p-2 rounded-r-full border border-gray-300 flex items-center justify-center">
-          <IoMdSearch size={18} />
+<div className="absolute top-0 right-0 h-full w-10 sm:w-12 bg-gray-200 p-2 rounded-r-full border border-gray-300 flex items-center justify-center">
+<IoMdSearch size={18} />
         </div>
 
         {searchQuery && (
           <button
-            className="absolute top-0 right-10 h-full w-10 sm:w-12 p-2 flex items-center justify-center"
-            onClick={clearSearch}
+          className="absolute top-0 right-10 h-full w-10 sm:w-12 p-2 flex items-center justify-center"
+          onClick={clearSearch}
           >
             <MdCancel className="text-gray-500" />
           </button>
         )}
       </div>
 
-      {/* Search results box */}
       {searchQuery && (
         <div className="relative w-full sm:w-[500px] bg-white shadow-lg rounded-lg p-2 max-h-72 overflow-y-auto text-sm z-0">
           {userVideos && userVideos.length > 0 ? (

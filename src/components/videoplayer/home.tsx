@@ -87,8 +87,8 @@ const DisplayData: React.FC = () => {
                   <video
                     className={`w-full object-cover ${
                       isOpen
-                        ? "h-48 sm:h-40 md:h-32 lg:h-28"
-                        : "h-56 sm:h-48 md:h-44 lg:h-40"
+                        ? "h-52 sm:h-40 md:h-32 lg:h-28"
+                        : "h-60 sm:h-48 md:h-44 lg:h-40"
                     } rounded-lg`}
                     src={item.videoUrl}
                     title={item.title}

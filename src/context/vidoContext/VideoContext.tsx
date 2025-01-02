@@ -207,7 +207,7 @@ const [channels, setChannels] = useState<any[]>([]);
     };
 
     fetchVideosById();
-  }, [user?._id]);
+  }, [user?._id,]);
 
   useEffect(() => {
     const fetchShorts = async () => {
