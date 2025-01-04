@@ -6,7 +6,7 @@ import { MyContext } from "@/context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axios from "axios";
 import Cookies from "js-cookie";
-import RelativeTime from "../reusebile/RelativeTime";
+import RelativeTime from "../reusebile/relativeTime";
 import Link from "next/link";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
@@ -14,6 +14,7 @@ import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
 interface VideoId {
   kind: string;
   videoId: string;
+  createdAt: number; 
 }
 interface User {
   _id: string;
@@ -32,6 +33,8 @@ interface SearchDataItem {
   userName: string;
   photoURL: string;
   displayName: string;
+  createdAt: number; 
+
   videoUrl: string;
 }
 
@@ -44,6 +47,8 @@ interface Comment {
   author: string;
   publishedAt: string;
 }
+ 
+
 
 const SearchPlayer: React.FC = () => {
   const searchParams = useSearchParams();
@@ -63,9 +68,9 @@ const SearchPlayer: React.FC = () => {
   const [newComment, setNewComment] = useState<string>("");
   const [subscribe, setSubscribe] = useState("");
   const [liked, setLiked] = useState<string>("");
-  const [like, setLike] = useState([]);
-  const [dislike, setdisLike] = useState([]);
-  const [subscribers, setSubscribers] = useState([]);
+  const [like, setLike] = useState<string[]>([]);
+    const [dislike, setDislike] = useState<string[]>([]);
+    const [subscribers, setSubscribers] = useState<string[]>([]);
   const token = Cookies.get("token");
   const mongoDbId = Cookies.get("mongoDbId");
     const { user } = UserAuth() as { user: User | null };
@@ -136,13 +141,14 @@ const SearchPlayer: React.FC = () => {
 
   const handleLike = async () => {
     if (!playVideo || !user?._id) return;
+console.log(playVideo,user?._id);
 
     try {
       const response = await axiosInstance.post(
         "http://localhost:5000/api/likeVideo",
         {
-          _id: playVideo._id,
-          uid: user?._id,
+          channelId: playVideo._id,
+
         },
         {
           headers: {
@@ -166,26 +172,26 @@ const SearchPlayer: React.FC = () => {
     }
   };
 
-  const islike = Array.isArray(like) && like.includes(user?._id);
+  const islike = Array.isArray(like) && like.includes(user?._id ||"");
 
   const handilDislike = async () => {
     try {
       const response = await axiosInstance.post(
         "http://localhost:5000/api/dislikeVideo",
         {
-          _id: playVideo._id,
-          uid: user?._id,
+          channelId: playVideo._id,
+
         }
       );
       setLike(response.data.likes);
       setLiked(response.data.dislikes);
-      setdisLike(response.data.dislikarray);
+      setDislike(response.data.dislikarray);
     } catch (error) {
       console.error("Error disliking the video:", error);
     }
   };
 
-  const isdislike = Array.isArray(dislike) && dislike.includes(user?._id);
+  const isdislike = Array.isArray(dislike) && dislike.includes(user?._id ||"");
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -263,7 +269,7 @@ const SearchPlayer: React.FC = () => {
   console.log("subers", subscribers);
 
   const isUserSubscribed =
-    Array.isArray(subscribers) && subscribers.includes(user?.uid);
+    Array.isArray(subscribers) && subscribers.includes(user?.uid ||"");
   console.log("isUserSubscribed", isUserSubscribed);
 
   return (
@@ -284,37 +290,38 @@ const SearchPlayer: React.FC = () => {
 
         <div className="flex flex-col mt-4">
           <h1 className="text-lg font-bold">{playVideo?.title}</h1>
-          <p className="text-sm">{playVideo?.description}</p>
         </div>
 
-        <div className="flex items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 mt-6">
-          <Link
-            href={`/userAcount?username=${playVideo?.userName}`}
-            className="flex items-start space-x-4 hover:bg-gray-100 rounded-lg transition-colors duration-200"
-          >
-            <img
-              src={
-                playVideo?.channelId
-                  ? playVideo?.channelId.profile
-                  : playVideo?.userId.photoURL
-              }
-              alt="Profile"
-              className="w-8 h-8 rounded-full object-cover cursor-pointer"
-            />
+        <div className="flex justify-between items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+          <div className="flex">
+            <Link
+              href={`/userAcount/videos?username=${playVideo?.channelId.name}`}
+              className="flex items-center space-x-4"
+            >
+              <img
+                src={playVideo?.channelId.profile}
+                alt="Profile"
+                className="w-8 h-8 rounded-full object-cover cursor-pointer"
+              />
 
-            <div className="flex flex-col">
-              <h4 className="font-semibold">{playVideo?.channelId.name}</h4>
-              <p className="text-sm text-gray-500">{subscribe} subscribers</p>
-            </div>
-          </Link>
-          <button
-            onClick={handilSubscrib}
-            className={`${
-              isUserSubscribed ? "bg-white text-black" : "bg-black text-white"
-            } rounded-full w-27 h-9 ml-10 text-sm p-1 transition-all duration-300`}
-          >
-            {isUserSubscribed ? "Subscribed" : "Subscribe"}
-          </button>
+              <div className="flex flex-col">
+                <h4 className="font-semibold">
+                  {playVideo?.channelId.name}
+                </h4>
+                <p className="text-sm text-gray-500">{subscribe} subscribers</p>
+              </div>
+            </Link>
+            <button
+              onClick={handilSubscrib}
+              className={`${
+                isUserSubscribed
+                  ? "bg-gray-100 max-w-28 h-8 text-gray-600"
+                  : "bg-black text-white"
+              } rounded-full w-27 h-9 ml-10 text-sm p-1 transition-all duration-300`}
+            >
+              {isUserSubscribed ? "Subscribed" : "Subscribe"}
+            </button>
+          </div>
 
           <div className="flex border focus:ring-2  bg-gray-50 w-28 h-8 rounded-full overflow-hidden cursor-pointer">
             <button
@@ -340,7 +347,8 @@ const SearchPlayer: React.FC = () => {
           <h2 className="text-lg font-semibold">Comments</h2>
           <div className="flex items-center space-x-2 mt-3">
             <img
-              src={channel ? channels.profile : user?.photoURL}
+              src={channel ? channels.profile : user?.photoURL||
+                "https://via.placeholder.com/150?text=Default+Image"}
               alt="User Profile"
               className="w-10 h-10 rounded-full object-cover"
             />

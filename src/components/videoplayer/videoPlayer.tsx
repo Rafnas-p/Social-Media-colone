@@ -7,9 +7,9 @@ import { AiOutlineDislike } from "react-icons/ai";
 import { AiOutlineLike } from "react-icons/ai";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 import Cookies from "js-cookie";
-
+import { Channel } from "../../context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
-import RelativeTime from "../reusebile/RelativeTime";
+import RelativeTime from "../reusebile/relativeTime";
 import axios from "axios";
 import Link from "next/link";
 interface User {
@@ -38,6 +38,10 @@ interface VideoDetails {
   channelId: any;
 }
 
+interface Video {
+  _id: string;
+}
+
 interface CommentSnippet {
   _id: string;
   userName: string;
@@ -52,7 +56,11 @@ interface MyContextType {
 }
 
 const VideoPlayer: React.FC = () => {
-  const context = useContext<MyContextType>(MyContext);
+  const context = useContext(MyContext);
+  if (!context) {
+    throw new Error("MyContext must be used within a provider");
+  }
+
   const { videoId: routeVideoId } = useParams() as { videoId?: string };
   const router = useRouter();
   const [currentVideoId, setCurrentVideoId] = useState<string | undefined>(
@@ -64,20 +72,18 @@ const VideoPlayer: React.FC = () => {
   const [openDropdownId, setOpenDropdownId] = useState(null);
 
   const [liked, setLiked] = useState<string>("");
-  const [like, setLike] = useState([]);
-  const [dislike, setdisLike] = useState([]);
+  const [like, setLike] = useState<string[]>([]);
+  const [dislike, setDislike] = useState<string[]>([]);
+  const [subscribers, setSubscribers] = useState<string[]>([]);
   const [subscribe, setSubscribe] = useState("");
-  const [subscribers, setSubscribers] = useState([]);
   const { user } = UserAuth() as { user: User | null };
+
   const { channels } = context;
-  const channel = channels.length !== 0;
+  const channel = channels.length > 0 ? channels[0] : null;
+
   const token = Cookies.get("token");
   const mongoDbId = Cookies.get("mongoDbId");
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  if (!context) {
-    throw new Error("MyContext must be used within a provider");
-  }
 
   useEffect(() => {
     const fetchVideoById = async () => {
@@ -162,11 +168,13 @@ const VideoPlayer: React.FC = () => {
     if (!newComment.trim()) return;
 
     try {
+      const currentChannel = channels.length > 0 ? channels[0] : null;
+
       const response = await axiosInstance.post<CommentSnippet>(
         `http://localhost:5000/api/addComment/${currentVideoId}`,
         {
-          userName: channels ? channels.name : user?.displayName,
-          userProfile: channels ? channels.profile : user?.photoURL,
+          userName: currentChannel ? currentChannel.name : user?.displayName,
+          userProfile: currentChannel ? currentChannel.profile : user?.photoURL,
           text: newComment,
         }
       );
@@ -222,7 +230,7 @@ const VideoPlayer: React.FC = () => {
     }
   };
 
-  const islike = Array.isArray(like) && like.includes(user?._id);
+  const islike = Array.isArray(like) && like.includes(user?._id || "");
 
   const handilDislike = async () => {
     if (!user?._id) {
@@ -239,13 +247,13 @@ const VideoPlayer: React.FC = () => {
       );
       setLike(response.data.likes);
       setLiked(response.data.dislikes);
-      setdisLike(response.data.dislikarray);
+      setDislike(response.data.dislikarray);
     } catch (error) {
       console.error("Error disliking the video:", error);
     }
   };
 
-  const isdislike = Array.isArray(dislike) && dislike.includes(user?._id);
+  const isdislike = Array.isArray(dislike) && dislike.includes(user?._id || "");
 
   const handilSubscrib = async () => {
     if (!user?._id) {
@@ -266,26 +274,28 @@ const VideoPlayer: React.FC = () => {
   };
 
   const isUserSubscribed =
-    Array.isArray(subscribers) && subscribers.includes(user?.uid);
+    Array.isArray(subscribers) && subscribers.includes(user?.uid || "");
   console.log("isUserSubscribed", isUserSubscribed);
 
-  const toggleDropdown = (id) => {
-    setOpenDropdownId((prevId) => (prevId === id ? null : id)); 
+  const toggleDropdown = (id: any) => {
+    setOpenDropdownId((prevId) => (prevId === id ? null : id));
   };
   const handleDelete = async (_id: string) => {
     try {
       const response = await axiosInstance.delete(
-        `http://localhost:5000/api/deleteComment/${_id}` 
+        `http://localhost:5000/api/deleteComment/${_id}`
       );
-  
+
       console.log("Comment deleted:", response.data);
-  
-      setComments((prevComments) => prevComments.filter(comment => comment._id !== _id));
+
+      setComments((prevComments) =>
+        prevComments.filter((comment) => comment._id !== _id)
+      );
     } catch (error: any) {
       console.error("Error in delete comment:", error);
     }
   };
-  
+
   return (
     <div className="flex  flex-col lg:flex-row px-4 mt-20 ml-14 bg-white text-gray-800 min-h-screen space-y-4 lg:space-y-0 lg:space-x-6">
       <div className="w-full lg:w-2/3 max-w-3xl space-y-4">
@@ -410,8 +420,15 @@ const VideoPlayer: React.FC = () => {
                 />
                 <div className="flex-1">
                   <div className="flex items-center justify-between mr-9">
-                    <p className="text-sm font-semibold">{comment.userName}</p>
-                    <div className="relative ">
+                    <div className="flex items-center space-x-2">
+                      <p className="text-sm font-semibold">
+                        {comment.userName}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        <RelativeTime dateString={comment?.createdAt} />
+                      </p>
+                    </div>
+                    <div className="relative">
                       <button
                         onClick={() => toggleDropdown(comment._id)}
                         className="text-gray-500 hover:text-gray-700"
@@ -420,7 +437,6 @@ const VideoPlayer: React.FC = () => {
                       </button>
                       {openDropdownId === comment._id && (
                         <div className="absolute right-0 mt-2 w-32 bg-white shadow-lg border rounded-md z-10">
-                        
                           <button
                             onClick={() => {
                               handleDelete(comment._id);
@@ -444,10 +460,10 @@ const VideoPlayer: React.FC = () => {
 
       <div className="w-full lg:w-1/3 pr-11">
         {context.data
-          .filter((video) => video._id !== currentVideoId)
+          .filter((video) => video._id !== currentVideoId && video._id != null)
           .map((video) => (
             <div
-              key={video._id}
+              key={video._id as string}
               className="flex items-center space-x-2 bg-white p-3 rounded-lg cursor-pointer hover:shadow-md transition-shadow"
               onClick={() => handleVideoClick(video._id)}
             >

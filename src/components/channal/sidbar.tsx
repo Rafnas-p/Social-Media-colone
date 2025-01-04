@@ -1,22 +1,30 @@
 "use client";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 import { IoHomeOutline } from "react-icons/io5";
 import { LuUserCircle } from "react-icons/lu";
 import Link from "next/link";
 
+interface Channel {
+  name: string;
+  profile: string;
+}
+
 function Sidbar2() {
   const context = useContext(MyContext);
+  
   const { channels, isOpen = false } = context || {};
+  
   const [loading, setLoading] = useState(true);
 
-  // Simulate loading for demonstration purposes
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000); // Mock a 2-second loading time
+    }, 2000); 
     return () => clearTimeout(timer);
   }, []);
+
+  const channel = channels?.[0];
 
   return (
     <>
@@ -27,7 +35,6 @@ function Sidbar2() {
       >
         <div className="flex flex-col mt-4 overflow-y-auto max-h-[calc(100vh-4rem)]">
           {loading ? (
-            // Skeleton Loader
             <div className="animate-pulse">
               <div
                 className={`${
@@ -46,11 +53,10 @@ function Sidbar2() {
               ></div>
             </div>
           ) : (
-            // Actual Content
-            <Link href={`/userAcount/videos?username=${channels?.name}`}>
+            <Link href={`/userAcount/videos?username=${channel?.name}`}>
               <button className="py-2 px-4">
                 <img
-                  src={channels?.profile}
+                  src={channel?.profile}
                   alt="Profile"
                   className={`${
                     isOpen ? "w-20 h-20 rounded-full ml-12" : "w-8 h-8 rounded-full"
@@ -68,7 +74,7 @@ function Sidbar2() {
                     isOpen ? "block" : "hidden"
                   } ml-10 text-sm text-gray-500`}
                 >
-                  {channels?.name}
+                  {channel?.name}
                 </p>
               </button>
             </Link>

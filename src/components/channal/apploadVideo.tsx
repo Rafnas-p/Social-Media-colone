@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, ChangeEvent, FormEvent, useContext } from "react";
 import axios from "axios";
-import { UserAuth } from "@/context/authcontext/authcontext";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 import { channel } from "diagnostics_channel";
 const VideoUploadComponent: React.FC = () => {
@@ -12,8 +11,10 @@ const VideoUploadComponent: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [title, setTitle] = useState<string>("");
   const [category, setCategory] = useState<string>("video");
-  const { user } = UserAuth();
   const context = useContext(MyContext);
+  if (!context) {
+    return <div>Loading...</div>;
+  }
   const { channels } = context;
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files && e.target.files.length > 0) {

@@ -22,6 +22,10 @@ const router=useRouter()
     }, 2000); 
   }, [user]);
 
+  if (!context) {
+    return <div>Loading...</div>; 
+  }
+  
   const { toggleSidebar,channels } = context;
   
 const channel=channels.length !== 0;

@@ -78,11 +78,9 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
       await signOut(auth);
       setUser(null);
 
-      // Clear cookies
       Cookies.remove("token");
       Cookies.remove("mongoDbId");
 
-      // Redirect to home
       router.push("/");
     } catch (error) {
       console.error("Error logging out:", error);
@@ -127,16 +125,16 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
       if (currentUser) {
         try {
-          const newToken = await currentUser.getIdToken(true); // Force refresh
+          const newToken = await currentUser.getIdToken(true);
           Cookies.set("token", newToken, { secure: true, sameSite: "strict" });
         } catch (error) {
-          console.error("Error refreshing token:", error);
+          console.error("Error refreshing token:", error)
           await logOut();
         }
       }
     };
 
-    const interval = setInterval(refreshToken, 50 * 60 * 1000); // Refresh every 50 minutes
+    const interval = setInterval(refreshToken, 50 * 60 * 1000); 
     return () => clearInterval(interval);
   }, []);
 
@@ -149,7 +147,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
         const response = await axios.get(
           `http://localhost:5000/api/getUserById/${currentUser.uid}`
         );
-        setUser(response.data); // Replace Firebase user with MongoDB user
+        setUser(response.data);
       } else {
         setUser(null);
         Cookies.remove("token");

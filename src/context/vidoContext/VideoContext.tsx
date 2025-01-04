@@ -17,7 +17,9 @@ interface SearchDataItem {
     liveBroadcastContent: string;
     publishTime: string;
     publishedAt: string;
+
     title: string;
+    createdAt: number; 
     thumbnails: {
       default: { url: string; width: number; height: number };
       medium: { url: string; width: number; height: number };
@@ -33,28 +35,40 @@ interface User {
   photoURL?: string;
 }
 
-
 interface MyContextType {
   selectedcat: string;
   setselectedcat: (newValue: string) => void;
   data: Video[];
-  comments?: Comment[]; 
+  comments?: Comment[];
   fetchComments?: (videoId: string) => void;
   isOpen: boolean;
   toggleSidebar: () => void;
-  searchData?: SearchDataItem[]; 
+  searchData?: SearchDataItem[];
   loading: boolean;
   error: string | null;
   filteredData: SearchItem[];
   setFilteredData: (data: SearchItem[]) => void;
   userVideos: Video[];
   shorts: Video[];
-  channels: any[]; 
-  isSignedIn:boolean;
-  user: User | null; 
+  channels: Channel[];
+  isSignedIn: boolean;
+  user: User | null;
 }
 
 
+
+ export interface Channel  {
+  length: number;
+  id: string;
+  name: string|any 
+  userId: string; 
+  profile: string;
+  handle: string;
+  subscribers: string[]; 
+
+  totalSubscribers: number; 
+  __v: number; 
+};
 
 
 interface VideoSnippet {
@@ -125,8 +139,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   const [filteredData, setFilteredData] = useState<SearchItem[]>([]);
   const [userVideos, setUserVideos] = useState<Video[]>([]);
   const [shorts, setShorts] = useState<Video[]>([]);
-const [channels, setChannels] = useState<any[]>([]);
-    const [like,setLike]=useState<any[]>(0)
+  const [channels, setChannels] = useState<Channel[]>([]);  
   
     const { user } = UserAuth() as { user: User | null };
 

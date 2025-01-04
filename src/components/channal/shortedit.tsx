@@ -80,7 +80,6 @@ export default function ShortEditForm() {
               value={shortsDetails.description}
               onChange={handleChange}
               className="w-full p-2 border rounded"
-              rows="4"
             />
           </div>
 
@@ -118,7 +117,6 @@ export default function ShortEditForm() {
             controls
             className="w-92 h-4/5 object-cover rounded-lg"
             src={shortsDetails.videoUrl}
-            type="video/mp4"
           >
           </video>
         </div>

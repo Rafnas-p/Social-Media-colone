@@ -35,7 +35,7 @@ interface MyContextType {
 }
 
 function DisplayShorts() {
-  const context = useContext<MyContextType>(MyContext);
+  const context = useContext(MyContext);
   const { channels } = context || {};
 
   const [shorts, setShorts] = useState<Short[]>([]);

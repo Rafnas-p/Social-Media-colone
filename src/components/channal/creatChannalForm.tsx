@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
+import { User } from "firebase/auth";
 
 interface ChannelData {
   name: string;
@@ -13,8 +13,7 @@ interface ChannelData {
 }
 
 const CreateChannelForm: React.FC = () => {
-  const { user } = UserAuth();
-  const router = useRouter(); // Initialize useRouter
+  const { user } = UserAuth() as { user: User | null };
 
   const [channelData, setChannelData] = useState<ChannelData>({
     name: user?.displayName || "", 

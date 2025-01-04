@@ -92,7 +92,7 @@ console.log('selectedUser',channels);
           {isCurrentUser && (
             <span>
               <button className="px-4 text-gray-500">Customize Channel</button>
-              <Link href="/channal" className="text-gray-500">
+              <Link href="/channal" className="text-gray-500 bg-gray-50  px-1 py-1 rounded-lg">
                 Manage Videos
               </Link>
             </span>
