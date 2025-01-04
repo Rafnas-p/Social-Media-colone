@@ -7,7 +7,6 @@ import { RiVideoAddFill } from "react-icons/ri";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import Link from "next/link";
 import Searchbhar2 from "./searchbhar";
-
 interface Channel {
   name: string;
   profile: string;
@@ -18,12 +17,12 @@ function Navbar2() {
   const [isImageLoading, setIsImageLoading] = useState<boolean>(true); // Manage image loading state
 
   const context = useContext(MyContext);
-  if (!context) {
-    return <div>Loading...</div>; 
+   if (!context) {
+    return <div>Loading...</div>;
   }
   const { toggleSidebar, channels } = context;
 
-  const channel = channels.length > 0 ? channels[0] : null;
+  const channel: Channel | null = channels.length > 0 ? channels[0] : null;
   const { user, logOut } = UserAuth();
 
   const handleSignOut = async () => {
@@ -40,7 +39,7 @@ function Navbar2() {
   };
 
   const handleImageLoad = () => {
-    setIsImageLoading(false); 
+    setIsImageLoading(false); // Hide skeleton when image loads
   };
 
   return (
@@ -87,9 +86,11 @@ function Navbar2() {
               <div className="w-8 h-8 bg-gray-300 rounded-full animate-pulse"></div>
             )}
             <img
-              src={channel ? channel.profile : user?.photoURL}
+              src={channel ? channels.profile : user?.photoURL}
               alt="Profile"
-              className={`w-8 h-8 rounded-full ${isImageLoading ? "hidden" : ""}`}
+              className={`w-8 h-8 rounded-full ${
+                isImageLoading ? "hidden" : ""
+              }`}
               onLoad={handleImageLoad}
             />
           </button>
@@ -97,7 +98,7 @@ function Navbar2() {
             <div className="absolute top-2 mr-9 right-0 w-56 bg-white shadow-lg rounded-md z-20">
               <div className="flex items-center px-4 py-2 text-gray-800">
                 <img
-                  src={channel ? channel.profile : user?.photoURL}
+                  src={channel ? channels.profile : user?.photoURL}
                   alt="Profile"
                   className="w-10 h-10 rounded-full"
                 />
