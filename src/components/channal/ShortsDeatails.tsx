@@ -28,7 +28,7 @@ function ShortsBord() {
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
   
   const isOpen = context?.isOpen ?? false;
-  const { user } = UserAuth() as { user: { _id: string; uid: string } | null };
+  const { user } = UserAuth() as unknown as { user: { _id: string; uid: string } | null };
 
   if (!context) {
     console.error(

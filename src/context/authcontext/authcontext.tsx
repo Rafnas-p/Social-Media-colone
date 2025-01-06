@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
 
 interface AuthContextType {
-  user: User | null;
+  user: User | undefined; // Changed from User | null to User | undefined
   googleSignIn: () => Promise<void>;
   logOut: () => Promise<void>;
   allUsers: UserRecord[];
@@ -45,7 +45,7 @@ interface AuthContextProviderProps {
 export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | undefined>(undefined); // Changed to User | undefined
   const [allUsers, setAllUsers] = useState<UserRecord[]>([]);
   const router = useRouter();
 
@@ -76,7 +76,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   const logOut = async (): Promise<void> => {
     try {
       await signOut(auth);
-      setUser(null);
+      setUser(undefined); // Updated from null to undefined
 
       Cookies.remove("token");
       Cookies.remove("mongoDbId");
@@ -149,7 +149,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
         );
         setUser(response.data);
       } else {
-        setUser(null);
+        setUser(undefined); // Updated from null to undefined
         Cookies.remove("token");
         Cookies.remove("mongoDbId");
       }

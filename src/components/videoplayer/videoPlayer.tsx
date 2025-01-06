@@ -78,7 +78,7 @@ const VideoPlayer: React.FC = () => {
   const [dislike, setDislike] = useState<string[]>([]);
   const [subscribers, setSubscribers] = useState<string[]>([]);
   const [subscribe, setSubscribe] = useState("");
-  const { user } = UserAuth() as { user: User | null };
+  const { user } = UserAuth() as unknown as { user: User | null };
 
   const { channels } = context;
 

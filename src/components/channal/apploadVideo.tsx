@@ -75,13 +75,16 @@ const VideoUploadComponent: React.FC = () => {
       setCategory("video");
       setVideoUrl(null);
       alert("Video uploaded successfully!");
-    } catch (error: any|unknown) {
-      if (error.response) {
-        console.error("Server Error:", error.response.data);
-        alert(`Error: ${error.response.data.message || "Upload failed"}`);
-      } else {
+    } catch (error:unknown){
+      if (axios.isAxiosError(error)) {
+        console.error("Server Error:", error.response?.data);
+        alert(`Error: ${error.response?.data.message || "Upload failed"}`);
+      } else if (error instanceof Error) {
         console.error("Upload Error:", error.message);
         alert("An unexpected error occurred. Please try again.");
+      } else {
+        console.error("Unknown error:", error);
+        alert("An unknown error occurred.");
       }
     }
   };

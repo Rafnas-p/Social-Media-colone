@@ -38,7 +38,7 @@ const Userprofile: React.FC = () => {
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
 
-  const { user } = UserAuth() as { user: User | null };
+  const { user } = UserAuth() as unknown as { user: User  };
 
   useEffect(() => {
     const fetchChannels = async () => {

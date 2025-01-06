@@ -83,7 +83,7 @@ const SearchPlayer: React.FC = () => {
     const [subscribers, setSubscribers] = useState<string[]>([]);
   const token = Cookies.get("token");
   const mongoDbId = Cookies.get("mongoDbId");
-    const { user } = UserAuth() as { user: User | null };
+    const { user } = UserAuth() as unknown as { user: User | null };
   const { channels } = context;
 
   useEffect(() => {

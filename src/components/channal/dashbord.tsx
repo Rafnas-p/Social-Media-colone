@@ -5,6 +5,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import Link from "next/link";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
+import { AxiosError } from "axios";
 
 
 type User = {
@@ -49,7 +50,7 @@ function Dashbord() {
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
   const [videos, setVideos] = useState<Video[]>(context?.userVideos||[]);
   const isOpen = context?.isOpen ?? false;
-    const { user } = UserAuth() as { user: User | null };
+    const { user } = UserAuth() as unknown as { user: User | null };
 
   if (!context) {
     console.error(
@@ -69,11 +70,16 @@ function Dashbord() {
         });
 
         setVideos(response.data.videos);
-      } catch (err: any) {
-        console.error("Error fetching videos:", err.message || err);
-      }
-    };
-
+      }  catch (err: unknown) {
+        if (err instanceof AxiosError) {
+          console.error("Axios error fetching videos:", err.message);
+        } else {
+          console.error("Error fetching videos:", err);
+        }
+      
+    }
+    
+  }
     fetchVideosById();
   }, [user?._id]);
 
@@ -85,8 +91,12 @@ function Dashbord() {
       console.log("Delete response:", response);
 
       setVideos((prevVideos) => prevVideos.filter((video) => video._id !== videoId));
-    } catch (error: any) {
-      console.error("Error in deleting video:", error);
+    }catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        console.error("Axios error fetching videos:", err.message);
+      } else {
+        console.error("Error fetching videos:", err);
+      }
     }
   };
 

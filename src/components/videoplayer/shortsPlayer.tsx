@@ -42,7 +42,7 @@ function DisplayShorts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
-    const { user } = UserAuth() as { user: User | null };
+    const { user } = UserAuth() as unknown as { user: User | null };
 
   useEffect(() => {
     const fetchAllShorts = async () => {

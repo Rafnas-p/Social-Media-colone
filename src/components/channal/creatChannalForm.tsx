@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
+import axios from "axios";
 
 interface ChannelData {
   name: string;
@@ -18,7 +19,7 @@ interface User {
 }
 
 const CreateChannelForm: React.FC = () => {
-  const { user } = UserAuth() as { user: User | null };
+  const { user } = UserAuth() as unknown as { user: User | null };
 
   const [channelData, setChannelData] = useState<ChannelData>({
     name: user?.displayName || "", 
@@ -75,8 +76,14 @@ const CreateChannelForm: React.FC = () => {
     });
 
     setMessage(response.data.message);
-  } catch (error: any|unknown) {
-    setMessage(error.response?.data?.message || "Something went wrong!");
+  }  catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      setMessage(error.response?.data?.message || "Something went wrong!");
+    } else if (error instanceof Error) {
+      setMessage(error.message || "An unexpected error occurred");
+    } else {
+      setMessage("An unknown error occurred");
+    }
   } finally {
     setLoading(false);
   }
