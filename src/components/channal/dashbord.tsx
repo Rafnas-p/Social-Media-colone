@@ -5,7 +5,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import Link from "next/link";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 
 
 type User = {
@@ -61,27 +61,32 @@ function Dashbord() {
   console.log('videossss',videos);
   
 
-  useEffect(() => {
-    const fetchVideosById = async () => {
-      try {
-        
-        const response = await axiosInstance.get("http://localhost:5000/api/videos", {
-          params: { userId: user?._id },
-        });
+useEffect(() => {
+  const fetchVideosById = async () => {
+    try {
+      if (!user || !user._id) {
+        console.warn("User is undefined or does not have an ID");
+        setVideos([]); // Ensure a fallback state if user is undefined
+        return;
+      }
 
-        setVideos(response.data.videos);
-      }  catch (err: unknown) {
-        if (err instanceof AxiosError) {
-          console.error("Axios error fetching videos:", err.message);
-        } else {
-          console.error("Error fetching videos:", err);
-        }
-      
+      const response = await axiosInstance.get("http://localhost:5000/api/videos", {
+        params: { userId: user._id },
+      });
+
+      setVideos(response.data.videos);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        console.error("Axios error fetching videos:", err.message);
+      } else {
+        console.error("Error fetching videos:", err);
+      }
     }
-    
-  }
-    fetchVideosById();
-  }, [user]);
+  };
+
+  fetchVideosById();
+}, [user]);
+
 
   const handleDelete = async (videoId: string) => {
     try {
