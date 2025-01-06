@@ -38,21 +38,24 @@ function ShortsBord() {
   }
 
   useEffect(() => {
+    if (!user?._id) {
+      return; // Exit early if `user?._id` is not available
+    }
+  
     const fetchShorts = async () => {
       try {
-       
         const response = await axios.get("http://localhost:5000/api/shorts", {
           params: { userId: user?._id },
         });
         setShorts(response.data.shorts);
       } catch (err) {
         console.error("Error fetching shorts:", err);
-      } finally {
       }
     };
-
+  
     fetchShorts();
   }, [user?._id]);
+  
 
   const handleDelete = async (videoId: string) => {
     try {
