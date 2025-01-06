@@ -190,7 +190,7 @@ console.log(playVideo,user?._id);
       const response = await axiosInstance.post(
         "http://localhost:5000/api/dislikeVideo",
         {
-          channelId: playVideo._id,
+          channelId: playVideo?._id,
 
         }
       );
@@ -329,7 +329,28 @@ console.log(playVideo,user?._id);
             {isUserSubscribed ? "Subscribed" : "Subscribe"}
           </button>
         </div>
-      </div>
+        
+                  <div className="flex border focus:ring-2  bg-gray-50 w-28 h-8 rounded-full overflow-hidden cursor-pointer">
+                    <button
+                      onClick={handleLike}
+                      className="p-3 rounded-r-none border-r bg-gray-100 flex-1 flex justify-center items-center cursor-pointer"
+                    >
+                      <AiOutlineLike
+                        className={islike ? "text-red-500" : "text-gray-500"}
+                      />
+        
+                      <p>{liked}</p>
+                    </button>
+                    <button
+                      onClick={handilDislike}
+                      className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center"
+                    >
+                      <AiOutlineDislike className={isdislike ? "text-red-500" : ""} />
+                    </button>
+                  </div>
+                </div>
+        
+      
     </div>
 
     <div className="mt-6">

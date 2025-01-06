@@ -40,11 +40,10 @@ function ShortsBord() {
 
   useEffect(() => {
     const fetchShorts = async () => {
-      if (!user?.uid) return;
       try {
         setLoading(true);
         const response = await axios.get("http://localhost:5000/api/shorts", {
-          params: { userId: user._id },
+          params: { userId: user?._id },
         });
         setShorts(response.data.shorts);
       } catch (err) {
@@ -65,7 +64,6 @@ function ShortsBord() {
       );
       console.log("Delete response:", response);
 
-      // Update state to remove the deleted video
       setShorts((prevShorts) => prevShorts.filter((short) => short._id !== videoId));
     } catch (error) {
       console.error("Error in deleting video:", error);

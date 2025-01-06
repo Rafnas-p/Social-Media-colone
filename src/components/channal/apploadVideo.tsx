@@ -27,9 +27,6 @@ const VideoUploadComponent: React.FC = () => {
     setTitle(e.target.value);
   };
 
-  const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>): void => {
-    setCategory(e.target.value);
-  };
 
   const handleDescriptionChange = (
     e: ChangeEvent<HTMLTextAreaElement>

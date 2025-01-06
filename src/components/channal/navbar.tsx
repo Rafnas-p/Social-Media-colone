@@ -7,10 +7,6 @@ import { RiVideoAddFill } from "react-icons/ri";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import Link from "next/link";
 import Searchbhar2 from "./searchbhar";
-interface Channel {
-  name: string;
-  profile: string;
-}
 
 function Navbar2() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);

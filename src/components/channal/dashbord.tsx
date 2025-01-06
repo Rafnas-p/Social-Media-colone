@@ -31,10 +31,9 @@ function Dashbord() {
   useEffect(() => {
     const fetchVideosById = async () => {
       try {
-        if (!user?._id) return;
         
         const response = await axiosInstance.get("http://localhost:5000/api/videos", {
-          params: { userId: user._id },
+          params: { userId: user?._id },
         });
 
         setVideos(response.data.videos);
