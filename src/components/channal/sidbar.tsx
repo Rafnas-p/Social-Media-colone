@@ -1,8 +1,6 @@
 "use client";
 import React, { useContext, useState } from "react";
 import { MyContext } from "@/context/vidoContext/VideoContext";
-import { IoHomeOutline } from "react-icons/io5";
-import { LuUserCircle } from "react-icons/lu";
 import Link from "next/link";
 
 function Sidbar2() {
@@ -10,11 +8,10 @@ function Sidbar2() {
   const { channels, isOpen = false } = context || {};
   const [loading, setLoading] = useState(true);
 
-  // Simulate loading for demonstration purposes
   React.useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 2000); // Mock a 2-second loading time
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -27,7 +24,6 @@ function Sidbar2() {
       >
         <div className="flex flex-col mt-4 overflow-y-auto max-h-[calc(100vh-4rem)]">
           {loading ? (
-            // Skeleton Loader
             <div className="animate-pulse">
               <div
                 className={`${
@@ -46,7 +42,6 @@ function Sidbar2() {
               ></div>
             </div>
           ) : (
-            // Actual Content
             <Link href={`/userAcount/videos?username=${channels?.name}`}>
               <button className="py-2 px-4">
                 <img

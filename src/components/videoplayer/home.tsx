@@ -1,7 +1,6 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
 import { MyContext } from "../../context/vidoContext/VideoContext";
-import { UserAuth } from "@/context/authcontext/authcontext";
 import Link from "next/link";
 
 interface VideoDetails {

@@ -53,7 +53,6 @@ const Searchbhar2: React.FC = () => {
   const { userVideos, setFilteredData } = context;
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // Handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value.trim());
   };

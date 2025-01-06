@@ -83,7 +83,6 @@ function ShortsBord() {
           <thead>
             <tr className="text-gray-500 text-sm">
               <th className="border px-4 py-2">Video</th>
-              {/* Hide other columns on small screens */}
               <th className="border px-4 py-2 hidden sm:table-cell">Visibility</th>
               <th className="border px-4 py-2 hidden md:table-cell">Restrictions</th>
               <th className="border px-4 py-2 hidden lg:table-cell">Date</th>
