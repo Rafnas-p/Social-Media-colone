@@ -64,11 +64,7 @@ function Dashbord() {
 useEffect(() => {
   const fetchVideosById = async () => {
     try {
-      if (!user || !user._id) {
-        console.warn("User is undefined or does not have an ID");
-        setVideos([]); // Ensure a fallback state if user is undefined
-        return;
-      }
+    
 
       const response = await axiosInstance.get("http://localhost:5000/api/videos", {
         params: { userId: user._id },
