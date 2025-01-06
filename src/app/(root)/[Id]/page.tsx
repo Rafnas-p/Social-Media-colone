@@ -9,7 +9,7 @@ function Page() {
     <div>
       
         
-        <SearchPlyer/>
+        <SearchPlyer />
         
     </div>
   )

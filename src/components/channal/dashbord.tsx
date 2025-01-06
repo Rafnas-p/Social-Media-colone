@@ -1,18 +1,25 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
 import { MyContext } from "@/context/vidoContext/VideoContext";
-import { MdOutlineModeEdit } from "react-icons/md";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import Link from "next/link";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
+
+
+interface User {
+  _id: string;
+  displayName: string;
+  photoURL: string;
+  email?: string;
+}
 
 function Dashbord() {
   const context = useContext(MyContext);
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
   const [videos, setVideos] = useState<any[]>(context?.userVideos || []);
   const isOpen = context?.isOpen ?? false;
-  const { user } = UserAuth() as { user: User | null };
+    const { user } = UserAuth() as { user: User | null };
 
   if (!context) {
     console.error(

@@ -22,7 +22,6 @@ function Navbar2() {
   }
   const { toggleSidebar, channels } = context;
 
-  const channel: Channel | null = channels.length > 0 ? channels[0] : null;
   const { user, logOut } = UserAuth();
 
   const handleSignOut = async () => {
@@ -86,7 +85,7 @@ function Navbar2() {
               <div className="w-8 h-8 bg-gray-300 rounded-full animate-pulse"></div>
             )}
             <img
-              src={channel ? channels.profile : user?.photoURL}
+              src={channels ? channels?.profile : user?.photoURL?? undefined}
               alt="Profile"
               className={`w-8 h-8 rounded-full ${
                 isImageLoading ? "hidden" : ""
@@ -98,7 +97,7 @@ function Navbar2() {
             <div className="absolute top-2 mr-9 right-0 w-56 bg-white shadow-lg rounded-md z-20">
               <div className="flex items-center px-4 py-2 text-gray-800">
                 <img
-                  src={channel ? channels.profile : user?.photoURL}
+                  src={channels ? channels.profile : user?.photoURL || undefined}
                   alt="Profile"
                   className="w-10 h-10 rounded-full"
                 />

@@ -1,15 +1,20 @@
 "use client";
 import React, { useState } from "react";
 import { UserAuth } from "@/context/authcontext/authcontext";
-import { useRouter } from "next/navigation";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
-import { User } from "firebase/auth";
 
 interface ChannelData {
   name: string;
   _id: string;
   photoURL: string;
   handil: string;
+}
+
+interface User {
+  _id: string;
+  displayName: string;
+  photoURL: string;
+  email?: string;
 }
 
 const CreateChannelForm: React.FC = () => {

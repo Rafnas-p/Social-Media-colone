@@ -19,7 +19,7 @@ interface SearchDataItem {
     publishedAt: string;
 
     title: string;
-    createdAt: number; 
+    createdAt: string; 
     thumbnails: {
       default: { url: string; width: number; height: number };
       medium: { url: string; width: number; height: number };
@@ -28,12 +28,23 @@ interface SearchDataItem {
   };
 }
 interface User {
-  _id: string;
+  _id?: string;
   uid: string;
   email: string;
   displayName?: string;
   photoURL?: string;
 }
+
+export type Channel = {
+  _id: string;
+  handle: string;
+  name: string;
+  profile: string;
+  subscribers: string[];
+  totalSubscribers: number;
+  userId: string;
+  __v: number;
+};
 
 interface MyContextType {
   selectedcat: string;
@@ -50,60 +61,57 @@ interface MyContextType {
   setFilteredData: (data: SearchItem[]) => void;
   userVideos: Video[];
   shorts: Video[];
-  channels: Channel[];
+  channels: Channel | null ; 
   isSignedIn: boolean;
   user: User | null;
 }
 
 
 
- export interface Channel  {
-  length: number;
-  id: string;
-  name: string|any 
-  userId: string; 
-  profile: string;
-  handle: string;
-  subscribers: string[]; 
-
-  totalSubscribers: number; 
-  __v: number; 
-};
 
 
 interface VideoSnippet {
-  publishedAt: string;
-  channelId: string;
   title: string;
   description: string;
-  thumbnails: {
-    default: { url: string };
-    medium: { url: string };
-    high: { url: string };
-  };
+  publishedAt: string; 
+  channelId: string
   channelTitle: string;
+  tags: string[];
+  thumbnails: {
+    default: {
+      url: string;
+    };
+    medium: {
+      url: string;
+    };
+    high: {
+      url: string;
+    };
+  };
 }
 
 interface Video {
-  _id: Key | null | undefined;
-  videoUrl: string | undefined;
-  title: string;
-  description: string;
-  visibility: string;
-  restrictions: string;
-  createdAt: number;
-  views: number;
-  comments: number;
-  likes: number;
-  dislikes: number;
-  videoId: string;
-  kind: string;
-  etag: string;
+  _id: string;                     
+  videoUrl: string;                 
+  title: string;                    
+  description: string;              
+  visibility: string;                
+  restrictions: string;             
+  createdAt: string;                
+  views: number;                     
+  comments: number;                 
+  likes: string[];                 
+  dislikes: string[];               
+  publicId: string;                
+  userId: string;                   
+  videoId: string;                  
+  kind: string;                     
+  etag: string;                     
   id: {
     kind: string;
     videoId: string;
-  };
-  snippet: VideoSnippet;
+  };                                
+  snippet: VideoSnippet;             
 }
 
 
@@ -139,7 +147,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   const [filteredData, setFilteredData] = useState<SearchItem[]>([]);
   const [userVideos, setUserVideos] = useState<Video[]>([]);
   const [shorts, setShorts] = useState<Video[]>([]);
-  const [channels, setChannels] = useState<Channel[]>([]);  
+  const [channels, setChannels] = useState<Channel | null>(null);
   
     const { user } = UserAuth() as { user: User | null };
 
@@ -179,6 +187,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
     fetchAllVideos();
   }, []);
 
+console.log('UUser',user);
 
   useEffect(() => {
     const fetchChannels = async () => {

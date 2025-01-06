@@ -27,8 +27,8 @@ const router=useRouter()
   }
   
   const { toggleSidebar,channels } = context;
-  
-const channel=channels.length !== 0;
+
+
   const handleSignIn = async () => {
     try {
       await googleSignIn();
@@ -112,11 +112,12 @@ const handulhomerout=()=>{
             onClick={toggleDropdown}
             aria-label="Profile"
           >
-            <img
-              src={channel? channels.profile:user?.photoURL}
-              alt="Profile"
-              className="w-8 h-8 rounded-full"
-            />
+           <img
+  src={channels ? channels.profile : user?.photoURL ?? undefined}
+  alt="Profile"
+  className="w-8 h-8 rounded-full"
+/>
+
           </button>
         ) : (
           <div
@@ -134,16 +135,16 @@ const handulhomerout=()=>{
           <div className="absolute top-2 mr-8 right-2 w-52 bg-white shadow-lg rounded-md z-20">
             <div className="flex items-center px-4 py-2 text-gray-800">
               <img
-                src={ channel? channels.profile:user?.photoURL}
+                src={ channels? channels.profile:user?.photoURL ?? undefined}
                 alt="Profile"
                 className="w-10 h-10 rounded-full"
               />
               <div className="ml-3">
-                <p className="text-sm text-gray-600">{channel? channels.name:user?.displayName}</p>
+                <p className="text-sm text-gray-600">{channels? channels.name:user?.displayName}</p>
               </div>
             </div>
-            {channel?<Link className="ml-3 text-sm text-blue-600"
-                href={`/userAcount/videos?username=${channel? channels.name:user?.displayName}`}>
+            {channels?<Link className="ml-3 text-sm text-blue-600"
+                href={`/userAcount/videos?username=${channels? channels.name:user?.displayName}`}>
               view channal
             </Link>: <Link className="ml-3 text-sm text-blue-600"
                 href={`/creatchannel`}>

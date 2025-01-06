@@ -10,12 +10,18 @@ import RelativeTime from "../reusebile/relativeTime";
 import Link from "next/link";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
-
 interface VideoId {
   kind: string;
   videoId: string;
-  createdAt: number; 
+  createdAt: string;
 }
+interface Video {
+  _id: string | null | undefined;
+  videoUrl: string;
+  title: string;
+  createdAt: string;
+}
+
 interface User {
   _id: string;
   uid: string;
@@ -33,7 +39,7 @@ interface SearchDataItem {
   userName: string;
   photoURL: string;
   displayName: string;
-  createdAt: number; 
+  createdAt: string; 
 
   videoUrl: string;
 }
@@ -68,6 +74,7 @@ const SearchPlayer: React.FC = () => {
   const [newComment, setNewComment] = useState<string>("");
   const [subscribe, setSubscribe] = useState("");
   const [liked, setLiked] = useState<string>("");
+  
   const [like, setLike] = useState<string[]>([]);
     const [dislike, setDislike] = useState<string[]>([]);
     const [subscribers, setSubscribers] = useState<string[]>([]);
@@ -75,7 +82,6 @@ const SearchPlayer: React.FC = () => {
   const mongoDbId = Cookies.get("mongoDbId");
     const { user } = UserAuth() as { user: User | null };
   const { channels } = context;
-  const channel = channels.length !== 0;
 
   useEffect(() => {
     const fetchVideoById = async () => {
@@ -94,6 +100,9 @@ const SearchPlayer: React.FC = () => {
     fetchVideoById();
   }, [videoId]);
 
+console.log('play video',playVideo);
+
+
   useEffect(() => {
     if (filteredData && filteredData.length > 0) {
       localStorage.setItem("filteredData", JSON.stringify(filteredData));
@@ -105,13 +114,13 @@ const SearchPlayer: React.FC = () => {
     if (storedFilteredData) {
       setFilteredData(JSON.parse(storedFilteredData));
     } else if (data && data.length > 0) {
-      setFilteredData(data);
+      setFilteredData(data as []);
     }
   }, [data, setFilteredData]);
 
   useEffect(() => {
     if (videoId && data) {
-      const video = data.find((item) => item.videoId === videoId);
+      const video = data.find((item) => item.videoId === videoId)as SearchDataItem | undefined;
       setCurrentVideo(video || null);
     }
   }, [videoId, data]);
@@ -175,6 +184,8 @@ console.log(playVideo,user?._id);
   const islike = Array.isArray(like) && like.includes(user?._id ||"");
 
   const handilDislike = async () => {
+    if (!playVideo?._id) return; 
+
     try {
       const response = await axiosInstance.post(
         "http://localhost:5000/api/dislikeVideo",
@@ -236,8 +247,8 @@ console.log(playVideo,user?._id);
       const response = await axiosInstance.post(
         `http://localhost:5000/api/addComment/${videoId}`,
         {
-          userName: user?.displayName,
-          userProfile: user?.photoURL,
+          userName: channels?.name,
+          userProfile: channels?.profile,
           text: newComment,
         }
       );
@@ -249,11 +260,13 @@ console.log(playVideo,user?._id);
     }
   };
 
-  const handleVideoClick = (id: string) => {
+  const handleVideoClick = (id:  string) => {
     router.push(`?Id=${id}`);
   };
 
   const handilSubscrib = async () => {
+    if (!playVideo?._id) return; 
+
     try {
       const response = await axiosInstance.post(
         "http://localhost:5000/api/subscribChannel",
@@ -266,170 +279,147 @@ console.log(playVideo,user?._id);
       console.error("Errorsubscrib channel:", error);
     }
   };
-  console.log("subers", subscribers);
 
   const isUserSubscribed =
     Array.isArray(subscribers) && subscribers.includes(user?.uid ||"");
   console.log("isUserSubscribed", isUserSubscribed);
 
   return (
-    <div className="flex px-4 mt-12 ml-2 bg-white-900 text-gray-800 min-h-screen">
-      <div className="w-2/3 max-w-3xl ml-16 mt-8">
-        {playVideo ? (
-          <div className="w-full bg-black rounded-xl overflow-hidden shadow-md">
-            <video
-              className="w-full h-[400px] object-cover"
-              src={playVideo.videoUrl}
-              title="Video player"
-              controls
-            ></video>
-          </div>
-        ) : (
-          <p className="text-center text-gray-500">Loading video...</p>
-        )}
+  <div className="flex flex-col md:flex-row px-4 mt-12 bg-white text-gray-800 min-h-screen">
+  <div className="w-full md:w-2/3 md:max-w-3xl mx-auto md:ml-16 mt-8">
+    {playVideo ? (
+      <div className="w-full bg-black rounded-xl overflow-hidden shadow-md">
+        <video
+          className="w-full h-[200px] md:h-[400px] object-cover"
+          src={playVideo.videoUrl}
+          title="Video player"
+          controls
+        ></video>
+      </div>
+    ) : (
+      <p className="text-center text-gray-500">Loading video...</p>
+    )}
 
-        <div className="flex flex-col mt-4">
-          <h1 className="text-lg font-bold">{playVideo?.title}</h1>
-        </div>
-
-        <div className="flex justify-between items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
-          <div className="flex">
-            <Link
-              href={`/userAcount/videos?username=${playVideo?.channelId.name}`}
-              className="flex items-center space-x-4"
-            >
-              <img
-                src={playVideo?.channelId.profile}
-                alt="Profile"
-                className="w-8 h-8 rounded-full object-cover cursor-pointer"
-              />
-
-              <div className="flex flex-col">
-                <h4 className="font-semibold">
-                  {playVideo?.channelId.name}
-                </h4>
-                <p className="text-sm text-gray-500">{subscribe} subscribers</p>
-              </div>
-            </Link>
-            <button
-              onClick={handilSubscrib}
-              className={`${
-                isUserSubscribed
-                  ? "bg-gray-100 max-w-28 h-8 text-gray-600"
-                  : "bg-black text-white"
-              } rounded-full w-27 h-9 ml-10 text-sm p-1 transition-all duration-300`}
-            >
-              {isUserSubscribed ? "Subscribed" : "Subscribe"}
-            </button>
-          </div>
-
-          <div className="flex border focus:ring-2  bg-gray-50 w-28 h-8 rounded-full overflow-hidden cursor-pointer">
-            <button
-              onClick={handleLike}
-              className="p-3 rounded-r-none border-r bg-gray-100 flex-1 flex justify-center items-center cursor-pointer"
-            >
-              <AiOutlineLike
-                className={islike ? "text-red-500" : "text-gray-500"}
-              />
-
-              <p>{liked}</p>
-            </button>
-            <button
-              onClick={handilDislike}
-              className="p-3 rounded-l-none bg-gray-100 flex-1 flex justify-center items-center"
-            >
-              <AiOutlineDislike className={isdislike ? "text-red-500" : ""} />
-            </button>
-          </div>
-        </div>
-
-        <div className="mt-6">
-          <h2 className="text-lg font-semibold">Comments</h2>
-          <div className="flex items-center space-x-2 mt-3">
+    <div className="flex flex-col mt-4">
+      <h1 className="text-lg font-bold">{playVideo?.title}</h1>
+      <div className="flex justify-between items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+        <div className="flex items-center">
+          <Link
+            href={`/userAcount/videos?username=${playVideo?.channelId.name}`}
+            className="flex items-center space-x-4"
+          >
             <img
-              src={channel ? channels.profile : user?.photoURL||
-                "https://via.placeholder.com/150?text=Default+Image"}
-              alt="User Profile"
-              className="w-10 h-10 rounded-full object-cover"
+              src={playVideo?.channelId.profile}
+              alt="Profile"
+              className="w-8 h-8 rounded-full object-cover"
             />
-            <input
-              type="text"
-              placeholder="Write a comment..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              className="flex-1 border-b border-gray-300 focus:border-black px-3  py-2 text-sm outline-none transition"
-            />
-            <button
-              onClick={postComment}
-              className="text-black font-medium hover:bg-blue-50 px-4 py-1 rounded transition"
-            >
-              Post
-            </button>
-          </div>
-
-          <div className="mt-5 space-y-4">
-            {videoComments.length > 0 ? (
-              videoComments.map((comment, index) => (
-                <div
-                  key={comment.id || index}
-                  className="flex items-start space-x-3"
-                >
-                  <img
-                  src={comment?.userProfile}
-                  alt={channels ? channels.name : comment.userName}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold">
-                        {comment.userName}
-                      </p>
-                      <p className="text-xs ml-1 text-gray-500">
-                        <RelativeTime dateString={comment?.createdAt} />
-
-                      </p>
-                    </div>
-                    <p className="text-sm">{comment?.text}</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500">No comments yet.</p>
-            )}
-          </div>
+            <div className="flex flex-col">
+              <h4 className="font-semibold">{playVideo?.channelId.name}</h4>
+              <p className="text-sm text-gray-500">{subscribe} subscribers</p>
+            </div>
+          </Link>
+          <button
+            onClick={handilSubscrib}
+            className={`${
+              isUserSubscribed
+                ? "bg-gray-100 max-w-28 h-8 text-gray-600"
+                : "bg-black text-white"
+            } rounded-full w-28 h-9 ml-10 text-sm p-1 transition-all duration-300`}
+          >
+            {isUserSubscribed ? "Subscribed" : "Subscribe"}
+          </button>
         </div>
       </div>
+    </div>
 
-      <div className="w-1/3 pl-4 mt-8 space-y-4 overflow-y-auto">
-        {filteredData.length > 0 ? (
-          filteredData.map((video, index) => (
-            <div
-              key={video._id || index}
-              className="flex items-start space-x-3 cursor-pointer"
-              onClick={() => handleVideoClick(video._id)}
-            >
-              <div className="w-28 h-16 rounded-lg overflow-hidden bg-black">
-                <video
-                  className="w-full h-full object-cover"
-                  src={video.videoUrl || ""}
-                  title="Related Video"
-                ></video>
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-semibold line-clamp-2">
-                  {video.title}
-                </p>
-                <p className="text-xs text-gray-500">
-                   <RelativeTime dateString={video.createdAt} />
-                </p>
+    <div className="mt-6">
+      <h2 className="text-lg font-semibold">Comments</h2>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-2 mt-3">
+        <img
+          src={
+            channels?.profile ||
+            user?.photoURL ||
+            "https://via.placeholder.com/150?text=Default+Image"
+          }
+          alt="User Profile"
+          className="w-10 h-10 rounded-full object-cover"
+        />
+        <input
+          type="text"
+          placeholder="Write a comment..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          className="flex-1 border-b border-gray-300 focus:border-black px-3 py-2 text-sm outline-none transition w-full"
+        />
+        <button
+          onClick={postComment}
+          className="text-black font-medium hover:bg-blue-50 px-4 py-1 rounded transition"
+        >
+          Post
+        </button>
+      </div>
+
+      <div className="mt-5 space-y-4">
+        {videoComments.length > 0 ? (
+          videoComments.map((comment, index) => (
+            <div key={comment.id || index} className="flex items-start space-x-3">
+              <img
+                src={comment?.userProfile}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+              <div>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold">{comment.userName}</p>
+                  <p className="text-xs ml-1 text-gray-500">
+                    <RelativeTime
+                      dateString={
+                        comment.createdAt as unknown as string | number
+                      }
+                    />
+                  </p>
+                </div>
+                <p className="text-sm">{comment?.text}</p>
               </div>
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500">No videos to display</p>
+          <p className="text-gray-500">No comments yet.</p>
         )}
       </div>
     </div>
+  </div>
+
+  <div className="w-full md:w-1/3 mt-8 md:pl-4 space-y-4 overflow-y-auto">
+    {filteredData.length > 0 ? (
+      filteredData.map((video, index) => (
+        <div
+          key={index}
+          className="flex items-start space-x-3 cursor-pointer"
+          onClick={() => handleVideoClick(video._id as string)}
+        >
+          <div className="w-28 h-16 rounded-lg overflow-hidden bg-black">
+            <video
+              className="w-full h-full object-cover"
+              src={video.videoUrl}
+              title="Related Video"
+            ></video>
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-semibold line-clamp-2">{video.title}</p>
+            <p className="text-xs text-gray-500">
+              <RelativeTime
+                dateString={video.createdAt as unknown as string | number}
+              />
+            </p>
+          </div>
+        </div>
+      ))
+    ) : (
+      <p className="text-center text-gray-500">No videos to display</p>
+    )}
+  </div>
+</div>
+
   );
 };
 

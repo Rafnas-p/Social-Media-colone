@@ -58,10 +58,10 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
 
       const token = await currentUser.getIdToken();
 
-      const mongoDbId = await saveUserToDatabase(currentUser);
+      const mongoDbId: string | undefined = await saveUserToDatabase(currentUser);
 
       Cookies.set("token", token, { secure: true, sameSite: "strict" });
-      Cookies.set("mongoDbId", mongoDbId, { secure: true, sameSite: "strict" });
+      Cookies.set("mongoDbId", mongoDbId || "", { secure: true, sameSite: "strict" });
 
       console.log(
         "JWT Token and MongoDB ID stored in cookies:",

@@ -7,7 +7,6 @@ import { AiOutlineDislike } from "react-icons/ai";
 import { AiOutlineLike } from "react-icons/ai";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 import Cookies from "js-cookie";
-import { Channel } from "../../context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import RelativeTime from "../reusebile/relativeTime";
 import axios from "axios";
@@ -79,7 +78,6 @@ const VideoPlayer: React.FC = () => {
   const { user } = UserAuth() as { user: User | null };
 
   const { channels } = context;
-  const channel = channels.length > 0 ? channels[0] : null;
 
   const token = Cookies.get("token");
   const mongoDbId = Cookies.get("mongoDbId");
@@ -166,10 +164,10 @@ const VideoPlayer: React.FC = () => {
       return;
     }
     if (!newComment.trim()) return;
-
+  
     try {
-      const currentChannel = channels.length > 0 ? channels[0] : null;
-
+      const currentChannel = channels ? channels : null;
+  
       const response = await axiosInstance.post<CommentSnippet>(
         `http://localhost:5000/api/addComment/${currentVideoId}`,
         {
@@ -178,13 +176,14 @@ const VideoPlayer: React.FC = () => {
           text: newComment,
         }
       );
-
+  
       setComments((prev) => [...prev, response.data]);
       setNewComment("");
     } catch (error) {
       console.error("Error posting comment:", error);
     }
   };
+  
 
   if (!videoDetails) {
     return <div>Loading or Video not found!</div>;
@@ -386,7 +385,7 @@ const VideoPlayer: React.FC = () => {
           <div className="flex items-center space-x-3 mt-3">
             <img
               src={
-                channel?.profile ||
+                channels?.profile ||
                 user?.photoURL ||
                 "https://via.placeholder.com/150?text=Default+Image"
               }

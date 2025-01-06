@@ -3,7 +3,7 @@
 import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { MyContext } from "../../context/vidoContext/VideoContext";
+import { Channel, MyContext } from "../../context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 
@@ -15,7 +15,7 @@ interface User {
   photoURL?: string;
 }
 interface Short {
-  channelId: string;
+  channelId:Channel
   _id: string;
   title: string;
   description: string;
@@ -36,7 +36,6 @@ interface MyContextType {
 
 function DisplayShorts() {
   const context = useContext(MyContext);
-  const { channels } = context || {};
 
   const [shorts, setShorts] = useState<Short[]>([]);
   const [currentShortIndex, setCurrentShortIndex] = useState<number | null>(
@@ -101,11 +100,12 @@ function DisplayShorts() {
 
   
   const handilSubscrib = async () => {
+    if (currentShortIndex === null || !shorts[currentShortIndex]) return;
     try {
       const response = await axiosInstance.post(
         "http://localhost:5000/api/subscribChannel",
         {
-          _id:channels?._id,
+          _id:shorts[currentShortIndex].channelId
         }
       );
       setSubscribers(response.data.subscribers || []);
@@ -140,7 +140,7 @@ function DisplayShorts() {
   }
 
   const isUserSubscribed =
-    Array.isArray(subscribers) && subscribers.includes(user?.uid);
+    Array.isArray(subscribers) && subscribers.includes(user?.uid ||"");
 
   return (
     <div className="mt-18">

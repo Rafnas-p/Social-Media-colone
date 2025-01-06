@@ -24,15 +24,29 @@ interface VideoId {
   videoId: string;
 }
 
-interface SearchItem {
+interface Video {
   description: any;
   userName: any;
   title: string;
-  videoId: React.Key;
-  _id: string;
+  createdAt: string; 
+  videoId: string;
+  _id: string | null
   id: VideoId;
   snippet: Snippet;
 }
+
+interface SearchItem {
+  description: any;
+  video: Video[]
+  userName: any;
+  title: string;
+  createdAt: string; 
+  videoId: string;
+  _id: string | null
+  id: VideoId;
+  snippet: Snippet;
+}
+
 
 interface MyContextType {
   data: SearchItem[];

@@ -2,12 +2,11 @@
 
 import React from "react";
 
-interface RelativeTimeProps {
-  dateString: string | number; // Accept both string or number as date
+ export interface RelativeTimeProps {
+  dateString: string | number; 
 }
 
 const RelativeTime: React.FC<RelativeTimeProps> = ({ dateString }) => {
-  // Ensure that dateString is always a string before passing it to new Date
   const getRelativeTime = (dateString: string): string => {
     const now = new Date();
     const date = new Date(dateString);
@@ -29,7 +28,6 @@ const RelativeTime: React.FC<RelativeTimeProps> = ({ dateString }) => {
     }
   };
 
-  // Convert number timestamp to string if necessary
   const formattedDateString = typeof dateString === "number" ? dateString.toString() : dateString;
 
   return <span>{getRelativeTime(formattedDateString)}</span>;
