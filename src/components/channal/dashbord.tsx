@@ -7,7 +7,6 @@ import Link from "next/link";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 import { AxiosError } from "axios";
 
-
 type User = {
   _id: string;
   displayName: string;
@@ -20,67 +19,67 @@ type User = {
   __v: number;
 };
 
-
 interface Video {
-  _id: string;                     
-  videoUrl: string;                 
-  title: string;                    
-  description: string;              
-  visibility: string;                
-  restrictions: string;             
-  createdAt: string;                
-  views: number;                     
-  comments: number;                 
-  likes: string[];                 
-  dislikes: string[];               
-  publicId: string;                
-  userId: string;                   
-  videoId: string;                  
-  kind: string;                     
-  etag: string;                     
+  _id: string;
+  videoUrl: string;
+  title: string;
+  description: string;
+  visibility: string;
+  restrictions: string;
+  createdAt: string;
+  views: number;
+  comments: number;
+  likes: string[];
+  dislikes: string[];
+  publicId: string;
+  userId: string;
+  videoId: string;
+  kind: string;
+  etag: string;
   id: {
     kind: string;
     videoId: string;
-  };    
+  };
 }
-
 
 function Dashbord() {
   const context = useContext(MyContext);
-  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
-  const [videos, setVideos] = useState<Video[]>(context?.userVideos||[]);
-  const isOpen = context?.isOpen ?? false;
-    const { user } = UserAuth() as unknown as { user: User | null };
 
   if (!context) {
     console.error(
       "MyContext is not defined. Ensure the provider wraps this component."
     );
-    return null;
+    return <div>Context is missing. Please fix the provider setup.</div>;
   }
-  console.log('videossss',videos);
-  
+
+  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
+  const [videos, setVideos] = useState<Video[]>(context?.userVideos || []);
+  const isOpen = context?.isOpen ?? false;
+  const { user } = UserAuth() as unknown as { user: User | null };
 
   useEffect(() => {
     const fetchVideosById = async () => {
       try {
-        
-        const response = await axiosInstance.get("http://localhost:5000/api/videos", {
-          params: { userId: user?._id },
-        });
+        const response = await axiosInstance.get(
+          "http://localhost:5000/api/videos",
+          {
+            params: { userId: user?._id },
+          }
+        );
 
         setVideos(response.data.videos);
-      }  catch (err: unknown) {
+      } catch (err: unknown) {
         if (err instanceof AxiosError) {
           console.error("Axios error fetching videos:", err.message);
         } else {
           console.error("Error fetching videos:", err);
         }
-      
+      }
+    };
+
+    if (user?._id) {
+      fetchVideosById();
     }
-    
-  }
-    fetchVideosById();
   }, [user?._id]);
 
   const handleDelete = async (videoId: string) => {
@@ -91,11 +90,11 @@ function Dashbord() {
       console.log("Delete response:", response);
 
       setVideos((prevVideos) => prevVideos.filter((video) => video._id !== videoId));
-    }catch (err: unknown) {
+    } catch (err: unknown) {
       if (err instanceof AxiosError) {
-        console.error("Axios error fetching videos:", err.message);
+        console.error("Axios error deleting video:", err.message);
       } else {
-        console.error("Error fetching videos:", err);
+        console.error("Error deleting video:", err);
       }
     }
   };
@@ -116,7 +115,9 @@ function Dashbord() {
             <tr className="text-gray-500 text-sm">
               <th className="border px-4 py-2">Shorts</th>
               <th className="border px-4 py-2 hidden sm:table-cell">Visibility</th>
-              <th className="border px-4 py-2 hidden sm:table-cell">Restrictions</th>
+              <th className="border px-4 py-2 hidden sm:table-cell">
+                Restrictions
+              </th>
               <th className="border px-4 py-2 hidden sm:table-cell">Date</th>
               <th className="border px-4 py-2 hidden sm:table-cell">Views</th>
               <th className="border px-4 py-2 hidden sm:table-cell">Comments</th>
