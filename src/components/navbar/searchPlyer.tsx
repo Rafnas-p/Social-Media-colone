@@ -15,13 +15,17 @@ interface VideoId {
   videoId: string;
   createdAt: string;
 }
-interface Video {
-  _id: string | null | undefined;
-  videoUrl: string;
-  title: string;
-  createdAt: string;
-}
 
+ type Channel = {
+  _id: string;
+  handle: string;
+  name: string;
+  profile: string;
+  subscribers: string[];
+  totalSubscribers: number;
+  userId: string;
+  __v: number;
+};
 interface User {
   _id: string;
   uid: string;
@@ -30,8 +34,8 @@ interface User {
   photoURL?: string;
 }
 interface SearchDataItem {
-  _id: any;
-  channelId: any;
+  _id: string;
+  channelId: Channel;
   id: VideoId;
   videoId: string;
   title: string;
@@ -68,7 +72,6 @@ const SearchPlayer: React.FC = () => {
 
   const { data, filteredData, setFilteredData } = context;
 
-  const [currentVideo, setCurrentVideo] = useState<SearchDataItem | null>(null);
   const [videoComments, setVideoComments] = useState<Comment[]>([]);
   const [playVideo, setPlayVideo] = useState<SearchDataItem | null>(null);
   const [newComment, setNewComment] = useState<string>("");
@@ -118,13 +121,7 @@ console.log('play video',playVideo);
     }
   }, [data, setFilteredData]);
 
-  useEffect(() => {
-    if (videoId && data) {
-      const video = data.find((item) => item.videoId === videoId)as SearchDataItem | undefined;
-      setCurrentVideo(video || null);
-    }
-  }, [videoId, data]);
-
+ 
   useEffect(() => {
     const fetchLikes = async () => {
       if (!playVideo) return;
@@ -169,7 +166,7 @@ console.log(playVideo,user?._id);
 
       setLiked(response.data.likesCount);
       setLike(response.data.likes);
-    } catch (error: any) {
+    } catch (error: any|unknown) {
       console.error("Error liking the video:", error);
       if (error.response) {
         console.error("Response error:", error.response);
@@ -275,7 +272,7 @@ console.log(playVideo,user?._id);
         }
       );
       setSubscribers(response.data.subscribers || []);
-    } catch (error: any) {
+    } catch (error: any| unknown) {
       console.error("Errorsubscrib channel:", error);
     }
   };

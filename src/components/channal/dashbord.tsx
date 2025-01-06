@@ -7,17 +7,47 @@ import Link from "next/link";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 
 
-interface User {
+type User = {
   _id: string;
   displayName: string;
+  email: string;
   photoURL: string;
-  email?: string;
+  channelName: string;
+  subscribedChannels: string[];
+  uid: string;
+  createdAt: string;
+  __v: number;
+};
+
+
+interface Video {
+  _id: string;                     
+  videoUrl: string;                 
+  title: string;                    
+  description: string;              
+  visibility: string;                
+  restrictions: string;             
+  createdAt: string;                
+  views: number;                     
+  comments: number;                 
+  likes: string[];                 
+  dislikes: string[];               
+  publicId: string;                
+  userId: string;                   
+  videoId: string;                  
+  kind: string;                     
+  etag: string;                     
+  id: {
+    kind: string;
+    videoId: string;
+  };    
 }
+
 
 function Dashbord() {
   const context = useContext(MyContext);
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
-  const [videos, setVideos] = useState<any[]>(context?.userVideos || []);
+  const [videos, setVideos] = useState<Video[]>(context?.userVideos||[]);
   const isOpen = context?.isOpen ?? false;
     const { user } = UserAuth() as { user: User | null };
 
@@ -27,6 +57,8 @@ function Dashbord() {
     );
     return null;
   }
+  console.log('videossss',videos);
+  
 
   useEffect(() => {
     const fetchVideosById = async () => {

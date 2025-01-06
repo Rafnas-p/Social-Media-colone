@@ -25,8 +25,8 @@ interface VideoId {
 }
 
 interface Video {
-  description: any;
-  userName: any;
+  description: string;
+  userName: string;
   title: string;
   createdAt: string; 
   videoId: string;
@@ -36,9 +36,9 @@ interface Video {
 }
 
 interface SearchItem {
-  description: any;
+  description: string;
   video: Video[]
-  userName: any;
+  userName: string;
   title: string;
   createdAt: string; 
   videoId: string;

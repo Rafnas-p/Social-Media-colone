@@ -75,7 +75,7 @@ const CreateChannelForm: React.FC = () => {
     });
 
     setMessage(response.data.message);
-  } catch (error: any) {
+  } catch (error: any|unknown) {
     setMessage(error.response?.data?.message || "Something went wrong!");
   } finally {
     setLoading(false);

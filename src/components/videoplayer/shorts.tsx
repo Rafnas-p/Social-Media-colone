@@ -1,7 +1,6 @@
 "use client";
 
 import axios from "axios";
-import Link from "next/link";
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { FaRegPlayCircle } from "react-icons/fa";
 import { MyContext } from "../../context/vidoContext/VideoContext";

@@ -2,8 +2,8 @@
 
 import axios from "axios";
 import Link from "next/link";
-import React, { useEffect, useState, useRef, useContext } from "react";
-import { Channel, MyContext } from "../../context/vidoContext/VideoContext";
+import React, { useEffect, useState, useRef } from "react";
+import { Channel } from "../../context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 
@@ -30,18 +30,14 @@ interface Short {
   createdAt: string;
 }
 
-interface MyContextType {
-  isOpen: boolean;
-}
+
 
 function DisplayShorts() {
-  const context = useContext(MyContext);
 
   const [shorts, setShorts] = useState<Short[]>([]);
   const [currentShortIndex, setCurrentShortIndex] = useState<number | null>(
     null
   );
-  const [subscribe, setSubscribe] = useState("");
   const [subscribers, setSubscribers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,7 +84,6 @@ function DisplayShorts() {
           { channelId: shorts[currentShortIndex].channelId }
         );
 
-        setSubscribe(response.data.subscribersCount);
         setSubscribers(response.data.totalSubscribers);
       } catch (error) {
         console.error("Error fetching subscriber count:", error);
@@ -109,7 +104,7 @@ function DisplayShorts() {
         }
       );
       setSubscribers(response.data.subscribers || []);
-    } catch (error: any) {
+    } catch (error: any|unknown) {
       console.error("Errorsubscrib channel:", error);
     }
   };

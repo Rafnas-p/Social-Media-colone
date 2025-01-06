@@ -19,21 +19,30 @@ interface User {
   displayName?: string;
   photoURL?: string;
 }
+
+type Channel = {
+  _id: string;
+  handle: string;
+  name: string;
+  profile: string;
+  subscribers: string[];
+  totalSubscribers: number;
+  userId: string;
+  __v: number;
+};
+
 const Userprofile: React.FC = () => {
   const context = useContext(MyContext) as MyContextType | null;
-  const [channels, setChannels] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [channels, setChannels] = useState<Channel[]>([]);
 
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
 
-    const { user } = UserAuth() as { user: User | null };
+  const { user } = UserAuth() as { user: User | null };
 
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        setLoading(true);
         const response = await axios.get(
           "http://localhost:5000/api/getChannelsByName",
           {
@@ -41,10 +50,7 @@ const Userprofile: React.FC = () => {
           }
         );
         setChannels(response.data);
-      } catch (err: any) {
-        setError(err.response?.data?.message || "Failed to fetch channels.");
-      } finally {
-        setLoading(false);
+      } catch (err: any|unknown) {
       }
     };
 
@@ -53,11 +59,14 @@ const Userprofile: React.FC = () => {
     }
   }, [username]);
 
-  const selectedUser = channels.find((u: User) => u.name === username);
+  console.log("channels", channels);
+
+  const selectedUser = channels.find((channel: Channel) => channel.name === username);
 
   if (!selectedUser) {
     return <div>User not found</div>;
   }
+
 
   const { isOpen } = context || { isOpen: false };
 
@@ -82,7 +91,7 @@ console.log('selectedUser',channels);
           </h1>
           <span className="flex flex-row items-center space-x-4 ml-3">
             <p className="text-sm font-medium text-gray-500 ml-1">
-              {selectedUser.handil}
+              {selectedUser.handle}
             </p>
             <p className="text-sm font-medium text-gray-500">
               {selectedUser.totalSubscribers} subscribers

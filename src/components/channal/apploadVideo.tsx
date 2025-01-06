@@ -75,7 +75,7 @@ const VideoUploadComponent: React.FC = () => {
       setCategory("video");
       setVideoUrl(null);
       alert("Video uploaded successfully!");
-    } catch (error: any) {
+    } catch (error: any|unknown) {
       if (error.response) {
         console.error("Server Error:", error.response.data);
         alert(`Error: ${error.response.data.message || "Upload failed"}`);

@@ -14,11 +14,19 @@ interface Video {
 interface MyContextType {
   isOpen: boolean;
 }
-
+type Channel = {
+  _id: string;
+  handle: string;
+  name: string;
+  profile: string;
+  subscribers: string[];
+  totalSubscribers: number;
+  userId: string;
+  __v: number;
+};
 const UserVideos: React.FC = () => {
   const context = useContext(MyContext) as unknown as MyContextType | null;
-  const [channels, setChannels] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [channels, setChannels] = useState<Channel[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,7 +38,6 @@ const UserVideos: React.FC = () => {
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        setLoading(true);
         const response = await axios.get(
           "http://localhost:5000/api/getChannelsByName",
           {
@@ -38,10 +45,9 @@ const UserVideos: React.FC = () => {
           }
         );
         setChannels(response.data);
-      } catch (err: any) {
+      } catch (err: any| unknown) {
         setError(err.response?.data?.message || "Failed to fetch channels.");
       } finally {
-        setLoading(false);
       }
     };
 
@@ -61,7 +67,7 @@ const UserVideos: React.FC = () => {
         });
 
         setVideos(response.data.videos);
-      } catch (err: any) {
+      } catch (err: any|unknown) {
         setError(err.message || "Failed to fetch videos.");
       }
     };

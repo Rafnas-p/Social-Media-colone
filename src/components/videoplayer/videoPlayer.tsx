@@ -18,11 +18,20 @@ interface User {
   displayName?: string;
   photoURL?: string;
 }
-
+type Channel = {
+  _id: string;
+  handle: string;
+  name: string;
+  profile: string;
+  subscribers: string[];
+  totalSubscribers: number;
+  userId: string;
+  __v: number;
+};
 interface VideoDetails {
-  uid: any;
+  uid: string;
   userId: string | null;
-  likes: any;
+  likes: number|string;
   name: ReactNode;
   totalSubscribers: ReactNode;
   photoURL: string;
@@ -34,12 +43,10 @@ interface VideoDetails {
   profil: string | null;
   createdAt: string;
   videoDetails: VideoDetails;
-  channelId: any;
+  channelId: Channel;
 }
 
-interface Video {
-  _id: string;
-}
+
 
 interface CommentSnippet {
   _id: string;
@@ -49,10 +56,6 @@ interface CommentSnippet {
   createdAt: string;
 }
 
-interface MyContextType {
-  data: VideoDetails[];
-  isOpen: boolean;
-}
 
 const VideoPlayer: React.FC = () => {
   const context = useContext(MyContext);
@@ -217,7 +220,7 @@ const VideoPlayer: React.FC = () => {
 
       setLiked(response.data.likesCount);
       setLike(response.data.likes);
-    } catch (error: any) {
+    } catch (error: unknown|any) {
       console.error("Error liking the video:", error);
       if (error.response) {
         console.error("Response error:", error.response);
@@ -267,7 +270,7 @@ const VideoPlayer: React.FC = () => {
         }
       );
       setSubscribers(response.data.subscribers || []);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Errorsubscrib channel:", error);
     }
   };
@@ -290,7 +293,7 @@ const VideoPlayer: React.FC = () => {
       setComments((prevComments) =>
         prevComments.filter((comment) => comment._id !== _id)
       );
-    } catch (error: any) {
+    } catch (error: any |unknown) {
       console.error("Error in delete comment:", error);
     }
   };

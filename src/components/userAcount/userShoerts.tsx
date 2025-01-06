@@ -1,7 +1,6 @@
 "use client";
 import axios from "axios";
 import React, { useEffect, useState, useRef, useContext } from "react";
-import { UserAuth } from "@/context/authcontext/authcontext";
 import { useSearchParams } from "next/navigation";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 
@@ -21,12 +20,23 @@ interface MyContextType {
   isOpen: boolean;
 }
 
+type Channel = {
+  _id: string;
+  handle: string;
+  name: string;
+  profile: string;
+  subscribers: string[];
+  totalSubscribers: number;
+  userId: string;
+  __v: number;
+};
+
 function UserShorts() {
   const searchParams = useSearchParams();
   const username = searchParams.get("username");
   const context = useContext(MyContext) as unknown as MyContextType | null;
   const isOpen = context?.isOpen ?? false;
-const [channels, setChannels] = useState<any[]>([]);
+  const [channels, setChannels] = useState<Channel[]>([]);
 
   const [shorts, setShorts] = useState<Short[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +60,7 @@ const [channels, setChannels] = useState<any[]>([]);
           }
         );
         setChannels(response.data);
-      } catch (err: any) {
+      } catch (err: any|unknown) {
         setError(err.response?.data?.message || "Failed to fetch channels.");
       } finally {
         setLoading(false);

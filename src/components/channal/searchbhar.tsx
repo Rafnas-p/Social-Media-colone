@@ -25,9 +25,9 @@ interface VideoId {
 }
 
 interface SearchItem {
-  videoUrl: any;
-  description: any;
-  userName: any;
+  videoUrl: string;
+  description: string;
+  userName: string;
   title: string;
   videoId: React.Key;
   _id: string;
@@ -40,7 +40,7 @@ interface MyContextType {
   searchData: SearchItem[];
   filteredData: SearchItem[];
   setFilteredData: React.Dispatch<React.SetStateAction<SearchItem[]>>;
-  userVideos: SearchItem[]; // Assuming userVideos is part of the context
+  userVideos: SearchItem[];
 }
 
 const Searchbhar2: React.FC = () => {

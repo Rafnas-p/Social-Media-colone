@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useCallback, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 import { UserAuth } from "@/context/authcontext/authcontext";
 import { Key } from 'readline';
@@ -46,49 +46,8 @@ export type Channel = {
   __v: number;
 };
 
-interface MyContextType {
-  selectedcat: string;
-  setselectedcat: (newValue: string) => void;
-  data: Video[];
-  comments?: Comment[];
-  fetchComments?: (videoId: string) => void;
-  isOpen: boolean;
-  toggleSidebar: () => void;
-  searchData?: SearchDataItem[];
-  loading: boolean;
-  error: string | null;
-  filteredData: SearchItem[];
-  setFilteredData: (data: SearchItem[]) => void;
-  userVideos: Video[];
-  shorts: Video[];
-  channels: Channel | null ; 
-  isSignedIn: boolean;
-  user: User | null;
-}
 
 
-
-
-
-interface VideoSnippet {
-  title: string;
-  description: string;
-  publishedAt: string; 
-  channelId: string
-  channelTitle: string;
-  tags: string[];
-  thumbnails: {
-    default: {
-      url: string;
-    };
-    medium: {
-      url: string;
-    };
-    high: {
-      url: string;
-    };
-  };
-}
 
 interface Video {
   _id: string;                     
@@ -111,7 +70,6 @@ interface Video {
     kind: string;
     videoId: string;
   };                                
-  snippet: VideoSnippet;             
 }
 
 
@@ -132,6 +90,29 @@ type SearchItem = {
   };
 };
 
+
+
+interface MyContextType {
+  selectedcat: string;
+  setselectedcat: (newValue: string) => void;
+  data: Video[];
+  comments?: Comment[];
+  fetchComments?: (videoId: string) => void;
+  isOpen: boolean;
+  toggleSidebar: () => void;
+  searchData?: SearchDataItem[];
+  loading: boolean;
+   
+
+  error: string | null;
+  filteredData: SearchItem[];
+  setFilteredData: (data: SearchItem[]) => void;
+  userVideos: Video[] | undefined;
+  shorts: Video[];
+  channels: Channel | null ; 
+  isSignedIn: boolean;
+  user: User | null;
+}
 
 export const MyContext = createContext<MyContextType | undefined>(undefined);
 
@@ -177,7 +158,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
           console.error("Invalid API response format");
         }
         setLoading(false);
-      } catch (err:any) {
+      } catch (err:any| unknown) {
         console.error("Error fetching videos:", err.message);
         setError(err.message || "Failed to fetch videos");
         setLoading(false);
@@ -200,7 +181,7 @@ console.log('UUser',user);
           }
         );
         setChannels(response.data);
-      } catch (err: any) {
+      } catch (err: any|unknown) {
         setError(err.response?.data?.message || "Failed to fetch channels.");
       } finally {
         setLoading(false);
@@ -223,7 +204,7 @@ console.log('UUser',user);
         });
 
         setUserVideos(response.data.videos);
-      } catch (err: any) {
+      } catch (err: any| unknown) {
         setError(err.message || "Failed to fetch videos.");
       }
     };

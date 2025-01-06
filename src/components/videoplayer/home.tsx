@@ -3,9 +3,22 @@ import React, { useContext, useEffect, useState } from "react";
 import { MyContext } from "../../context/vidoContext/VideoContext";
 import Link from "next/link";
 
+
+type Channel = {
+  _id: string;
+  handle: string;
+  name: string;
+  profile: string;
+  subscribers: string[];
+  totalSubscribers: number;
+  userId: string;
+  __v: number;
+};
+
+
 interface VideoDetails {
-  channelId: any;
-  uid: any;
+  channelId: Channel;
+  uid: string;
   createdAt: string;
   description: string;
   duration: number;

@@ -23,11 +23,10 @@ interface Video {
 
 function ShortsBord() {
   const context = useContext(MyContext);
-  const [shorts, setShorts] = useState<Video[]>([]); // State to store the shorts
-  const [hoveredRow, setHoveredRow] = useState<string | null>(null); // Track the hovered row
-  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null); // Track the dropdown state
-  const [loading, setLoading] = useState<boolean>(false); // Loading state
-  const [error, setError] = useState<string | null>(null); // Error state
+  const [shorts, setShorts] = useState<Video[]>([]); 
+  const [hoveredRow, setHoveredRow] = useState<string | null>(null); 
+  const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
+  
   const isOpen = context?.isOpen ?? false;
   const { user } = UserAuth() as { user: { _id: string; uid: string } | null };
 
@@ -41,16 +40,14 @@ function ShortsBord() {
   useEffect(() => {
     const fetchShorts = async () => {
       try {
-        setLoading(true);
+       
         const response = await axios.get("http://localhost:5000/api/shorts", {
           params: { userId: user?._id },
         });
         setShorts(response.data.shorts);
       } catch (err) {
         console.error("Error fetching shorts:", err);
-        setError("Failed to fetch shorts. Please try again later.");
       } finally {
-        setLoading(false);
       }
     };
 
