@@ -27,19 +27,11 @@ function ShortsBord() {
   const [hoveredRow, setHoveredRow] = useState<string | null>(null); 
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
   
-  const isOpen = context?.isOpen ?? false;
   const { user } = UserAuth() as unknown as { user: { _id: string; uid: string } | null };
-
-  if (!context) {
-    console.error(
-      "MyContext is not defined. Ensure the provider wraps this component."
-    );
-    return null;
-  }
-
+  
   useEffect(() => {
     if (!user?._id) {
-      return; // Exit early if `user?._id` is not available
+      return; 
     }
   
     const fetchShorts = async () => {
@@ -56,6 +48,14 @@ function ShortsBord() {
     fetchShorts();
   }, [user?._id]);
   
+  if (!context) {
+    console.error(
+      "MyContext is not defined. Ensure the provider wraps this component."
+    );
+    return null;
+  }
+  const isOpen = context?.isOpen ?? false;
+
 
   const handleDelete = async (videoId: string) => {
     try {
@@ -140,7 +140,6 @@ function ShortsBord() {
                     </div>
                   )}
                 </td>
-                {/* Other columns will only be visible on certain screen sizes */}
                 <td className="border border-gray-300 px-4 py-2 hidden sm:table-cell">
                   {short.visibility || "Public"}
                 </td>

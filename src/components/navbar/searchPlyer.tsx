@@ -10,6 +10,7 @@ import RelativeTime from "../reusebile/relativeTime";
 import Link from "next/link";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 import { AiOutlineDislike, AiOutlineLike } from "react-icons/ai";
+import Image from "next/image";
 interface VideoId {
   kind: string;
   videoId: string;
@@ -50,7 +51,7 @@ interface SearchDataItem {
 
 interface Comment {
   userName: ReactNode;
-  createdAt(createdAt: any): React.ReactNode;
+  createdAt(createdAt: string): React.ReactNode;
   userProfile: string;
   id: string;
   text: string;
@@ -166,14 +167,11 @@ console.log(playVideo,user?._id);
 
       setLiked(response.data.likesCount);
       setLike(response.data.likes);
-    } catch (error: any|unknown) {
-      console.error("Error liking the video:", error);
-      if (error.response) {
-        console.error("Response error:", error.response);
-      } else if (error.request) {
-        console.error("Request error:", error.request);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.response?.data || error.message);
       } else {
-        console.error("Error message:", error.message);
+        console.error("Unknown error:", error);
       }
     }
   };
@@ -272,8 +270,12 @@ console.log(playVideo,user?._id);
         }
       );
       setSubscribers(response.data.subscribers || []);
-    } catch (error: any| unknown) {
-      console.error("Errorsubscrib channel:", error);
+    }catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.response?.data || error.message);
+      } else {
+        console.error("Unknown error:", error);
+      }
     }
   };
 
@@ -305,10 +307,12 @@ console.log(playVideo,user?._id);
             href={`/userAcount/videos?username=${playVideo?.channelId.name}`}
             className="flex items-center space-x-4"
           >
-            <img
-              src={playVideo?.channelId.profile}
+            <Image
+              src={playVideo?.channelId.profile || '/default-profile.png'}
               alt="Profile"
-              className="w-8 h-8 rounded-full object-cover"
+              className=" rounded-full object-cover"
+              width={32}
+              height={32}
             />
             <div className="flex flex-col">
               <h4 className="font-semibold">{playVideo?.channelId.name}</h4>
@@ -353,14 +357,16 @@ console.log(playVideo,user?._id);
     <div className="mt-6">
       <h2 className="text-lg font-semibold">Comments</h2>
       <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-2 mt-3">
-        <img
+        <Image
           src={
             channels?.profile ||
             user?.photoURL ||
             "https://via.placeholder.com/150?text=Default+Image"
           }
           alt="User Profile"
-          className="w-10 h-10 rounded-full object-cover"
+          className="rounded-full object-cover"
+          width={40}
+          height={40}
         />
         <input
           type="text"
@@ -381,9 +387,13 @@ console.log(playVideo,user?._id);
         {videoComments.length > 0 ? (
           videoComments.map((comment, index) => (
             <div key={comment.id || index} className="flex items-start space-x-3">
-              <img
+              <Image
                 src={comment?.userProfile}
-                className="w-8 h-8 rounded-full object-cover"
+                className=" rounded-full object-cover"
+                alt="User Profile"
+
+                width={32}
+                height={32}
               />
               <div>
                 <div className="flex items-center justify-between">

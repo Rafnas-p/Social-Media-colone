@@ -2,6 +2,7 @@
 import React, { useState, ChangeEvent, FormEvent, useContext } from "react";
 import axios from "axios";
 import { MyContext } from "@/context/vidoContext/VideoContext";
+import Image from "next/image";
 const VideoUploadComponent: React.FC = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -27,7 +28,6 @@ const VideoUploadComponent: React.FC = () => {
     setTitle(e.target.value);
   };
 
-
   const handleDescriptionChange = (
     e: ChangeEvent<HTMLTextAreaElement>
   ): void => {
@@ -45,9 +45,9 @@ const VideoUploadComponent: React.FC = () => {
     const formData = new FormData();
     formData.append("video", videoFile);
     formData.append("description", description);
-    formData.append("userId", channels?.userId ??"");
-    formData.append("userName", channels?.name ??"");
-    formData.append("channelId", channels?._id??"");
+    formData.append("userId", channels?.userId ?? "");
+    formData.append("userName", channels?.name ?? "");
+    formData.append("channelId", channels?._id ?? "");
     formData.append("title", title);
     formData.append("category", category);
 
@@ -75,7 +75,7 @@ const VideoUploadComponent: React.FC = () => {
       setCategory("video");
       setVideoUrl(null);
       alert("Video uploaded successfully!");
-    } catch (error:unknown){
+    } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error("Server Error:", error.response?.data);
         alert(`Error: ${error.response?.data.message || "Upload failed"}`);
@@ -171,10 +171,13 @@ const VideoUploadComponent: React.FC = () => {
         {thumbnail && (
           <div className="mt-8">
             <h3 className="text-lg font-medium text-gray-700">Thumbnail:</h3>
-            <img
+
+            <Image
               src={`http://localhost:5000/${thumbnail}`}
               alt="Thumbnail"
-              className="mt-3 w-full h-60 object-cover rounded-lg border"
+              width={300}
+              height={240}
+              className="mt-3 object-cover rounded-lg border"
             />
           </div>
         )}

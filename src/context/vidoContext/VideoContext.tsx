@@ -77,7 +77,7 @@ interface MyProviderProps {
   children: ReactNode;
 }
 type SearchItem = {
-  createdAt(createdAt: any): React.ReactNode;
+  createdAt(createdAt: string): React.ReactNode;
   videoId: number;
   description: ReactNode;
   title: ReactNode;
@@ -158,10 +158,14 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
           console.error("Invalid API response format");
         }
         setLoading(false);
-      } catch (err:any| unknown) {
-        console.error("Error fetching videos:", err.message);
-        setError(err.message || "Failed to fetch videos");
-        setLoading(false);
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          console.error("Axios error:", err.response?.data || err.message);
+        } else if (err instanceof Error) {
+          console.error("Error:", err.message);
+        } else {
+          console.error("An unknown error occurred:", err);
+        }
       }
     };
   
@@ -181,10 +185,14 @@ console.log('UUser',user);
           }
         );
         setChannels(response.data);
-      } catch (err: any|unknown) {
-        setError(err.response?.data?.message || "Failed to fetch channels.");
-      } finally {
-        setLoading(false);
+      }catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          console.error("Axios error:", err.response?.data || err.message);
+        } else if (err instanceof Error) {
+          console.error("Error:", err.message);
+        } else {
+          console.error("An unknown error occurred:", err);
+        }
       }
     };
 
@@ -204,8 +212,14 @@ console.log('UUser',user);
         });
 
         setUserVideos(response.data.videos);
-      } catch (err: any| unknown) {
-        setError(err.message || "Failed to fetch videos.");
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          console.error("Axios error:", err.response?.data || err.message);
+        } else if (err instanceof Error) {
+          console.error("Error:", err.message);
+        } else {
+          console.error("An unknown error occurred:", err);
+        }
       }
     };
 

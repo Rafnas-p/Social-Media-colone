@@ -52,6 +52,28 @@ function Dashbord() {
   const isOpen = context?.isOpen ?? false;
     const { user } = UserAuth() as unknown as { user: User | null };
 
+    useEffect(() => {
+      const fetchVideosById = async () => {
+        try {
+          
+          const response = await axiosInstance.get("http://localhost:5000/api/videos", {
+            params: { userId: user?._id },
+          });
+  
+          setVideos(response.data.videos);
+        }  catch (err: unknown) {
+          if (err instanceof AxiosError) {
+            console.error("Axios error fetching videos:", err.message);
+          } else {
+            console.error("Error fetching videos:", err);
+          }
+        
+      }
+      
+    }
+      fetchVideosById();
+    }, [user?._id]);
+
   if (!context) {
     console.error(
       "MyContext is not defined. Ensure the provider wraps this component."
@@ -61,27 +83,6 @@ function Dashbord() {
   console.log('videossss',videos);
   
 
-  useEffect(() => {
-    const fetchVideosById = async () => {
-      try {
-        
-        const response = await axiosInstance.get("http://localhost:5000/api/videos", {
-          params: { userId: user?._id },
-        });
-
-        setVideos(response.data.videos);
-      }  catch (err: unknown) {
-        if (err instanceof AxiosError) {
-          console.error("Axios error fetching videos:", err.message);
-        } else {
-          console.error("Error fetching videos:", err);
-        }
-      
-    }
-    
-  }
-    fetchVideosById();
-  }, [user?._id]);
 
   const handleDelete = async (videoId: string) => {
     try {

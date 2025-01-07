@@ -52,10 +52,12 @@ function Navbar2() {
         </div>
 
         <Link href="/" passHref>
-          <img
+          <Image
             src="https://upload.wikimedia.org/wikipedia/commons/3/34/YouTube_logo_%282017%29.png?20170829160812"
             alt="YouTube Logo"
-            className="h-6 w-20 cursor-pointer"
+            className=" cursor-pointer"
+            width={80}
+            height={24}
           />
         </Link>
 
@@ -81,14 +83,14 @@ function Navbar2() {
             {isImageLoading && (
               <div className="w-8 h-8 bg-gray-300 rounded-full animate-pulse"></div>
             )}
-            <img
-              src={channels ? channels?.profile : user?.photoURL?? undefined}
-              alt="Profile"
-              className={`w-8 h-8 rounded-full ${
-                isImageLoading ? "hidden" : ""
-              }`}
-              onLoad={handleImageLoad}
-            />
+           <Image
+    src={channels?.profile || user?.photoURL || '/default-profile.png'} 
+    alt="Profile"
+    width={32} 
+    height={32} 
+    className="rounded-full"
+    onLoadingComplete={handleImageLoad} 
+  />
           </button>
           {isDropdownOpen && (
             <div className="absolute top-2 mr-9 right-0 w-56 bg-white shadow-lg rounded-md z-20">

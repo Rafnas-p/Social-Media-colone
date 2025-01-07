@@ -57,6 +57,7 @@ interface CommentSnippet {
   createdAt: string;
 }
 
+type DropdownId = string | number | null;
 
 const VideoPlayer: React.FC = () => {
   const context = useContext(MyContext);
@@ -72,7 +73,7 @@ const VideoPlayer: React.FC = () => {
   const [videoDetails, setVideoDetails] = useState<VideoDetails | null>(null);
   const [comments, setComments] = useState<CommentSnippet[]>([]);
   const [newComment, setNewComment] = useState<string>("");
-  const [openDropdownId, setOpenDropdownId] = useState(null);
+  const [openDropdownId, setOpenDropdownId] = useState<DropdownId>(null);
 
   const [liked, setLiked] = useState<string>("");
   const [like, setLike] = useState<string[]>([]);
@@ -221,14 +222,13 @@ const VideoPlayer: React.FC = () => {
 
       setLiked(response.data.likesCount);
       setLike(response.data.likes);
-    } catch (error: unknown|any) {
-      console.error("Error liking the video:", error);
-      if (error.response) {
-        console.error("Response error:", error.response);
-      } else if (error.request) {
-        console.error("Request error:", error.request);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        console.error("Axios error:", err.response?.data || err.message);
+      } else if (err instanceof Error) {
+        console.error("Error:", err.message);
       } else {
-        console.error("Error message:", error.message);
+        console.error("An unknown error occurred:", err);
       }
     }
   };
@@ -280,7 +280,7 @@ const VideoPlayer: React.FC = () => {
     Array.isArray(subscribers) && subscribers.includes(user?.uid || "");
   console.log("isUserSubscribed", isUserSubscribed);
 
-  const toggleDropdown = (id: any) => {
+  const toggleDropdown = (id: DropdownId) => {
     setOpenDropdownId((prevId) => (prevId === id ? null : id));
   };
   const handleDelete = async (_id: string) => {
@@ -294,8 +294,14 @@ const VideoPlayer: React.FC = () => {
       setComments((prevComments) =>
         prevComments.filter((comment) => comment._id !== _id)
       );
-    } catch (error: any |unknown) {
-      console.error("Error in delete comment:", error);
+    }  catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        console.error("Axios error:", err.response?.data || err.message);
+      } else if (err instanceof Error) {
+        console.error("Error:", err.message);
+      } else {
+        console.error("An unknown error occurred:", err);
+      }
     }
   };
 

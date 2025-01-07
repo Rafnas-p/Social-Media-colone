@@ -76,7 +76,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
   const logOut = async (): Promise<void> => {
     try {
       await signOut(auth);
-      setUser(undefined); // Updated from null to undefined
+      setUser(undefined); 
 
       Cookies.remove("token");
       Cookies.remove("mongoDbId");

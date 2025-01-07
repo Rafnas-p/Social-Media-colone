@@ -44,14 +44,21 @@ const Userprofile: React.FC = () => {
   useEffect(() => {
     const fetchChannels = async () => {
       try {
-        const response = await axios.get(
+        const response = await axios.get<Channel[]>(
           "http://localhost:5000/api/getChannelsByName",
           {
             params: { userName: username },
           }
         );
         setChannels(response.data);
-      } catch (err: any|unknown) {
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          console.error("Axios error:", err.response?.data || err.message);
+        } else if (err instanceof Error) {
+          console.error("Error:", err.message);
+        } else {
+          console.error("An unknown error occurred:", err);
+        }
       }
     };
 
@@ -59,6 +66,7 @@ const Userprofile: React.FC = () => {
       fetchChannels();
     }
   }, [username]);
+
 
   console.log("channels", channels);
 

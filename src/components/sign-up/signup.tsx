@@ -6,15 +6,28 @@ const Signup = () => {
   const [error, setError] = useState("");
   const { googleSignIn, user, logOut } = UserAuth();
 
+  // const handleGoogleSignIn = async () => {
+  //   try {
+  //     await googleSignIn(); 
+  //   } catch (error:any |unknown) {
+  //     setError(error.message);
+  //     console.log(error);
+  //   }
+  // };
   const handleGoogleSignIn = async () => {
     try {
-      await googleSignIn(); 
-    } catch (error:any |unknown) {
-      setError(error.message);
-      console.log(error);
+      await googleSignIn();
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+        console.log("Error during Google sign-in:", error.message);
+      } else {
+        setError("An unexpected error occurred.");
+        console.error("Unexpected error during Google sign-in:", error);
+      }
     }
   };
-
+  
   const handleSignOut = async () => {
     try {
       await logOut();

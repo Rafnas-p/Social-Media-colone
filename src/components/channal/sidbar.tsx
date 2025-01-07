@@ -2,6 +2,7 @@
 import React, { useContext, useState } from "react";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 import Link from "next/link";
+import Image from "next/image";
 
 function Sidbar2() {
   const context = useContext(MyContext);
@@ -44,13 +45,13 @@ function Sidbar2() {
           ) : (
             <Link href={`/userAcount/videos?username=${channels?.name}`}>
               <button className="py-2 px-4">
-                <img
-                  src={channels?.profile}
-                  alt="Profile"
-                  className={`${
-                    isOpen ? "w-20 h-20 rounded-full ml-12" : "w-8 h-8 rounded-full"
-                  }`}
-                />
+              <Image
+  src={channels?.profile || '/default-profile.png'} 
+  alt="Profile"
+  width={isOpen ? 80 : 32} 
+  height={isOpen ? 80 : 32} 
+  className={isOpen ? "rounded-full ml-12" : "rounded-full"} 
+/>
                 <p
                   className={`${
                     isOpen ? "block" : "hidden"

@@ -15,6 +15,22 @@ const Navbar: React.FC = () => {
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true); 
+  useEffect(() => {
+    const handleOutsideClick = () => {
+      setIsDropdownOpen(false);
+    };
+  
+    if (isDropdownOpen) {
+      document.addEventListener("click", handleOutsideClick);
+    }
+  
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, [isDropdownOpen])
+
+
+
 const router=useRouter()
   useEffect(() => {
     setTimeout(() => {
@@ -54,19 +70,6 @@ const router=useRouter()
   };
 
   
-  useEffect(() => {
-    const handleOutsideClick = () => {
-      setIsDropdownOpen(false);
-    };
-
-    if (isDropdownOpen) {
-      document.addEventListener("click", handleOutsideClick);
-    }
-
-    return () => {
-      document.removeEventListener("click", handleOutsideClick);
-    };
-  }, [isDropdownOpen])
 const handulhomerout=()=>{
   router.push('/')
 }

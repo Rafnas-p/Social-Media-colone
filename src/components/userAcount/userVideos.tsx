@@ -28,7 +28,6 @@ const UserVideos: React.FC = () => {
   const context = useContext(MyContext) as unknown as MyContextType | null;
   const [channels, setChannels] = useState<Channel[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
-  const [error, setError] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
   const isOpen = context?.isOpen ?? false;
@@ -45,9 +44,14 @@ const UserVideos: React.FC = () => {
           }
         );
         setChannels(response.data);
-      } catch (err: any| unknown) {
-        setError(err.response?.data?.message || "Failed to fetch channels.");
-      } finally {
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          console.error("Axios error:", err.response?.data || err.message);
+        } else if (err instanceof Error) {
+          console.error("Error:", err.message);
+        } else {
+          console.error("An unknown error occurred:", err);
+        }
       }
     };
 
@@ -67,15 +71,20 @@ const UserVideos: React.FC = () => {
         });
 
         setVideos(response.data.videos);
-      } catch (err: any|unknown) {
-        setError(err.message || "Failed to fetch videos.");
+      }  catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          console.error("Axios error:", err.response?.data || err.message);
+        } else if (err instanceof Error) {
+          console.error("Error:", err.message);
+        } else {
+          console.error("An unknown error occurred:", err);
+        }
       }
     };
 
     fetchVideos();
   }, [user?.userId]);
 
-  if (error) return <p className="text-red-500">Error: {error}</p>;
 
   const handleMouseEnter = (event: React.MouseEvent<HTMLVideoElement>) => {
     const videoElement = event.currentTarget;

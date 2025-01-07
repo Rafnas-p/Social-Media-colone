@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
 import axios from "axios";
+import Image from "next/image";
 
 interface ChannelData {
   name: string;
@@ -97,11 +98,13 @@ const CreateChannelForm: React.FC = () => {
       </h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-4 text-center">
-          <img
-            src={previewImage || channelData.photoURL}
-            alt="User"
-            className="w-24 h-24 rounded-full mx-auto mb-3"
-          />
+        <Image
+  src={previewImage || channelData.photoURL}
+  alt="User"
+  width={96}
+  height={96} 
+  className="rounded-full mx-auto mb-3"
+/>
           <input
             type="file"
             accept="image/*"

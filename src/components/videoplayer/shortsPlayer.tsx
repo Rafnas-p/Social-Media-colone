@@ -105,8 +105,14 @@ function DisplayShorts() {
         }
       );
       setSubscribers(response.data.subscribers || []);
-    } catch (error: any|unknown) {
-      console.error("Errorsubscrib channel:", error);
+    }  catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        console.error("Axios error:", err.response?.data || err.message);
+      } else if (err instanceof Error) {
+        console.error("Error:", err.message);
+      } else {
+        console.error("An unknown error occurred:", err);
+      }
     }
   };
 

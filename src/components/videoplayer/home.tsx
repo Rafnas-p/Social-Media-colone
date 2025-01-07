@@ -45,20 +45,21 @@ const DisplayData: React.FC = () => {
   const isOpen = context?.isOpen ?? false;
   const [loading, setLoading] = useState<boolean>(true);
 
+  
+    useEffect(() => {
+      const fetchData = async () => {
+        setLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        setLoading(false);
+      };
+      fetchData();
+    }, []);
+
   if (!context) {
     return <div>Loading...</div>;
   }
 
   const { data } = context;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setLoading(false);
-    };
-    fetchData();
-  }, []);
 
   return (
     <div
