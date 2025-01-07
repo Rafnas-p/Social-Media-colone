@@ -50,7 +50,7 @@ function Dashbord() {
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
   const [videos, setVideos] = useState<Video[]>(context?.userVideos||[]);
   const isOpen = context?.isOpen ?? false;
-    const { user } = UserAuth() as unknown as { user: User };
+    const { user } = UserAuth() as unknown as { user: User | null };
 
   if (!context) {
     console.error(
@@ -62,9 +62,6 @@ function Dashbord() {
   
 
   useEffect(() => {
-    if (!user?._id) {
-      return; // Exit early if `user?._id` is not available
-    }
     const fetchVideosById = async () => {
       try {
         
@@ -84,7 +81,7 @@ function Dashbord() {
     
   }
     fetchVideosById();
-  }, [user._id]);
+  }, [user?._id]);
 
   const handleDelete = async (videoId: string) => {
     try {

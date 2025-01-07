@@ -8,6 +8,7 @@ import { MyContext } from "../../context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 const Navbar: React.FC = () => {
   const context = useContext(MyContext);
   const { googleSignIn, logOut, user } = UserAuth();
@@ -78,11 +79,14 @@ const handulhomerout=()=>{
         </div>
        
         <Link href="/" passHref>
-        <img
+        <Image
           src="https://upload.wikimedia.org/wikipedia/commons/3/34/YouTube_logo_%282017%29.png?20170829160812"
           alt="YouTube Logo"
-          className="h-5 w-15  cursor-pointer"
+          className=" cursor-pointer"
+          width={68}
+          height={68}
           onClick={handulhomerout}
+          
         />
         </Link>
      
@@ -112,11 +116,15 @@ const handulhomerout=()=>{
             onClick={toggleDropdown}
             aria-label="Profile"
           >
-           <img
-  src={channels ? channels.profile : user?.photoURL ?? undefined}
+           <Image
+  src={channels ? channels.profile : user?.photoURL || "https://www.w3schools.com/w3images/avatar2.png"}
   alt="Profile"
-  className="w-8 h-8 rounded-full"
+  width={32}
+  height={32}
+  className=" rounded-full"
 />
+
+
 
           </button>
         ) : (
@@ -134,10 +142,12 @@ const handulhomerout=()=>{
         {isDropdownOpen && isSignedIn && (
           <div className="absolute top-2 mr-8 right-2 w-52 bg-white shadow-lg rounded-md z-20">
             <div className="flex items-center px-4 py-2 text-gray-800">
-              <img
-                src={ channels? channels.profile:user?.photoURL ?? undefined}
+              <Image
+                src={ channels? channels.profile:user?.photoURL  || "https://www.w3schools.com/w3images/avatar2.png"}
                 alt="Profile"
-                className="w-10 h-10 rounded-full"
+                className=" rounded-full"
+                width={32}
+                height={32}
               />
               <div className="ml-3">
                 <p className="text-sm text-gray-600">{channels? channels.name:user?.displayName}</p>

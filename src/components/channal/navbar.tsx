@@ -7,6 +7,7 @@ import { RiVideoAddFill } from "react-icons/ri";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import Link from "next/link";
 import Searchbhar2 from "./searchbhar";
+import Image from "next/image";
 
 function Navbar2() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -92,10 +93,12 @@ function Navbar2() {
           {isDropdownOpen && (
             <div className="absolute top-2 mr-9 right-0 w-56 bg-white shadow-lg rounded-md z-20">
               <div className="flex items-center px-4 py-2 text-gray-800">
-                <img
-                  src={channels ? channels.profile : user?.photoURL || undefined}
+                <Image
+                  src={ channels?.profile || user?.photoURL || "https://www.w3schools.com/w3images/avatar2.png"}
                   alt="Profile"
-                  className="w-10 h-10 rounded-full"
+                  className=" rounded-full"
+                  width={40}
+                  height={40}
                 />
                 <div className="ml-3">
                   <p className="text-sm text-gray-600">{user?.displayName}</p>

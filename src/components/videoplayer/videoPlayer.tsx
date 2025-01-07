@@ -11,6 +11,7 @@ import { UserAuth } from "@/context/authcontext/authcontext";
 import RelativeTime from "../reusebile/relativeTime";
 import axios from "axios";
 import Link from "next/link";
+import Image from "next/image";
 interface User {
   _id: string;
   uid: string;
@@ -318,10 +319,12 @@ const VideoPlayer: React.FC = () => {
               href={`/userAcount/videos?username=${videoDetails?.channelId.name}`}
               className="flex items-center space-x-4"
             >
-              <img
+              <Image
                 src={videoDetails?.channelId.profile}
                 alt="Profile"
-                className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                className=" rounded-full object-cover cursor-pointer"
+                width={38}
+                height={38}
               />
 
               <div className="flex flex-col">
@@ -386,14 +389,16 @@ const VideoPlayer: React.FC = () => {
         <div className="mt-6">
           <h2 className="text-lg font-semibold">Comments</h2>
           <div className="flex items-center space-x-3 mt-3">
-            <img
+            <Image
               src={
                 channels?.profile ||
                 user?.photoURL ||
                 "https://via.placeholder.com/150?text=Default+Image"
               }
               alt="User Profile"
-              className="w-10 h-10 rounded-full object-cover"
+              className=" rounded-full object-cover"
+              width={32}
+              height={32}
             />
             <div className="flex-1">
               <input
@@ -415,10 +420,12 @@ const VideoPlayer: React.FC = () => {
           <div className="mt-5 space-y-4">
             {comments.map((comment) => (
               <div key={comment._id} className="flex items-start space-x-3">
-                <img
+                <Image
                   src={comment?.userProfile}
                   alt={comment.userName}
-                  className="w-10 h-10 rounded-full object-cover"
+                  className=" rounded-full object-cover"
+                  width={32}
+                  height={32}
                 />
                 <div className="flex-1">
                   <div className="flex items-center justify-between mr-9">

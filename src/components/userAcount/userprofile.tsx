@@ -6,6 +6,7 @@ import { UserAuth } from "@/context/authcontext/authcontext";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 import Link from "next/link";
 import axios from "axios";
+import Image from "next/image";
 
 interface MyContextType {
   isOpen: boolean;
@@ -80,11 +81,13 @@ console.log('selectedUser',channels);
           isOpen ? "ml-60 mt-24" : "ml-32 mt-24"
         }`}
       >
-        <img
-          src={selectedUser.profile}
-          alt="Profile"
-          className="w-28 h-28 rounded-full"
-        />
+       <Image
+  src={selectedUser.profile || '/path/to/default-image.jpg'} 
+  alt="Profile"
+  width={112} 
+  height={112}
+  className="w-28 h-28 rounded-full"
+/>
         <div>
           <h1 className=" text-3xl from-neutral-950 p-1 ml-3">
             {selectedUser.name}

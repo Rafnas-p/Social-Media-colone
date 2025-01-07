@@ -2,6 +2,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { MyContext } from "../../context/vidoContext/VideoContext";
 import Link from "next/link";
+import Image from "next/image";
 
 
 type Channel = {
@@ -114,10 +115,12 @@ const DisplayData: React.FC = () => {
                   href={`/userAcount/videos?username=${item.userName}`}
                   className="flex-shrink-0"
                 >
-                  <img
+                  <Image
                     src={item.channelId.profile}
                     alt="Profile"
-                    className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                    className=" rounded-full object-cover cursor-pointer"
+                    width={32}
+                    height={32}
                   />
                 </Link>
 

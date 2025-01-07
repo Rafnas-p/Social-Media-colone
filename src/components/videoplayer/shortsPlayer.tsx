@@ -6,6 +6,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Channel } from "../../context/vidoContext/VideoContext";
 import { UserAuth } from "@/context/authcontext/authcontext";
 import axiosInstance from "@/app/fairbase/axiosInstance/axiosInstance";
+import Image from "next/image";
 
 interface User {
   _id: string;
@@ -160,10 +161,12 @@ function DisplayShorts() {
                 href={`/userAcount?username=${shorts[currentShortIndex].userName}`}
                 className="flex items-center space-x-2"
               >
-                <img
+                <Image
                   src={shorts[currentShortIndex].channelId?.profile}
                   alt="Profile"
-                  className="w-6 h-6 rounded-full object-cover"
+                  className=" rounded-full object-cover"
+                  width={28}
+                  height={28}
                 />
                 <span className="text-sm font-semibold">
                   {shorts[currentShortIndex].userName}
