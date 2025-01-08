@@ -144,22 +144,21 @@ const VideoPlayer: React.FC = () => {
   }, [videoDetails]);
 
   useEffect(() => {
-    const fetchSubscribersCount = async () => {
-      if (!videoDetails) return;
-
+    const fetchSubscribersCount = async (): Promise<void> => {
+      if (!videoDetails || !videoDetails.channelId) return;
+  
       try {
-        const response = await axios.post(
-          "https://your-video-platform.onrender.com/api/getSubscribersCount",
-          { channelId: videoDetails.channelId }
-        );
-
+        const response = await axios.post("https://your-video-platform.onrender.com/api/getSubscribersCount", {
+          channelId: videoDetails.channelId,
+        });
+  
         setSubscribe(response.data.subscribersCount);
         setSubscribers(response.data.totalSubscribers);
       } catch (error) {
         console.error("Error fetching subscriber count:", error);
       }
     };
-
+  
     fetchSubscribersCount();
   }, [videoDetails, user?.uid]);
 
