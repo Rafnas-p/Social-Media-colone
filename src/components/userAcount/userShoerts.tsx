@@ -54,7 +54,7 @@ function UserShorts() {
       try {
         setLoading(true);
         const response = await axios.get(
-          'http://localhost:5000/api/getChannelsByName',
+          'https://your-video-platform.onrender.com/api/getChannelsByName',
           {
             params: { userName: username },
           }
@@ -83,7 +83,7 @@ function UserShorts() {
       if (!user?.userId) return;
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:5000/api/shorts', {
+        const response = await axios.get('https://your-video-platform.onrender.com/api/shorts', {
           params: { userId: user.userId },
         });
         setShorts(response.data.shorts);

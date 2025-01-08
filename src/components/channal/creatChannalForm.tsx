@@ -70,7 +70,7 @@ const CreateChannelForm: React.FC = () => {
     formData.append("userId", channelData._id);
     formData.append("handil", channelData.handil);
   formData.append("photoURL",channelData.photoURL)
-    const response = await axiosInstance.post("http://localhost:5000/api/create-channel", formData, {
+    const response = await axiosInstance.post("https://your-video-platform.onrender.com/api/create-channel", formData, {
       headers: {
         "Content-Type": "multipart/form-data", 
       },

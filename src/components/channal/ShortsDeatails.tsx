@@ -36,7 +36,7 @@ function ShortsBord() {
   
     const fetchShorts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/shorts", {
+        const response = await axios.get("https://your-video-platform.onrender.com/api/shorts", {
           params: { userId: user?._id },
         });
         setShorts(response.data.shorts);
@@ -60,7 +60,7 @@ function ShortsBord() {
   const handleDelete = async (videoId: string) => {
     try {
       const response = await axiosInstance.delete(
-        `http://localhost:5000/api/deleteShortsById/${videoId}`
+        `https://your-video-platform.onrender.com/api/deleteShortsById/${videoId}`
       );
       console.log("Delete response:", response);
 

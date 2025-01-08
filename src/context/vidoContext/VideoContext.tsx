@@ -150,7 +150,7 @@ export const MyProvider: React.FC<MyProviderProps> = ({ children }) => {
   useEffect(() => {
     const fetchAllVideos = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/EntairVideos");
+        const response = await axios.get("https://your-video-platform.onrender.com/api/EntairVideos");
   
         if (response.data && response.data.videos) {
           setData(response.data.videos);
@@ -179,7 +179,7 @@ console.log('UUser',user);
       try {
         setLoading(true);
         const response = await axios.get(
-          "http://localhost:5000/api/getchannel",
+          "https://your-video-platform.onrender.com/api/getchannel",
           {
             params: { ownerId: user?._id },
           }
@@ -207,7 +207,7 @@ console.log('UUser',user);
     const fetchVideosById = async () => {
       try {
         if (!user?._id) return;
-        const response = await axios.get("http://localhost:5000/api/videos", {
+        const response = await axios.get("https://your-video-platform.onrender.com/api/videos", {
           params: { userId: user._id },
         });
 
@@ -231,7 +231,7 @@ console.log('UUser',user);
       if (!user?.uid) return;
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:5000/api/shorts", {
+        const response = await axios.get("https://your-video-platform.onrender.com/api/shorts", {
           params: { userId: user._id },
         });
         setShorts(response.data.shorts);

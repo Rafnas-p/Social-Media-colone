@@ -45,7 +45,7 @@ const Userprofile: React.FC = () => {
     const fetchChannels = async () => {
       try {
         const response = await axios.get<Channel[]>(
-          "http://localhost:5000/api/getChannelsByName",
+          "https://your-video-platform.onrender.com/api/getChannelsByName",
           {
             params: { userName: username },
           }

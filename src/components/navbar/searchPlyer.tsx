@@ -92,7 +92,7 @@ const SearchPlayer: React.FC = () => {
       if (!videoId) return;
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/video/${videoId}`
+          `https://your-video-platform.onrender.com/api/video/${videoId}`
         );
         setPlayVideo(response.data);
       } catch (error) {
@@ -129,7 +129,7 @@ console.log('play video',playVideo);
 
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/likeVideoCount",
+          "https://your-video-platform.onrender.com/api/likeVideoCount",
           {
             _id: playVideo._id,
             uid: user?._id,
@@ -152,7 +152,7 @@ console.log(playVideo,user?._id);
 
     try {
       const response = await axiosInstance.post(
-        "http://localhost:5000/api/likeVideo",
+        "https://your-video-platform.onrender.com/api/likeVideo",
         {
           channelId: playVideo._id,
 
@@ -183,7 +183,7 @@ console.log(playVideo,user?._id);
 
     try {
       const response = await axiosInstance.post(
-        "http://localhost:5000/api/dislikeVideo",
+        "https://your-video-platform.onrender.com/api/dislikeVideo",
         {
           channelId: playVideo?._id,
 
@@ -204,7 +204,7 @@ console.log(playVideo,user?._id);
       if (!videoId) return;
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/getCommentsById/${videoId}`
+          `https://your-video-platform.onrender.com/api/getCommentsById/${videoId}`
         );
         setVideoComments(response.data);
       } catch (error) {
@@ -221,7 +221,7 @@ console.log(playVideo,user?._id);
 
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/getSubscribersCount",
+          "https://your-video-platform.onrender.com/api/getSubscribersCount",
           { channelId: playVideo.channelId }
         );
 
@@ -240,7 +240,7 @@ console.log(playVideo,user?._id);
 
     try {
       const response = await axiosInstance.post(
-        `http://localhost:5000/api/addComment/${videoId}`,
+        `https://your-video-platform.onrender.com/api/addComment/${videoId}`,
         {
           userName: channels?.name,
           userProfile: channels?.profile,
@@ -264,7 +264,7 @@ console.log(playVideo,user?._id);
 
     try {
       const response = await axiosInstance.post(
-        "http://localhost:5000/api/subscribChannel",
+        "https://your-video-platform.onrender.com/api/subscribChannel",
         {
           _id: playVideo.channelId._id,
         }

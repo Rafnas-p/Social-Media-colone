@@ -93,7 +93,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     const { uid, email, displayName, photoURL } = user;
 
     try {
-      const response = await fetch("http://localhost:5000/api/users", {
+      const response = await fetch("https://your-video-platform.onrender.com/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -145,7 +145,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
         Cookies.set("token", token, { secure: true, sameSite: "strict" });
 
         const response = await axios.get(
-          `http://localhost:5000/api/getUserById/${currentUser.uid}`
+          `https://your-video-platform.onrender.com/api/getUserById/${currentUser.uid}`
         );
         setUser(response.data);
       } else {
@@ -162,7 +162,7 @@ export const AuthContextProvider: React.FC<AuthContextProviderProps> = ({
     const fetchAllUsers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/getallusers"
+          "https://your-video-platform.onrender.com/api/getallusers"
         );
         setAllUsers(response.data);
       } catch (error) {

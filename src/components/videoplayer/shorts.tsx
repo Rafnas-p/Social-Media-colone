@@ -37,7 +37,7 @@ function DisplayShortsGrid() {
   useEffect(() => {
     const fetchShorts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/entaireShorts");
+        const response = await axios.get("https://your-video-platform.onrender.com/api/entaireShorts");
         const shortsData = response.data.shorts || [];
 
         if (shortsData.length > 0) {

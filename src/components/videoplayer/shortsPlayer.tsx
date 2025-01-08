@@ -49,7 +49,7 @@ function DisplayShorts() {
     const fetchAllShorts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/entaireShorts"
+          "https://your-video-platform.onrender.com/api/entaireShorts"
         );
         const shortsData = response.data.shorts || [];
         setShorts(shortsData);
@@ -81,7 +81,7 @@ function DisplayShorts() {
 
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/getSubscribersCount",
+          "https://your-video-platform.onrender.com/api/getSubscribersCount",
           { channelId: shorts[currentShortIndex].channelId }
         );
 
@@ -99,7 +99,7 @@ function DisplayShorts() {
     if (currentShortIndex === null || !shorts[currentShortIndex]) return;
     try {
       const response = await axiosInstance.post(
-        "http://localhost:5000/api/subscribChannel",
+        "https://your-video-platform.onrender.com/api/subscribChannel",
         {
           _id:shorts[currentShortIndex].channelId
         }

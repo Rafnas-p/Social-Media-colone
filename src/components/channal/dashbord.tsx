@@ -56,7 +56,7 @@ function Dashbord() {
       const fetchVideosById = async () => {
         try {
           
-          const response = await axiosInstance.get("http://localhost:5000/api/videos", {
+          const response = await axiosInstance.get("https://your-video-platform.onrender.com/api/videos", {
             params: { userId: user?._id },
           });
   
@@ -87,7 +87,7 @@ function Dashbord() {
   const handleDelete = async (videoId: string) => {
     try {
       const response = await axiosInstance.delete(
-        `http://localhost:5000/api/deleatVideoById/${videoId}`
+        `https://your-video-platform.onrender.com/api/deleatVideoById/${videoId}`
       );
       console.log("Delete response:", response);
 

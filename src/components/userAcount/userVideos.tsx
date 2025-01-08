@@ -38,7 +38,7 @@ const UserVideos: React.FC = () => {
     const fetchChannels = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/getChannelsByName",
+          "https://your-video-platform.onrender.com/api/getChannelsByName",
           {
             params: { userName: username },
           }
@@ -66,7 +66,7 @@ const UserVideos: React.FC = () => {
     const fetchVideos = async () => {
       try {
         if (!user?.userId) return;
-        const response = await axios.get("http://localhost:5000/api/videos", {
+        const response = await axios.get("https://your-video-platform.onrender.com/api/videos", {
           params: { userId: user.userId },
         });
 

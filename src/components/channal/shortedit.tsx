@@ -20,7 +20,7 @@ export default function ShortEditForm() {
     const fetchVideoById = async () => {
       if (!shortsId) return;
       try {
-        const response = await axios.get(`http://localhost:5000/api/short/${shortsId}`);
+        const response = await axios.get(`https://your-video-platform.onrender.com/api/short/${shortsId}`);
         setshortsDetails(response.data);
       } catch (error) {
         console.error("Error fetching video details:", error);
@@ -41,7 +41,7 @@ export default function ShortEditForm() {
     if (!shortsDetails) return;
 
     try {
-      await axios.put(`http://localhost:5000/api/updateShortsDetails/${shortsId}`, shortsDetails);
+      await axios.put(`https://your-video-platform.onrender.com/api/updateShortsDetails/${shortsId}`, shortsDetails);
       alert("Video details updated successfully!");
     } catch (error) {
       console.error("Error updating video details:", error);

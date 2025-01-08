@@ -53,7 +53,7 @@ const VideoUploadComponent: React.FC = () => {
 
     try {
       const response = await axios.post<{ thumbnailPath: string }>(
-        "http://localhost:5000/api/videos/upload",
+        "https://your-video-platform.onrender.com/api/videos/upload",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -173,7 +173,7 @@ const VideoUploadComponent: React.FC = () => {
             <h3 className="text-lg font-medium text-gray-700">Thumbnail:</h3>
 
             <Image
-              src={`http://localhost:5000/${thumbnail}`}
+              src={`https://your-video-platform.onrender.com/${thumbnail}`}
               alt="Thumbnail"
               width={300}
               height={240}

@@ -19,7 +19,7 @@ export default function EditForm() {
     const fetchVideoById = async () => {
       if (!videoId) return;
       try {
-        const response = await axios.get(`http://localhost:5000/api/video/${videoId}`);
+        const response = await axios.get(`https://your-video-platform.onrender.com/api/video/${videoId}`);
         setVideoDetails(response.data);
       } catch (error) {
         console.error("Error fetching video details:", error);
@@ -39,7 +39,7 @@ export default function EditForm() {
     e.preventDefault();
     if (videoDetails) {
       try {
-        await axios.put(`http://localhost:5000/api/updateVideoDetails/${videoId}`, videoDetails);
+        await axios.put(`https://your-video-platform.onrender.com/api/updateVideoDetails/${videoId}`, videoDetails);
         alert("Video details updated successfully!");
       } catch (error) {
         console.error("Error updating video details:", error);

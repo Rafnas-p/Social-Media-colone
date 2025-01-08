@@ -93,7 +93,7 @@ const VideoPlayer: React.FC = () => {
       if (!currentVideoId) return;
       try {
         const response = await axios.get<VideoDetails>(
-          `http://localhost:5000/api/video/${currentVideoId}`
+          `https://your-video-platform.onrender.com/api/video/${currentVideoId}`
         );
         setVideoDetails(response.data);
       } catch (error) {
@@ -110,7 +110,7 @@ const VideoPlayer: React.FC = () => {
       if (!currentVideoId) return;
       try {
         const response = await axios.get<CommentSnippet[]>(
-          `http://localhost:5000/api/getCommentsById/${currentVideoId}`
+          `https://your-video-platform.onrender.com/api/getCommentsById/${currentVideoId}`
         );
         setComments(response.data);
       } catch (error) {
@@ -127,7 +127,7 @@ const VideoPlayer: React.FC = () => {
 
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/likeVideoCount",
+          "https://your-video-platform.onrender.com/api/likeVideoCount",
           {
             _id: videoDetails._id,
           }
@@ -149,7 +149,7 @@ const VideoPlayer: React.FC = () => {
 
       try {
         const response = await axios.post(
-          "http://localhost:5000/api/getSubscribersCount",
+          "https://your-video-platform.onrender.com/api/getSubscribersCount",
           { channelId: videoDetails.channelId }
         );
 
@@ -174,7 +174,7 @@ const VideoPlayer: React.FC = () => {
       const currentChannel = channels ? channels : null;
   
       const response = await axiosInstance.post<CommentSnippet>(
-        `http://localhost:5000/api/addComment/${currentVideoId}`,
+        `https://your-video-platform.onrender.com/api/addComment/${currentVideoId}`,
         {
           userName: currentChannel ? currentChannel.name : user?.displayName,
           userProfile: currentChannel ? currentChannel.profile : user?.photoURL,
@@ -208,7 +208,7 @@ const VideoPlayer: React.FC = () => {
 
     try {
       const response = await axiosInstance.post(
-        "http://localhost:5000/api/likeVideo",
+        "https://your-video-platform.onrender.com/api/likeVideo",
         {
           channelId: videoDetails._id,
         },
@@ -243,7 +243,7 @@ const VideoPlayer: React.FC = () => {
 
     try {
       const response = await axiosInstance.post(
-        "http://localhost:5000/api/dislikeVideo",
+        "https://your-video-platform.onrender.com/api/dislikeVideo",
         {
           channelId: videoDetails._id,
         }
@@ -265,7 +265,7 @@ const VideoPlayer: React.FC = () => {
     }
     try {
       const response = await axiosInstance.post(
-        "http://localhost:5000/api/subscribChannel",
+        "https://your-video-platform.onrender.com/api/subscribChannel",
         {
           _id: videoDetails.channelId._id,
         }
@@ -286,7 +286,7 @@ const VideoPlayer: React.FC = () => {
   const handleDelete = async (_id: string) => {
     try {
       const response = await axiosInstance.delete(
-        `http://localhost:5000/api/deleteComment/${_id}`
+        `https://your-video-platform.onrender.com/api/deleteComment/${_id}`
       );
 
       console.log("Comment deleted:", response.data);
