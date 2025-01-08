@@ -1,14 +1,17 @@
-import React from 'react'
-import UserShorts from '@/components/userAcount/userShoerts'
-import Userprofile from '@/components/userAcount/userprofile'
+'use client';
+import React, { Suspense } from 'react';
+import Userprofile from '@/components/userAcount/userprofile';
+import UserShorts from '@/components/userAcount/userShoerts';
+
 function Page() {
   return (
     <div>
-     
-        <Userprofile/>
-        <UserShorts/>
+      <Userprofile />
+      <Suspense fallback={<div>Loading User Shorts...</div>}>
+        <UserShorts />
+      </Suspense>
     </div>
-  )
+  );
 }
 
-export default Page
+export default Page;
