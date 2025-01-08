@@ -3,7 +3,7 @@ import axios from 'axios';
 import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { MyContext } from '@/context/vidoContext/VideoContext';
-
+import { Suspense } from 'react';
 interface Short {
   _id: string;
   description: string;
@@ -33,6 +33,7 @@ type Channel = {
 };
 
 function UserShorts() {
+
   const searchParams = useSearchParams();
   const username = searchParams.get('username');
   const context = useContext(MyContext) as unknown as MyContextType | null;
@@ -131,6 +132,8 @@ function UserShorts() {
   }
 
   return (
+          <Suspense fallback={<div>Loading User Shorts...</div>}>
+    
     <div
       className={`flex flex-col p-6 transition-all duration-300 ${
         isOpen ? 'ml-64' : 'ml-16'
@@ -192,6 +195,7 @@ function UserShorts() {
         </div>
       )}
     </div>
+    </Suspense>
   );
 }
 
