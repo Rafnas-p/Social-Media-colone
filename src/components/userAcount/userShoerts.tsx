@@ -1,6 +1,7 @@
 "use client";
 import axios from "axios";
 import React, { useEffect, useState, useRef, useContext } from "react";
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { MyContext } from "@/context/vidoContext/VideoContext";
 
@@ -136,6 +137,8 @@ console.log('UserShorts',user);
   }
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
+
     <div
     className={`flex flex-col p-6 transition-all duration-300  ${
       isOpen ? "ml-64" : "ml-16"
@@ -197,6 +200,8 @@ console.log('UserShorts',user);
         </div>
       )}
     </div>
+    </Suspense>
+
   );
 }
 
