@@ -153,7 +153,7 @@ function DisplayShorts() {
         ref={modalRef}
         tabIndex={-1}
       >
-        <div className="relative w-3/12 h-5/6  flex flex-col mt-10 items-center">
+        <div className="relative w-[340px] sm:w-[350px] h-5/6  flex flex-col mt-10 items-center">
           <video
             controls
             src={shorts[currentShortIndex].videoUrl}
@@ -196,7 +196,7 @@ function DisplayShorts() {
         {currentShortIndex < shorts.length - 1 && (
           <div className="absolute bottom-2 w-full flex justify-center">
             <div
-              className="w-3/12 h-3 bg-black bg-opacity-90 text-white rounded-md flex items-center justify-center cursor-pointer"
+              className="w-[340px] sm:w-[350px] h-3 bg-black bg-opacity-90 text-white rounded-md flex items-center justify-center cursor-pointer"
               onClick={() => setCurrentShortIndex(currentShortIndex + 1)}
             >
             

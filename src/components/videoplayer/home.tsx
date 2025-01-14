@@ -4,7 +4,6 @@ import { MyContext } from "../../context/vidoContext/VideoContext";
 import Link from "next/link";
 import Image from "next/image";
 
-
 type Channel = {
   _id: string;
   handle: string;
@@ -15,7 +14,6 @@ type Channel = {
   userId: string;
   __v: number;
 };
-
 
 interface VideoDetails {
   channelId: Channel;
@@ -33,8 +31,6 @@ interface VideoDetails {
   userName: string;
 }
 
-
-
 interface MyContextType {
   data: VideoDetails[];
   isOpen: boolean;
@@ -45,15 +41,14 @@ const DisplayData: React.FC = () => {
   const isOpen = context?.isOpen ?? false;
   const [loading, setLoading] = useState<boolean>(true);
 
-  
-    useEffect(() => {
-      const fetchData = async () => {
-        setLoading(true);
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        setLoading(false);
-      };
-      fetchData();
-    }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
   if (!context) {
     return <div>Loading...</div>;
@@ -63,11 +58,13 @@ const DisplayData: React.FC = () => {
 
   return (
     <div
-      className={`flex flex-col p-6 transition-all duration-300 mt-20 ${
-        isOpen ? "ml-64" : "ml-16"} `} style={{ minHeight: '100vh', overflowY: 'auto' }}
+      className={`flex flex-col p-4 transition-all duration-300 mt-16 ${
+        isOpen ? "ml-64" : "ml-4"
+      } md:ml-16`}
+      style={{ minHeight: "100vh", overflowY: "auto" }}
     >
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array(8)
             .fill(0)
             .map((_, index) => (
@@ -90,7 +87,7 @@ const DisplayData: React.FC = () => {
       ) : data.length === 0 ? (
         <p className="text-center text-gray-600">No data found</p>
       ) : (
-        <div className="grid grid-cols-1 rounded-lg sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 bg-white">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {data.map((item, index) => (
             <div
               key={index}
@@ -101,8 +98,8 @@ const DisplayData: React.FC = () => {
                   <video
                     className={`w-full object-cover ${
                       isOpen
-                        ? "h-52 sm:h-40 md:h-32 lg:h-28"
-                        : "h-60 sm:h-48 md:h-44 lg:h-40"
+                        ? "h-40 sm:h-32 md:h-28"
+                        : "h-48 sm:h-40 md:h-36 lg:h-32"
                     } rounded-lg`}
                     src={item.videoUrl}
                     title={item.title}
@@ -111,7 +108,7 @@ const DisplayData: React.FC = () => {
                   ></video>
                 </div>
               </Link>
-              <div className="flex items-center space-x-4 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200">
+              <div className="flex items-center space-x-4 p-2">
                 <Link
                   href={`/userAcount/videos?username=${item.userName}`}
                   className="flex-shrink-0"
@@ -119,7 +116,7 @@ const DisplayData: React.FC = () => {
                   <Image
                     src={item.channelId.profile}
                     alt="Profile"
-                    className=" rounded-full object-cover cursor-pointer"
+                    className="rounded-full object-cover cursor-pointer"
                     width={32}
                     height={32}
                   />
@@ -130,7 +127,9 @@ const DisplayData: React.FC = () => {
                     <p className="text-sm font-semibold text-gray-800">
                       {item.title}
                     </p>
-                    <p className="text-xs text-gray-500">{item.channelId.name} </p>
+                    <p className="text-xs text-gray-500">
+                      {item.channelId.name}
+                    </p>
                   </div>
                 </Link>
               </div>
@@ -138,9 +137,7 @@ const DisplayData: React.FC = () => {
           ))}
         </div>
       )}
-      
     </div>
-   
   );
 };
 

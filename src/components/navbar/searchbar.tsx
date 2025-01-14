@@ -95,7 +95,7 @@ const Searchbar: React.FC = () => {
 
   return (
     <div className="px-4 sm:px-0 fixed top-4 flex flex-col items-center z-10">
-      <div className="relative w-full sm:w-[500px]  max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
+      <div className="relative w-[150px] sm:w-[500px]  max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
         <input
           type="text"
           placeholder="Search..."

@@ -305,11 +305,11 @@ const VideoPlayer: React.FC = () => {
   };
 
   return (
-    <div className="flex  flex-col lg:flex-row px-4 mt-20 ml-14 bg-white text-gray-800 min-h-screen space-y-4 lg:space-y-0 lg:space-x-6">
-      <div className="w-full lg:w-2/3 max-w-3xl space-y-4">
+    <div className="flex  flex-col lg:flex-row px-4 mt-20 sm:ml-14 bg-white text-gray-800 min-h-screen space-y-4 lg:space-y-0 lg:space-x-6">
+      <div className="w-fullh-[200] lg:w-2/3 max-w-3xl space-y-4">
         <div className="w-full bg-black rounded-xl overflow-hidden shadow-md">
           <video
-            className="w-full h-[400px] object-cover"
+            className="w-full h-[300] object-cover"
             src={videoDetails.videoUrl}
             title="Video Player"
             controls
@@ -327,16 +327,16 @@ const VideoPlayer: React.FC = () => {
               <Image
                 src={videoDetails?.channelId.profile}
                 alt="Profile"
-                className=" rounded-full object-cover cursor-pointer"
+                className=" rounded-full object-cover w-7 h-7 sm:w-8 sm:h-8 cursor-pointer"
                 width={38}
                 height={38}
               />
 
               <div className="flex flex-col">
-                <h4 className="font-semibold">
+                <h4 className="font-semibold text-xs sm:text-sm">
                   {videoDetails?.channelId.name}
                 </h4>
-                <p className="text-sm text-gray-500">{subscribe} subscribers</p>
+                <p className="text-xs sm:text-sm text-gray-500">{subscribe} subscribers</p>
               </div>
             </Link>
             <button
